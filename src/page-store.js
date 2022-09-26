@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils-common'
-import { drawImage, drawRadius, ctxInit } from './utils-canvas'
+import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { ScrollY } from './ui-scroll'
 import { Card } from './ui-card'
@@ -28,11 +28,6 @@ class PageStore {
     this.cards_I
     this.cardss_I
     this.preview_I
-
-    this.buttonHome_I
-    this.buttonLoad_I
-    this.buttonUnload_I
-    this.buttonCompose_I
 
     this.instance()
   }
@@ -76,10 +71,6 @@ class PageStore {
     this.instanceCards()
     this.instanceCardss()
     this.instancePreview()
-    this.instanceButtonHome()
-    this.instanceButtonLoad()
-    this.instanceButtonUnload()
-    this.instanceButtonCompose()
   }
 
   instanceScroll() {
@@ -165,48 +156,26 @@ class PageStore {
     this.preview_I = new Card(option)
   }
 
-  instanceButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 40, height: 40, radius: 20, font: 14, lineWidth: 1, fillStyle: 'white', strokeStyle: 'white', text: 'H' }
-
-    this.buttonHome_I = new Button(option)
-  }
-
-  instanceButtonLoad() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, font: 14, lineWidth: 1, fillStyle: 'white', strokeStyle: 'white', text: '装载' }
-
-    this.buttonLoad_I = new Button(option)
-  }
-
-  instanceButtonUnload() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, font: 14, lineWidth: 1, fillStyle: 'white', strokeStyle: 'white', text: '卸载' }
-
-    this.buttonUnload_I = new Button(option)
-  }
-
-  instanceButtonCompose() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, font: 14, lineWidth: 1, fillStyle: 'white', strokeStyle: 'white', text: '合成' }
-
-    this.buttonCompose_I = new Button(option)
-  }
-
   drawButtonHome() {
-    this.buttonHome_I.render()
+    const option = { x: 12, y: 12 + safeTop, width: 40, height: 40, radius: 20, text: 'H' }
 
-    const { x, y, width, height } = this.buttonHome_I
+    new Button(option).render()
 
     const event = () => {
       Imitation.state.page.current = 'home'
       Imitation.dispatch()
     }
 
-    addEventListener('touchstart', event, { x, y, width, height })
+    addEventListener('touchstart', event, option)
   }
 
   drawPreview() {
     if (!this.preview) return
 
+    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-    ctx.rect(0, 0, windowWidth, windowHeight)
+
     ctx.fill()
 
     this.preview_I.card = this.preview
@@ -214,31 +183,31 @@ class PageStore {
     this.preview_I.render()
 
     if (this.previewType === 'cards') {
-      this.buttonLoad_I.render()
+      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '装载' }
 
-      const { x, y, width, height } = this.buttonLoad_I
+      new Button(option).render()
 
       const load = () => {
         this.load(this.preview)
         this.preview = null
       }
 
-      addEventListener('touchstart', load, { x, y, width, height })
+      addEventListener('touchstart', load, option)
 
-      this.buttonCompose_I.render()
+      const option_ = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '合成' }
 
-      const { x_, y_, width_, height_ } = this.buttonCompose_I
+      new Button(option_).render()
 
       const compose = () => {
         this.compose(this.preview)
         this.preview = null
       }
 
-      addEventListener('touchstart', compose, { x_, y_, width_, height_ })
+      addEventListener('touchstart', compose, option_)
 
       const close = (e) => {
-        if (ifTouchCover(e, { x, y, width, height })) return
-        if (ifTouchCover(e, { x_, y_, width_, height_ })) return
+        if (ifTouchCover(e, option)) return
+        if (ifTouchCover(e, option_)) return
         this.preview = null
       }
 
@@ -246,19 +215,19 @@ class PageStore {
     }
 
     if (this.previewType === 'cardss') {
-      this.buttonUnload_I.render()
+      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '卸载' }
 
-      const { x, y, width, height } = this.buttonUnload_I
+      new Button(option).render()
 
       const unload = () => {
         this.unload(this.preview)
         this.preview = null
       }
 
-      addEventListener('touchstart', unload, { x, y, width, height })
+      addEventListener('touchstart', unload, option)
 
       const close = (e) => {
-        if (ifTouchCover(e, { x, y, width, height })) return
+        if (ifTouchCover(e, option)) return
         this.preview = null
       }
 
@@ -287,15 +256,10 @@ class PageStore {
 
     const option = { x: 12, y: 64 + safeTop, width: windowWidth - 24, height: this.cardssH + 24, radius: 12 }
 
-    ctx.save()
-
     drawRadius(option)
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+
+    ctx.fillStyle = 'white'
     ctx.fill()
-
-    ctxInit()
-
-    ctx.restore()
 
     this.cardss_I.forEach((card) => {
       card.scrollTop = scrollPosition
@@ -311,7 +275,7 @@ class PageStore {
       option.x = 12 + 60 + (index % 4) * (option.width + 12)
 
       if (index === Imitation.state.info.cardssIndex) {
-        new Button(option).render()
+        new Button({ ...option, fillStyle: 'black', strokeStyle: 'black' }).render()
       }
 
       if (index !== Imitation.state.info.cardssIndex) {

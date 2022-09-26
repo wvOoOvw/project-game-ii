@@ -14,13 +14,13 @@ class ScrollY {
     this.min = option.min
     this.max = option.max
 
-    this.backgroundColor = 'rgba(255, 255, 255, 1)'
+    this.backgroundColor = option.backgroundColor || 'white'
 
     this.scrollbarOffset = option.scrollbarOffset
 
     this.scrollbarThick = option.scrollbarThick
 
-    this.scrollbarColor = 'rgba(0, 0, 0, opacity)'
+    this.scrollbarColor = option.scrollbarColor || 'rgba(0, 0, 0, opacity)'
 
     this.scrollbarOpacity = 0
 
@@ -71,6 +71,7 @@ class ScrollY {
 
     drawRadius(option)
 
+    ctx.fillStyle = this.backgroundColor
     ctx.fill()
 
     addEventListener('touchstart', this.eventDown.bind(this), option)

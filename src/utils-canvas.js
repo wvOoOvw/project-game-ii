@@ -12,22 +12,6 @@
 
 const ctx = canvas.getContext('2d')
 
-const ctxInit = () => {
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-  ctx.fillStyle = '#000000'
-  ctx.strokeStyle = '#000000'
-  ctx.shadowBlur = 0
-  ctx.shadowColor = '#000000'
-  ctx.shadowOffsetX = 0
-  ctx.shadowOffsetY = 0
-  ctx.lineWidth = 1
-  ctx.font = 'bold 14px monospace'
-  ctx.textAlign = 'start'
-  ctx.textBaseline = 'alphabetic'
-}
-
-export { ctxInit }
-
 const drawImage = (image, option) => {
   const x = option.x
   const y = option.y

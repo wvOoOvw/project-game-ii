@@ -9,7 +9,7 @@ class Button {
     this.width = option.width
     this.height = option.height
     this.radius = option.radius || 8
-    this.text = option.text || ''
+    this.text = option.text
     this.font = option.font || 14
     this.lineWidth = option.lineWidth || 1
     this.fillStyle = option.fillStyle || 'white'

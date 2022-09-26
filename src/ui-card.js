@@ -12,6 +12,7 @@ class Card {
     this.y = option.y
     this.width = option.width
     this.height = option.height
+    this.fillStyle = option.fillStyle || 'white'
 
     this.card = option.card
 
@@ -63,7 +64,7 @@ class Card {
       drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
     }
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fillStyle = this.fillStyle
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'

@@ -7,16 +7,12 @@ import PageHome from './page-home'
 import PageStore from './page-store'
 // import PageBattle from './page-battle'
 
-import { ctxInit } from './utils-canvas'
-
 import { mock } from '../source/cards'
 
 const ctx = canvas.getContext('2d')
 
 class Main {
   constructor() {
-    ctxInit()
-
     this.animationFrameId
 
     this.ImitationInit()
@@ -37,6 +33,7 @@ class Main {
         page.currentCache = page.current
         page.current = 'transition'
       }
+      
       page.instance = new page.map[page.current]()
     }
 

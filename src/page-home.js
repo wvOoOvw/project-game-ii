@@ -16,52 +16,32 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class PageHome {
   constructor() {
-    this.buttonBattle_I
-    this.buttonStore_I
-
-    this.instance()
-  }
-
-  instance() {
-    this.instanceButtonBattle()
-    this.instanceButtonStore()
-  }
-
-  instanceButtonBattle() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, text: '战斗' }
-
-    this.buttonBattle_I = new Button(option)
-  }
-
-  instanceButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, text: '仓库' }
-
-    this.buttonStore_I = new Button(option)
+    
   }
 
   drawButtonBattle() {
-    this.buttonBattle_I.render()
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, text: '战斗' }
 
-    const { x, y, width, height } = this.buttonBattle_I
+    new Button(option).render()
 
     const event = () => {
 
     }
 
-    addEventListener('touchstart', event, { x, y, width, height })
+    addEventListener('touchstart', event, option)
   }
 
   drawButtonStore() {
-    this.buttonStore_I.render()
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, text: '仓库' }
 
-    const { x, y, width, height } = this.buttonStore_I
+    new Button(option).render()
 
     const event = () => {
       Imitation.state.page.current = 'store'
       Imitation.dispatch()
     }
 
-    addEventListener('touchstart', event, { x, y, width, height })
+    addEventListener('touchstart', event, option)
   }
 
   drawBackground() {
