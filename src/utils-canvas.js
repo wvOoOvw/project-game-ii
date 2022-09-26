@@ -13,9 +13,7 @@
 const ctx = canvas.getContext('2d')
 
 const ctxInit = () => {
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
-  ctx.scale(dpr, dpr)
-  ctx.globalAlpha = 1
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.fillStyle = '#000000'
   ctx.strokeStyle = '#000000'
   ctx.shadowBlur = 0
@@ -23,8 +21,6 @@ const ctxInit = () => {
   ctx.shadowOffsetX = 0
   ctx.shadowOffsetY = 0
   ctx.lineWidth = 1
-  ctx.lineCap = 'butt'
-  ctx.lineJoin = 'miter'
   ctx.font = 'bold 14px monospace'
   ctx.textAlign = 'start'
   ctx.textBaseline = 'alphabetic'
@@ -32,7 +28,7 @@ const ctxInit = () => {
 
 export { ctxInit }
 
-const drawImageFullCenter = (image, option) => {
+const drawImage = (image, option) => {
   const x = option.x
   const y = option.y
   const width = option.width
@@ -64,7 +60,7 @@ const drawImageFullCenter = (image, option) => {
   ctx.drawImage(image, sx, sy, swidth, sheight, x, y, width, height)
 }
 
-const drawRadiusRect = (option) => {
+const drawRadius = (option) => {
   const x = option.x
   const y = option.y
   const width = option.width
@@ -83,22 +79,18 @@ const drawRadiusRect = (option) => {
   ctx.closePath()
 }
 
-const getDrawTextRow = (option) => {
+const drawRect = (option) => {
+  const x = option.x
+  const y = option.y
   const width = option.width
-  const text = option.text
+  const height = option.height
 
-  let test = text.split('')
-  let temp = ''
-  let row = []
-  test.forEach(i => {
-    if (ctx.measureText(temp).width > width) {
-      row.push(temp)
-      temp = ''
-    }
-    temp = temp + i
-  })
-  row.push(temp)
-  return row
+  ctx.beginPath()
+  ctx.moveTo(x, y)
+  ctx.lineTo(x + width, y)
+  ctx.lineTo(x + width, y + height)
+  ctx.lineTo(x, y + height)
+  ctx.closePath()
 }
 
 const drawText = (option) => {
@@ -124,60 +116,4 @@ const drawText = (option) => {
   })
 }
 
-export { drawImageFullCenter, drawRadiusRect, getDrawTextRow, drawText }
-
-const drawButtonWhite = (option) => {
-  const x = option.x
-  const y = option.y
-  const width = option.width
-  const height = option.height
-  const text = option.text
-  const font = option.font
-  const lineWidth = option.lineWidth
-
-  ctx.save()
-
-  drawRadiusRect(option)
-  ctx.lineWidth = lineWidth
-  ctx.strokeStyle = 'rgba(255, 255, 255, 1)'
-  ctx.stroke()
-
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.font = `bold ${font}px monospace`
-  ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-  ctx.fillText(text, x + width / 2, y + height / 2)
-
-  ctxInit()
-
-  ctx.restore()
-}
-
-const drawButtonBlack = (option) => {
-  const x = option.x
-  const y = option.y
-  const width = option.width
-  const height = option.height
-  const text = option.text
-  const font = option.font
-  const lineWidth = option.lineWidth
-
-  ctx.save()
-
-  drawRadiusRect(option)
-  ctx.lineWidth = lineWidth
-  ctx.strokeStyle = 'rgba(0, 0, 0, 1)'
-  ctx.stroke()
-
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.font = `bold ${font}px monospace`
-  ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-  ctx.fillText(text, x + width / 2, y + height / 2)
-
-  ctxInit()
-
-  ctx.restore()
-}
-
-export { drawButtonWhite, drawButtonBlack }
+export { drawImage, drawRect, drawRadius, drawText }

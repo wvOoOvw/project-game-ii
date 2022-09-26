@@ -2,6 +2,7 @@ import './adapter-web'
 import './adapter-dpr'
 import './data-Imitation'
 
+import PageTransition from './page-transition'
 import PageHome from './page-home'
 import PageStore from './page-store'
 // import PageBattle from './page-battle'
@@ -14,10 +15,9 @@ const ctx = canvas.getContext('2d')
 
 class Main {
   constructor() {
-    ctxInit(canvas)
+    ctxInit()
 
     this.animationFrameId
-    this.pageInstance
 
     this.ImitationInit()
     this.loopStart()
@@ -30,11 +30,17 @@ class Main {
 
     Imitation.state.removeEventListener = []
 
-    if (!this.pageInstance || !(this.pageInstance instanceof Imitation.state.page.map[Imitation.state.page.current])) {
-      this.pageInstance = new Imitation.state.page.map[Imitation.state.page.current]()
+    const page = Imitation.state.page
+
+    if (!page.instance || !(page.instance instanceof page.map[page.current])) {
+      if (page.instance && !(page.instance instanceof PageTransition)) {
+        page.currentCache = page.current
+        page.current = 'transition'
+      }
+      page.instance = new page.map[page.current]()
     }
 
-    this.pageInstance.render()
+    page.instance.render()
   }
 
   loopStart() {
@@ -53,11 +59,14 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'home',
+        current: 'store',
+        currentCache: '',
         map: {
+          'transition': PageTransition,
           'home': PageHome,
           'store': PageStore,
-        }
+        },
+        instance: null
       },
       removeEventListener: [],
       info: {
@@ -75,10 +84,11 @@ class Main {
       }
     })
 
-    Imitation.state.info.cardss[0] = [...Imitation.state.info.cards].filter((i,index) => index < 23)
+    Imitation.state.info.cardss[0] = [...Imitation.state.info.cards].filter((i, index) => index < 23)
 
     const event = () => {
-
+      Imitation.state.page.next = Imitation.state.page.current
+      Imitation.state.page.current = 'transition'
     }
 
     Imitation.register(event, state => state.page.current)

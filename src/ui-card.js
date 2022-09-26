@@ -1,4 +1,4 @@
-import { drawImageFullCenter, drawText, drawRadiusRect, ctxInit } from './utils-canvas'
+import { drawImage, drawText, drawRect, drawRadius } from './utils-canvas'
 import { addEventListener, addEventListenerPure, ifTouchCover } from './utils-common'
 
 const ctx = canvas.getContext('2d')
@@ -45,22 +45,25 @@ class Card {
 
     ctx.save()
 
-    drawRadiusRect({ x, y, width, height, radius: width * 0.08 })
+    if (this.displayMode === 'normal') {
+      drawRadius({ x, y, width, height, radius: width * 0.08 })
+    }
+
+    if (this.displayMode === 'line') {
+      drawRadius({ x, y, width, height, radius: width * 0.06 })
+    }
 
     ctx.clip()
 
     if (this.imageMode === 'normal') {
-      drawImageFullCenter(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
+      drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
     }
 
     if (this.imageMode === 'full') {
-      drawImageFullCenter(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+      drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
     }
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.fillRect(x, y, width, height)
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -89,8 +92,6 @@ class Card {
 
       ctx.fillText('Lv' + card.level, x + width - width * 0.12, y + height / 2)
     }
-
-    ctxInit()
 
     ctx.restore()
 
