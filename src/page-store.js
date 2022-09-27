@@ -7,9 +7,9 @@ import { Button } from './ui-button'
 
 import { parse } from '../source/cards'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpeg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpeg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpeg'
+import J_205624_78456047248 from '../media/205624_78456047248.jpg'
+import J_162926_76690565815 from '../media/162926_76690565815.jpg'
+import J_234521_92189037316 from '../media/234521_92189037316.jpg'
 
 const ctx = canvas.getContext('2d')
 
@@ -162,8 +162,8 @@ class PageStore {
     new Button(option).render()
 
     const event = () => {
-      Imitation.state.page.current = 'home'
-      Imitation.dispatch()
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'home'
     }
 
     addEventListener('touchstart', event, option)
@@ -183,7 +183,7 @@ class PageStore {
     this.preview_I.render()
 
     if (this.previewType === 'cards') {
-      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '装载' }
+      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '装载' }
 
       new Button(option).render()
 
@@ -194,7 +194,7 @@ class PageStore {
 
       addEventListener('touchstart', load, option)
 
-      const option_ = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '合成' }
+      const option_ = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '合成' }
 
       new Button(option_).render()
 
@@ -215,7 +215,7 @@ class PageStore {
     }
 
     if (this.previewType === 'cardss') {
-      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '卸载' }
+      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '卸载' }
 
       new Button(option).render()
 

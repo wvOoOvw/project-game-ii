@@ -14,6 +14,7 @@ const ctx = canvas.getContext('2d')
 class Main {
   constructor() {
     this.animationFrameId
+    this.instance
 
     this.ImitationInit()
     this.loopStart()
@@ -26,18 +27,15 @@ class Main {
 
     Imitation.state.removeEventListener = []
 
-    const page = Imitation.state.page
+    const pageClass = Imitation.state.page.map[Imitation.state.page.current]
 
-    if (!page.instance || !(page.instance instanceof page.map[page.current])) {
-      if (page.instance && !(page.instance instanceof PageTransition)) {
-        page.currentCache = page.current
-        page.current = 'transition'
-      }
-      
-      page.instance = new page.map[page.current]()
+    const ifCurrent = this.instance instanceof pageClass
+
+    if (!ifCurrent) {
+      this.instance = new pageClass()
     }
 
-    page.instance.render()
+    this.instance.render()
   }
 
   loopStart() {
@@ -57,13 +55,12 @@ class Main {
     Imitation.state = {
       page: {
         current: 'store',
-        currentCache: '',
+        next: '',
         map: {
           'transition': PageTransition,
           'home': PageHome,
           'store': PageStore,
         },
-        instance: null
       },
       removeEventListener: [],
       info: {
@@ -82,13 +79,6 @@ class Main {
     })
 
     Imitation.state.info.cardss[0] = [...Imitation.state.info.cards].filter((i, index) => index < 23)
-
-    const event = () => {
-      Imitation.state.page.next = Imitation.state.page.current
-      Imitation.state.page.current = 'transition'
-    }
-
-    Imitation.register(event, state => state.page.current)
   }
 }
 

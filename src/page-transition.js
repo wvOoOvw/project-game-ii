@@ -1,14 +1,14 @@
 import { createImage } from './utils-common'
 import { drawImage } from './utils-canvas'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpeg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpeg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpeg'
-import J_17052_65240412012 from '../media/17052_65240412012.jpeg'
+import J_205624_78456047248 from '../media/205624_78456047248.jpg'
+import J_162926_76690565815 from '../media/162926_76690565815.jpg'
+import J_234521_92189037316 from '../media/234521_92189037316.jpg'
+import J_17052_65240412012 from '../media/17052_65240412012.jpg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_17052_65240412012)
+const backgroundImage = createImage(J_162926_76690565815)
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
@@ -36,6 +36,7 @@ class PageTransition {
 
     if (this.count > 60) {
       Imitation.state.page.current = Imitation.state.page.next
+      Imitation.state.page.next = ''
       return
     }
 

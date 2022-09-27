@@ -83,9 +83,8 @@ class Card {
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.12 + width * 0.24)
       ctx.fillText(card.type, x + width * 0.08, y + width * 0.12 + width * 0.36)
       ctx.fillText(card.attribute, x + width * 0.08, y + width * 0.12 + width * 0.48)
-      ctx.fillText(`消耗：${card.cost}`, x + width * 0.08, y + width * 0.12 + width * 0.60)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.84, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
+      drawText({ x: x + width * 0.08, y: y + width * 0.72, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
     }
 
     if (this.displayMode === 'line') {
