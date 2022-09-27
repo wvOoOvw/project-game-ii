@@ -1,5 +1,5 @@
-import { drawImage, drawText, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, addEventListenerPure, ifTouchCover } from './utils-common'
+import { drawImage, drawText, drawRect, drawRadius } from './utils.canvas'
+import { addEventListener, addEventListenerPure, ifTouchCover } from './utils.common'
 
 const ctx = canvas.getContext('2d')
 

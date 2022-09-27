@@ -1,4 +1,4 @@
-import { drawRadius } from './utils-canvas'
+import { drawRadius } from './utils.canvas'
 
 const ctx = canvas.getContext('2d')
 

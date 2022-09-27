@@ -1,5 +1,5 @@
-import { addEventListener, addEventListenerPure } from './utils-common'
-import { drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, addEventListenerPure } from './utils.common'
+import { drawRect, drawRadius } from './utils.canvas'
 
 const ctx = canvas.getContext('2d')
 

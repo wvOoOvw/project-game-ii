@@ -1,11 +1,11 @@
-import './adapter-web'
-import './adapter-dpr'
-import './data-Imitation'
+import './adapter.web'
+import './adapter.dpr'
+import './data.Imitation'
 
-import PageTransition from './page-transition'
-import PageHome from './page-home'
-import PageStore from './page-store'
-// import PageBattle from './page-battle'
+import PageTransition from './page.transition'
+import PageHome from './page.home'
+import PageStore from './page.store'
+// import PageBattle from './page.battle'
 
 import { mock } from '../source/cards'
 

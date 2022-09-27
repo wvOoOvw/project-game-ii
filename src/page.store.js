@@ -1,9 +1,9 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils-common'
-import { drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils.common'
+import { drawImage, drawRect, drawRadius } from './utils.canvas'
 
-import { ScrollY } from './ui-scroll'
-import { Card } from './ui-card'
-import { Button } from './ui-button'
+import { ScrollY } from './ui.scroll'
+import { Card } from './ui.card'
+import { Button } from './ui.button'
 
 import { parse } from '../source/cards'
 
@@ -182,8 +182,10 @@ class PageStore {
 
     this.preview_I.render()
 
+    const buttonY = windowHeight - (windowHeight - windowWidth * 0.7 * 1.5) / 2 - 80
+
     if (this.previewType === 'cards') {
-      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '装载' }
+      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '装载' }
 
       new Button(option).render()
 
@@ -194,7 +196,7 @@ class PageStore {
 
       addEventListener('touchstart', load, option)
 
-      const option_ = { x: windowWidth / 2 - 60, y: windowHeight * 0.75 + 60, width: 120, height: 40, radius: 8, text: '合成' }
+      const option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, radius: 8, text: '合成' }
 
       new Button(option_).render()
 
@@ -215,7 +217,7 @@ class PageStore {
     }
 
     if (this.previewType === 'cardss') {
-      const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.75, width: 120, height: 40, radius: 8, text: '卸载' }
+      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '卸载' }
 
       new Button(option).render()
 
