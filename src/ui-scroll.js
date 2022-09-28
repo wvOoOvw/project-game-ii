@@ -1,10 +1,12 @@
+import { UI } from './ui'
 import { addEventListener, addEventListenerPure } from './utils-common'
 import { drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
-class ScrollY {
+class ScrollY extends UI {
   constructor(option) {
+    super(option)
     this.x = option.x
     this.y = option.y
     this.width = option.width
@@ -13,10 +15,6 @@ class ScrollY {
 
     this.min = option.min
     this.max = option.max
-
-    this.background = option.background || true
-
-    this.backgroundColor = option.backgroundColor || 'white'
 
     this.scrollbar = option.scrollbar || true
 
@@ -45,6 +43,7 @@ class ScrollY {
   }
   eventMove(e) {
     if (!this.mouseDownPosition) return
+    if (this.max < 0) return
 
     clearTimeout(this.scrollbarTimeout)
     this.scrollbarTimeout = setTimeout(() => this.scrollbarTimeout = null, 1000)
@@ -59,7 +58,6 @@ class ScrollY {
       this.scrollPosition = this.min
       return
     }
-
     if (result > this.max) {
       this.scrollPosition = this.max
       return
@@ -75,16 +73,13 @@ class ScrollY {
 
     drawRadius(option)
 
-    if (this.background) {
-      ctx.fillStyle = this.backgroundColor
-      ctx.fill()
-    }
-
     addEventListener('touchstart', this.eventDown.bind(this), option)
     addEventListenerPure('touchmove', this.eventMove.bind(this), option)
     addEventListenerPure('touchend', this.eventUp.bind(this), option)
 
     ctx.clip()
+
+    callback(this.scrollPosition)
 
     if (this.scrollbar && this.max > 0) {
       const lineH = this.height * (this.height / (this.max + this.height))
@@ -100,7 +95,6 @@ class ScrollY {
       ctx.fill()
     }
 
-    callback(this.scrollPosition)
 
     ctx.restore()
   }

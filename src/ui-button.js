@@ -1,9 +1,11 @@
+import { UI } from './ui'
 import { drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
-class Button {
+class Button extends UI {
   constructor(option) {
+    super(option)
     this.x = option.x
     this.y = option.y
     this.width = option.width

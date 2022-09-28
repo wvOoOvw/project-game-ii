@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { ScrollY } from './ui-scroll'
@@ -22,51 +22,60 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 class PageStore {
   constructor() {
     this.preview = null
-    this.previewType = null
 
-    this.scroll_I
-    this.card_I
-    this.team_I
-    this.preview_I
+    this.scrollPosition = 0
+
+    this.card
+    this.team
+
+    this.InstanceScroll
+    this.InstanceCard
+    this.InstanceTeam
+    this.InstancePreview
 
     this.instance()
   }
 
-  get card() {
-    return Imitation.state.info.cardLibrary
-  }
-
-  get team() {
-    return Imitation.state.info.team[Imitation.state.info.teamIndex]
-  }
-
-  get cardH() {
+  get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
 
-    return ((windowWidth - 24 - 12 * 5) / 4 * 1.25) * row + (row ? 12 * (row - 1) : 0)
+    if (row === 0) return 0
+
+    const real = ((windowWidth - 84) / 4 * 1.25) * row
+
+    const margin = row ? 12 * (row - 1) : 0
+
+    return real + margin + 24
   }
 
-  get teamH() {
-    const row = Math.ceil(this.team.length / 3)
+  get teamHeight() {
+    const row = Math.ceil(this.team.length / 4)
 
-    return ((windowWidth - 24 - 12 * 4) / 3 * 0.175) * row + (row ? 6 * (row - 1) : 0)
+    if (row === 0) return 0
+
+    const real = ((windowWidth - 66) / 4 * 0.2) * row
+
+    const margin = row ? 6 * (row - 1) : 0
+
+    return real + margin + 24
   }
 
-  get teamHH() {
-    if (this.team.length === 0) return -12
-
-    return this.teamH + 24
+  get teamSelectHeight() {
+    return 60
   }
 
-  get scrollOption() {
-    return { x: this.scroll_I.x, y: this.scroll_I.y, width: this.scroll_I.width, height: this.scroll_I.height }
-  }
+  get emptyHeight() {
+    const r = 0
 
-  setScrollOptionH() {
-    this.scroll_I.max = this.cardH - this.scroll_I.height + 24
+    if (this.team.length === 0) r = r + 12
+
+    return r
   }
 
   instance() {
+    this.card = Imitation.state.info.cardLibrary.map(i => parse(i))
+    this.team = Imitation.state.info.team[Imitation.state.info.teamIndex].map(i => parse(i))
+
     this.instanceScroll()
     this.instanceCard()
     this.instanceTeam()
@@ -74,69 +83,53 @@ class PageStore {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 76 + this.teamHH + safeTop, width: windowWidth - 24, height: windowHeight - 88 - this.teamHH - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2, min: 0 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2, min: 0 }
 
-    this.scroll_I = new ScrollY(scrollOption)
+    this.InstanceScroll = new ScrollY(scrollOption)
 
-    this.setScrollOptionH()
+    this.InstanceScroll.max = this.teamSelectHeight + this.cardHeight + this.teamHeight - this.emptyHeight - this.InstanceScroll.height + 24
+  }
+
+  instanceTeam() {
+    this.InstanceTeam = this.team.map((card, index) => {
+      const option = {
+        width: (windowWidth - 66) / 4,
+        card: card,
+        touchMode: 'click',
+        touchEvent: () => this.preview = card,
+        displayMode: 'line',
+        imageMode: 'full',
+        imageIns: backgroundImage,
+      }
+
+      option.height = option.width * 0.2
+      option.x = 24 + parseInt(index % 4) * (option.width + 6)
+      option.y = 84 + parseInt(index / 4) * (option.height + 6) + this.teamSelectHeight + safeTop
+
+      return new Card(option)
+    })
   }
 
   instanceCard() {
-    const touchEvent = (card) => {
-      this.previewType = 'card'
-      this.preview = card
-    }
-
-    this.card_I = this.card.map((card, index) => {
-      card = parse(card)
-
+    this.InstanceCard = this.card.map((card, index) => {
       card.image = backgroundImage
 
       const option = {
-        width: (windowWidth - 24 - 12 * 5) / 4,
+        width: (windowWidth - 84) / 4,
         card: card,
         touchMode: 'click',
-        touchArea: this.scrollOption,
-        touchEvent: () => touchEvent(card),
+        touchArea: this.InstanceScroll.option,
+        touchEvent: () => this.preview = card,
         displayMode: 'normal',
         imageMode: 'full',
         imageIns: backgroundImage
       }
 
       option.height = option.width * 1.25
-      option.x = 12 + 12 + (index % 4) * (option.width + 12)
-      option.y = 76 + 12 + parseInt(index / 4) * (option.height + 12) + this.teamHH + safeTop
+      option.x = 24 + parseInt(index % 4) * (option.width + 12)
+      option.y = 96 + parseInt(index / 4) * (option.height + 12) + this.teamSelectHeight + this.teamHeight - this.emptyHeight + safeTop
 
       return new Card(option)
-
-    })
-  }
-
-  instanceTeam() {
-    const touchEvent = (card) => {
-      this.previewType = 'team'
-      this.preview = card
-    }
-
-    this.team_I = this.team.map((card, index) => {
-      card = parse(card)
-
-      const option = {
-        width: (windowWidth - 24 - 12 * 4) / 3,
-        card: card,
-        touchMode: 'click',
-        touchEvent: () => touchEvent(card),
-        displayMode: 'line',
-        imageMode: 'full',
-        imageIns: backgroundImage
-      }
-
-      option.height = option.width * 0.175
-      option.x = 12 + 12 + (index % 3) * (option.width + 12)
-      option.y = 64 + 12 + parseInt(index / 3) * (option.height + 6) + safeTop
-
-      return new Card(option)
-
     })
   }
 
@@ -153,131 +146,77 @@ class PageStore {
     option.x = windowWidth * 0.15
     option.y = (windowHeight - option.width * 1.5) / 2 - 80
 
-    this.preview_I = new Card(option)
-  }
-
-  drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 40, height: 40, radius: 20, text: 'H' }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
-  drawPreview() {
-    if (!this.preview) return
-
-    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-
-    ctx.fill()
-
-    this.preview_I.card = this.preview
-
-    this.preview_I.render()
-
-    const buttonY = windowHeight - (windowHeight - windowWidth * 0.7 * 1.5) / 2 - 80
-
-    if (this.previewType === 'card') {
-      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '装载' }
-
-      new Button(option).render()
-
-      const load = () => {
-        this.load(this.preview)
-        this.preview = null
-      }
-
-      addEventListener('touchstart', load, option)
-
-      const option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, radius: 8, text: '合成' }
-
-      new Button(option_).render()
-
-      const compose = () => {
-        this.compose(this.preview)
-        this.preview = null
-      }
-
-      addEventListener('touchstart', compose, option_)
-
-      const close = (e) => {
-        if (ifTouchCover(e, option)) return
-        if (ifTouchCover(e, option_)) return
-        this.preview = null
-      }
-
-      addEventListenerPure('touchstart', close)
-    }
-
-    if (this.previewType === 'team') {
-      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '卸载' }
-
-      new Button(option).render()
-
-      const unload = () => {
-        this.unload(this.preview)
-        this.preview = null
-      }
-
-      addEventListener('touchstart', unload, option)
-
-      const close = (e) => {
-        if (ifTouchCover(e, option)) return
-        this.preview = null
-      }
-
-      addEventListenerPure('touchstart', close)
-    }
+    this.InstancePreview = new Card(option)
   }
 
   drawScroll() {
     const event = (scrollPosition) => {
-      this.drawCard(scrollPosition)
+      this.scrollPosition = scrollPosition
+      this.drawTeamSelect()
+      this.drawTeam()
+      this.drawCard()
     }
 
-    this.scroll_I.render(event)
+    this.InstanceScroll.render(event)
   }
 
-  drawCard(scrollPosition) {
-    this.card_I.forEach((card) => {
-      card.scrollTop = scrollPosition
+  drawTeam() {
+    if (this.team.length === 0) return
+
+    const option = { x: 12, y: 72 + safeTop + this.teamSelectHeight - this.scrollPosition, width: windowWidth - 24, height: this.teamHeight, radius: 12 }
+
+    if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+    drawRadius(option)
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+    ctx.fill()
+
+    this.InstanceTeam.forEach((card) => {
+      if (!ifScreenCover({ ...option, y: card.y - this.scrollPosition }, this.InstanceScroll.option)) return
+
+      card.scrollTop = this.scrollPosition
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
-  drawTeam(scrollPosition) {
-    if (this.team.length === 0) return
+  drawCard() {
+    const option = { x: 12, y: 84 + this.teamSelectHeight + this.teamHeight - this.emptyHeight + safeTop - this.scrollPosition, width: windowWidth - 24, height: this.cardHeight, radius: 12 }
 
-    const option = { x: 12, y: 64 + safeTop, width: windowWidth - 24, height: this.teamH + 24, radius: 12 }
+    if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
     drawRadius(option)
 
-    ctx.fillStyle = 'white'
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
     ctx.fill()
 
-    this.team_I.forEach((card) => {
-      card.scrollTop = scrollPosition
+    this.InstanceCard.forEach((card) => {
+      if (!ifScreenCover({ ...option, y: card.y - this.scrollPosition }, this.InstanceScroll.option)) return
+
+      card.scrollTop = this.scrollPosition
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
   drawTeamSelect() {
-    new Array(4).fill().forEach((i, index) => {
-      const option = { y: 12 + safeTop, width: 40, height: 40, radius: 20, font: 14, lineWidth: 1, text: index }
+    const option = { x: 12, y: 60 - this.scrollPosition + safeTop, width: windowWidth - 24, height: this.teamSelectHeight, radius: 12 }
 
-      option.x = 12 + 60 + (index % 4) * (option.width + 12)
+    if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+    drawRadius(option)
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+    ctx.fill()
+
+    new Array(4).fill().forEach((i, index) => {
+      const option = { y: 72 - this.scrollPosition + safeTop, width: 36, height: 36, radius: 12, fillStyle: 'black', strokeStyle: 'black', text: index }
+
+      option.x = 24 + (index % 4) * (option.width + 12)
 
       if (index === Imitation.state.info.teamIndex) {
-        new Button({ ...option, fillStyle: 'black', strokeStyle: 'black' }).render()
+        new Button({ ...option, lineWidth: 4 }).render()
       }
 
       if (index !== Imitation.state.info.teamIndex) {
@@ -295,8 +234,84 @@ class PageStore {
     })
   }
 
+  drawPreview() {
+    if (!this.preview) return
+
+    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+
+    ctx.fill()
+
+    this.InstancePreview.card = this.preview
+
+    this.InstancePreview.render()
+
+    const buttonY = windowHeight - this.InstancePreview.y - 160
+
+    var option, option_
+
+    if (this.card.includes(this.preview)) {
+      option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '装载' }
+
+      new Button(option).render()
+
+      const load = () => {
+        this.load(this.preview)
+        this.preview = null
+      }
+
+      addEventListener('touchstart', load, option)
+
+      option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, radius: 8, text: '合成' }
+
+      new Button(option_).render()
+
+      const compose = () => {
+        this.compose(this.preview)
+        this.preview = null
+      }
+
+      addEventListener('touchstart', compose, option_)
+    }
+
+    if (this.team.includes(this.preview)) {
+      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '卸载' }
+
+      new Button(option).render()
+
+      const unload = () => {
+        this.unload(this.preview)
+        this.preview = null
+      }
+
+      addEventListener('touchstart', unload, option)
+    }
+
+    const close = (e) => {
+      if (option && ifTouchCover(e, option)) return
+      if (option_ && ifTouchCover(e, option_)) return
+      this.preview = null
+    }
+
+    addEventListenerPure('touchstart', close)
+  }
+
   drawBackground() {
     drawImage(backgroundImage, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+  }
+
+  drawButtonHome() {
+    const option = { x: 12, y: 12 + safeTop, width: 36, height: 36, radius: 18, text: 'H' }
+
+    new Button(option).render()
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'home'
+    }
+
+    addEventListener('touchstart', event, option)
   }
 
   compose(card) { }
@@ -322,14 +337,14 @@ class PageStore {
 
     Imitation.state.info.team[Imitation.state.info.teamIndex] = team.filter(i => i !== teamFind)
 
+    console.log(Imitation.state.info.team[Imitation.state.info.teamIndex].length)
+
     this.instance()
   }
 
   render() {
     this.drawBackground()
     this.drawButtonHome()
-    this.drawTeamSelect()
-    this.drawTeam()
     this.drawScroll()
     this.drawPreview()
   }

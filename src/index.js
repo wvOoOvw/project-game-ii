@@ -67,12 +67,12 @@ class Main {
       removeEventListener: [],
       info: {
         cardLibrary: [],
-        team: [[new Array(4).fill([])]],
+        team: new Array(4).fill([]),
         teamIndex: 0,
       }
     }
 
-    Imitation.state.info.cardLibrary = mock(12).map(card => {
+    Imitation.state.info.cardLibrary = mock(15).map(card => {
       return {
         key: card.key,
         level: 1,
@@ -80,7 +80,7 @@ class Main {
       }
     })
 
-    Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40)
+    Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40).map(i => ({ key: i.key, level: i.level }))
   }
 }
 

@@ -34,7 +34,7 @@ const ifTouchCover = (e, option) => {
 
 const ifScreenCover = (inner, outer) => {
   const { x, y, width, height } = inner
-  const { x_, y_, width_, height_ } = outer
+  const { x:x_, y:y_, width:width_, height:height_ } = outer
 
   return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
 }

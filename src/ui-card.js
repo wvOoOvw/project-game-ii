@@ -1,3 +1,4 @@
+import { UI } from './ui'
 import { drawImage, drawText, drawRect, drawRadius } from './utils-canvas'
 import { addEventListener, addEventListenerPure, ifTouchCover } from './utils-common'
 
@@ -6,13 +7,16 @@ const ctx = canvas.getContext('2d')
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Card {
+class Card extends UI {
   constructor(option) {
+    super(option)
     this.x = option.x
     this.y = option.y
     this.width = option.width
     this.height = option.height
     this.fillStyle = option.fillStyle || 'white'
+    this.fontSize = option.fontSize || option.width * 0.075
+    this.radius = option.radius || option.width * 0.08
 
     this.card = option.card
 
@@ -46,13 +50,7 @@ class Card {
 
     ctx.save()
 
-    if (this.displayMode === 'normal') {
-      drawRadius({ x, y, width, height, radius: width * 0.08 })
-    }
-
-    if (this.displayMode === 'line') {
-      drawRadius({ x, y, width, height, radius: width * 0.06 })
-    }
+    drawRadius({ x, y, width, height, radius: this.radius })
 
     ctx.clip()
 
@@ -69,9 +67,7 @@ class Card {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    const fontSize = width * 0.075
-
-    ctx.font = `bold ${fontSize}px monospace`
+    ctx.font = `bold ${this.fontSize}px monospace`
 
     if (this.displayMode === 'normal') {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -88,9 +84,13 @@ class Card {
     }
 
     if (this.displayMode === 'line') {
-      ctx.fillText(card.name, x + width * 0.12, y + height / 2)
+      ctx.textAlign = 'start'
 
-      ctx.fillText('Lv' + card.level, x + width - width * 0.12, y + height / 2)
+      ctx.fillText(card.name, x + width * 0.05, y + height / 2)
+
+      ctx.textAlign = 'end'
+      
+      ctx.fillText('Lv' + card.level, x + width - width * 0.05, y + height / 2)
     }
 
     ctx.restore()
