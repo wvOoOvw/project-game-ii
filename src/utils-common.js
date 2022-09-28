@@ -1,3 +1,9 @@
+const hash = (n = 12, l = 1) => {
+  return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
+}
+
+export { hash }
+
 const addEventListener = (type, callback, option) => {
   const event = e => ifTouchCover(e, option) ? callback(e) : null
 
@@ -26,7 +32,14 @@ const ifTouchCover = (e, option) => {
   return x_ >= x && x_ <= x + width && y_ >= y && y_ <= y + height
 }
 
-export { addEventListener, addEventListenerPure, ifTouchCover }
+const ifScreenCover = (inner, outer) => {
+  const { x, y, width, height } = inner
+  const { x_, y_, width_, height_ } = outer
+
+  return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
+}
+
+export { addEventListener, addEventListenerPure, ifTouchCover, ifScreenCover }
 
 const createImage = (src) => {
   const image = new Image()

@@ -1,7 +1,7 @@
-import { addEventListener, createImage } from './utils.common'
-import { drawImage } from './utils.canvas'
+import { addEventListener, createImage } from './utils-common'
+import { drawImage } from './utils-canvas'
 
-import { Button } from './ui.button'
+import { Button } from './ui-button'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'

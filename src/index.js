@@ -1,13 +1,15 @@
-import './adapter.web'
-import './adapter.dpr'
-import './data.Imitation'
+import './adapter-web'
+import './adapter-dpr'
+import './data-imitation'
 
-import PageTransition from './page.transition'
-import PageHome from './page.home'
-import PageStore from './page.store'
-// import PageBattle from './page.battle'
+import PageTransition from './page-transition'
+import PageHome from './page-home'
+import PageStore from './page-store'
+// import PageBattle from './page-battle'
 
-import { mock } from '../source/cards'
+import { mock } from '../source/card'
+
+import { hash } from './utils-common'
 
 const ctx = canvas.getContext('2d')
 
@@ -64,13 +66,13 @@ class Main {
       },
       removeEventListener: [],
       info: {
-        cards: [],
-        cardss: [[], [], [], []],
-        cardssIndex: 0,
+        cardLibrary: [],
+        team: [[new Array(4).fill([])]],
+        teamIndex: 0,
       }
     }
 
-    Imitation.state.info.cards = mock(12).map(card => {
+    Imitation.state.info.cardLibrary = mock(12).map(card => {
       return {
         key: card.key,
         level: 1,
@@ -78,7 +80,7 @@ class Main {
       }
     })
 
-    Imitation.state.info.cardss[0] = [...Imitation.state.info.cards].filter((i, index) => index < 23)
+    Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40)
   }
 }
 

@@ -1,11 +1,11 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils.common'
-import { drawImage, drawRect, drawRadius } from './utils.canvas'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover } from './utils-common'
+import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
-import { ScrollY } from './ui.scroll'
-import { Card } from './ui.card'
-import { Button } from './ui.button'
+import { ScrollY } from './ui-scroll'
+import { Card } from './ui-card'
+import { Button } from './ui-button'
 
-import { parse } from '../source/cards'
+import { parse } from '../source/card'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'
@@ -25,37 +25,37 @@ class PageStore {
     this.previewType = null
 
     this.scroll_I
-    this.cards_I
-    this.cardss_I
+    this.card_I
+    this.team_I
     this.preview_I
 
     this.instance()
   }
 
-  get cards() {
-    return Imitation.state.info.cards
+  get card() {
+    return Imitation.state.info.cardLibrary
   }
 
-  get cardss() {
-    return Imitation.state.info.cardss[Imitation.state.info.cardssIndex]
+  get team() {
+    return Imitation.state.info.team[Imitation.state.info.teamIndex]
   }
 
-  get cardsH() {
-    const row = Math.ceil(this.cards.length / 4)
+  get cardH() {
+    const row = Math.ceil(this.card.length / 4)
 
     return ((windowWidth - 24 - 12 * 5) / 4 * 1.25) * row + (row ? 12 * (row - 1) : 0)
   }
 
-  get cardssH() {
-    const row = Math.ceil(this.cardss.length / 3)
+  get teamH() {
+    const row = Math.ceil(this.team.length / 3)
 
     return ((windowWidth - 24 - 12 * 4) / 3 * 0.175) * row + (row ? 6 * (row - 1) : 0)
   }
 
-  get cardssHH() {
-    if (this.cardss.length === 0) return -12
+  get teamHH() {
+    if (this.team.length === 0) return -12
 
-    return this.cardssH + 24
+    return this.teamH + 24
   }
 
   get scrollOption() {
@@ -63,31 +63,31 @@ class PageStore {
   }
 
   setScrollOptionH() {
-    this.scroll_I.max = this.cardsH - this.scroll_I.height + 24
+    this.scroll_I.max = this.cardH - this.scroll_I.height + 24
   }
 
   instance() {
     this.instanceScroll()
-    this.instanceCards()
-    this.instanceCardss()
+    this.instanceCard()
+    this.instanceTeam()
     this.instancePreview()
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 76 + this.cardssHH + safeTop, width: windowWidth - 24, height: windowHeight - 88 - this.cardssHH - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2, min: 0 }
+    const scrollOption = { x: 12, y: 76 + this.teamHH + safeTop, width: windowWidth - 24, height: windowHeight - 88 - this.teamHH - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2, min: 0 }
 
     this.scroll_I = new ScrollY(scrollOption)
 
     this.setScrollOptionH()
   }
 
-  instanceCards() {
+  instanceCard() {
     const touchEvent = (card) => {
-      this.previewType = 'cards'
+      this.previewType = 'card'
       this.preview = card
     }
 
-    this.cards_I = this.cards.map((card, index) => {
+    this.card_I = this.card.map((card, index) => {
       card = parse(card)
 
       card.image = backgroundImage
@@ -105,20 +105,20 @@ class PageStore {
 
       option.height = option.width * 1.25
       option.x = 12 + 12 + (index % 4) * (option.width + 12)
-      option.y = 76 + 12 + parseInt(index / 4) * (option.height + 12) + this.cardssHH + safeTop
+      option.y = 76 + 12 + parseInt(index / 4) * (option.height + 12) + this.teamHH + safeTop
 
       return new Card(option)
 
     })
   }
 
-  instanceCardss() {
+  instanceTeam() {
     const touchEvent = (card) => {
-      this.previewType = 'cardss'
+      this.previewType = 'team'
       this.preview = card
     }
 
-    this.cardss_I = this.cardss.map((card, index) => {
+    this.team_I = this.team.map((card, index) => {
       card = parse(card)
 
       const option = {
@@ -184,7 +184,7 @@ class PageStore {
 
     const buttonY = windowHeight - (windowHeight - windowWidth * 0.7 * 1.5) / 2 - 80
 
-    if (this.previewType === 'cards') {
+    if (this.previewType === 'card') {
       const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '装载' }
 
       new Button(option).render()
@@ -216,7 +216,7 @@ class PageStore {
       addEventListenerPure('touchstart', close)
     }
 
-    if (this.previewType === 'cardss') {
+    if (this.previewType === 'team') {
       const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '卸载' }
 
       new Button(option).render()
@@ -239,54 +239,54 @@ class PageStore {
 
   drawScroll() {
     const event = (scrollPosition) => {
-      this.drawCards(scrollPosition)
+      this.drawCard(scrollPosition)
     }
 
     this.scroll_I.render(event)
   }
 
-  drawCards(scrollPosition) {
-    this.cards_I.forEach((card) => {
+  drawCard(scrollPosition) {
+    this.card_I.forEach((card) => {
       card.scrollTop = scrollPosition
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
-  drawCardss(scrollPosition) {
-    if (this.cardss.length === 0) return
+  drawTeam(scrollPosition) {
+    if (this.team.length === 0) return
 
-    const option = { x: 12, y: 64 + safeTop, width: windowWidth - 24, height: this.cardssH + 24, radius: 12 }
+    const option = { x: 12, y: 64 + safeTop, width: windowWidth - 24, height: this.teamH + 24, radius: 12 }
 
     drawRadius(option)
 
     ctx.fillStyle = 'white'
     ctx.fill()
 
-    this.cardss_I.forEach((card) => {
+    this.team_I.forEach((card) => {
       card.scrollTop = scrollPosition
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
-  drawCardssSelect() {
+  drawTeamSelect() {
     new Array(4).fill().forEach((i, index) => {
       const option = { y: 12 + safeTop, width: 40, height: 40, radius: 20, font: 14, lineWidth: 1, text: index }
 
       option.x = 12 + 60 + (index % 4) * (option.width + 12)
 
-      if (index === Imitation.state.info.cardssIndex) {
+      if (index === Imitation.state.info.teamIndex) {
         new Button({ ...option, fillStyle: 'black', strokeStyle: 'black' }).render()
       }
 
-      if (index !== Imitation.state.info.cardssIndex) {
+      if (index !== Imitation.state.info.teamIndex) {
         new Button(option).render()
 
         if (this.preview) return
 
         const event = () => {
-          Imitation.state.info.cardssIndex = index
+          Imitation.state.info.teamIndex = index
           this.instance()
         }
 
@@ -302,25 +302,25 @@ class PageStore {
   compose(card) { }
 
   load(card) {
-    const currentCards = Imitation.state.info.cards
-    const currentCardss = Imitation.state.info.cardss[Imitation.state.info.cardssIndex]
+    const cardLibrary = Imitation.state.info.cardLibrary
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
 
-    const cardsF = currentCards.filter(i => i.key === card.key && i.level === card.level)
-    const cardssF = currentCardss.filter(i => i.key === card.key && i.level === card.level)
+    const length = cardLibrary.filter(i => i.key === card.key && i.level === card.level)
+    const length_ = team.filter(i => i.key === card.key && i.level === card.level)
 
-    if (cardsF.length === cardssF.length) return
+    if (length.length === length_.length) return
 
-    currentCardss.push({ key: card.key, level: card.level })
+    team.push({ key: card.key, level: card.level })
 
     this.instance()
   }
 
   unload(card) {
-    const currentCardss = Imitation.state.info.cardss[Imitation.state.info.cardssIndex]
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
 
-    const cardssF = currentCardss.find(i => i.key === card.key && i.level === card.level)
+    const teamFind = team.find(i => i.key === card.key && i.level === card.level)
 
-    Imitation.state.info.cardss[Imitation.state.info.cardssIndex] = currentCardss.filter(i => i !== cardssF)
+    Imitation.state.info.team[Imitation.state.info.teamIndex] = team.filter(i => i !== teamFind)
 
     this.instance()
   }
@@ -328,8 +328,8 @@ class PageStore {
   render() {
     this.drawBackground()
     this.drawButtonHome()
-    this.drawCardssSelect()
-    this.drawCardss()
+    this.drawTeamSelect()
+    this.drawTeam()
     this.drawScroll()
     this.drawPreview()
   }

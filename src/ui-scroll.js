@@ -1,5 +1,5 @@
-import { addEventListener, addEventListenerPure } from './utils.common'
-import { drawRect, drawRadius } from './utils.canvas'
+import { addEventListener, addEventListenerPure } from './utils-common'
+import { drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
@@ -14,7 +14,11 @@ class ScrollY {
     this.min = option.min
     this.max = option.max
 
+    this.background = option.background || true
+
     this.backgroundColor = option.backgroundColor || 'white'
+
+    this.scrollbar = option.scrollbar || true
 
     this.scrollbarOffset = option.scrollbarOffset
 
@@ -71,8 +75,10 @@ class ScrollY {
 
     drawRadius(option)
 
-    ctx.fillStyle = this.backgroundColor
-    ctx.fill()
+    if (this.background) {
+      ctx.fillStyle = this.backgroundColor
+      ctx.fill()
+    }
 
     addEventListener('touchstart', this.eventDown.bind(this), option)
     addEventListenerPure('touchmove', this.eventMove.bind(this), option)
@@ -80,7 +86,7 @@ class ScrollY {
 
     ctx.clip()
 
-    if (this.max > 0) {
+    if (this.scrollbar && this.max > 0) {
       const lineH = this.height * (this.height / (this.max + this.height))
       const lineY = this.y + (this.height - lineH) * (this.scrollPosition / this.max)
 
