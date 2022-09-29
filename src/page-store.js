@@ -81,7 +81,7 @@ class PageStore {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
 
@@ -170,12 +170,12 @@ class PageStore {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
     ctx.fill()
 
-    this.InstanceTeam.forEach((card) => {
-      if (!ifScreenCover({ ...option, y: card.y - offsetY }, this.InstanceScroll.option)) return
+    this.InstanceTeam.forEach((i) => {
+      if (!ifScreenCover({ ...option, y: i.y - offsetY }, this.InstanceScroll.option)) return
 
-      card.offsetY = 0 - offsetY
-      card.touchAble = this.preview ? false : true
-      card.render()
+      i.offsetY = 0 - offsetY
+      i.touchAble = this.preview ? false : true
+      i.render()
     })
   }
 
@@ -189,12 +189,12 @@ class PageStore {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
     ctx.fill()
 
-    this.InstanceCard.forEach((card) => {
-      if (!ifScreenCover({ ...option, y: card.y - offsetY }, this.InstanceScroll.option)) return
+    this.InstanceCard.forEach((i) => {
+      if (!ifScreenCover({ ...option, y: i.y - offsetY }, this.InstanceScroll.option)) return
 
-      card.offsetY = 0 - offsetY
-      card.touchAble = this.preview ? false : true
-      card.render()
+      i.offsetY = 0 - offsetY
+      i.touchAble = this.preview ? false : true
+      i.render()
     })
   }
 

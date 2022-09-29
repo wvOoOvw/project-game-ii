@@ -21,6 +21,8 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class PageHome {
   constructor() {
+    this.map
+
     this.InstanceScrollBox
     this.InstanceScrollList
 
@@ -28,6 +30,8 @@ class PageHome {
   }
 
   instance() {
+    this.map = Imitation.state.explore.map
+
     this.instanceScrollBox()
     this.instanceScrollList()
   }
@@ -37,23 +41,42 @@ class PageHome {
 
     this.InstanceScrollBox = new Scroll(scrollOption)
 
-    this.InstanceScrollBox.offsetY = 800
+    this.InstanceScrollBox.scrollY = 800
   }
 
   instanceScrollList() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbar: false }
+    this.InstanceScrollList = this.map.map((i, index) => {
+      const scrollOption = { x: 12, y: 60 + 212 * index + safeTop, width: windowWidth - 24, height: 200, radius: 12 }
 
-    this.InstanceScrollBox = new Scroll(scrollOption)
+      scrollOption.scrollX = 600
 
-    this.InstanceScrollBox.offsetX = 600
+      return new Scroll(scrollOption)
+    })
   }
 
-  drawScroll() {
-    const event = (offset) => {
-      this.offsetY = offset[1]
+  drawScrollBox() {
+    const event = (scroll) => {
+      const offsetY = scroll[1]
+
+      this.drawScrollList(offsetY)
     }
 
     this.InstanceScrollBox.render(event)
+  }
+
+  drawScrollList(offsetY) {
+    this.InstanceScrollList.forEach(i => {
+      const option = { ...i.option, y: i.y - offsetY, radius: i.radius }
+
+      drawRadius(option)
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+      ctx.fill()
+
+      i.offsetY = 0 - offsetY
+
+      i.render(new Function)
+    })
   }
 
   drawButtonHome() {
@@ -76,7 +99,7 @@ class PageHome {
   render() {
     this.drawBackground()
     this.drawButtonHome()
-    this.drawScroll()
+    this.drawScrollBox()
   }
 }
 

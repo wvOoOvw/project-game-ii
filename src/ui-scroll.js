@@ -12,9 +12,9 @@ class Scroll extends UI {
 
     this.scrollbar = props.scrollbar || true
 
-    this.scrollbarOffset = props.scrollbarOffset
+    this.scrollbarOffset = props.scrollbarOffset || 4
 
-    this.scrollbarThick = props.scrollbarThick
+    this.scrollbarThick = props.scrollbarThick || 2
 
     this.scrollbarColor = props.scrollbarColor || 'rgba(0, 0, 0, opacity)'
 

@@ -73,7 +73,9 @@ class Main {
         team: [[], [], [], []],
         teamIndex: 0,
       },
-      explore: []
+      explore: {
+        map: []
+      }
     }
 
     Imitation.state.info.cardLibrary = mock(15).map(card => {
@@ -86,7 +88,7 @@ class Main {
 
     Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40).map(i => ({ key: i.key, level: i.level }))
 
-    Imitation.state.explore = originExplore
+    Imitation.state.explore.map = originExplore
   }
 }
 
