@@ -1,7 +1,7 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
-import { ScrollY } from './ui-scroll'
+import { Scroll } from './ui-scroll'
 import { Card } from './ui-card'
 import { Button } from './ui-button'
 
@@ -22,8 +22,6 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 class PageStore {
   constructor() {
     this.preview = null
-
-    this.scrollPosition = 0
 
     this.card
     this.team
@@ -83,11 +81,11 @@ class PageStore {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2, min: 0 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbarOffset: 4, scrollbarThick: 2 }
 
-    this.InstanceScroll = new ScrollY(scrollOption)
+    this.InstanceScroll = new Scroll(scrollOption)
 
-    this.InstanceScroll.max = this.teamSelectHeight + this.cardHeight + this.teamHeight - this.emptyHeight - this.InstanceScroll.height + 24
+    this.InstanceScroll.scrollY = this.teamSelectHeight + this.cardHeight + this.teamHeight - this.emptyHeight - this.InstanceScroll.height + 24
   }
 
   instanceTeam() {
@@ -97,8 +95,8 @@ class PageStore {
         card: card,
         touchMode: 'click',
         touchEvent: () => this.preview = card,
-        displayMode: 'line',
-        imageMode: 'full',
+        displayMode: 'team',
+        imageMode: 'overspread',
         imageIns: backgroundImage,
       }
 
@@ -120,8 +118,8 @@ class PageStore {
         touchMode: 'click',
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
-        displayMode: 'normal',
-        imageMode: 'full',
+        displayMode: 'library',
+        imageMode: 'overspread',
         imageIns: backgroundImage
       }
 
@@ -137,8 +135,8 @@ class PageStore {
     const option = {
       width: windowWidth * 0.7,
       card: this.preview,
-      displayMode: 'normal',
-      imageMode: 'full',
+      displayMode: 'preview',
+      imageMode: 'overspread',
       imageIns: backgroundImage
     }
 
@@ -150,20 +148,20 @@ class PageStore {
   }
 
   drawScroll() {
-    const event = (scrollPosition) => {
-      this.scrollPosition = scrollPosition
-      this.drawTeamSelect()
-      this.drawTeam()
-      this.drawCard()
+    const event = (scroll) => {
+      const offsetY = scroll[1]
+      this.drawTeamSelect(offsetY)
+      this.drawTeam(offsetY)
+      this.drawCard(offsetY)
     }
 
     this.InstanceScroll.render(event)
   }
 
-  drawTeam() {
+  drawTeam(offsetY) {
     if (this.team.length === 0) return
 
-    const option = { x: 12, y: 72 + safeTop + this.teamSelectHeight - this.scrollPosition, width: windowWidth - 24, height: this.teamHeight, radius: 12 }
+    const option = { x: 12, y: 72 + safeTop + this.teamSelectHeight - offsetY, width: windowWidth - 24, height: this.teamHeight, radius: 12 }
 
     if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -173,16 +171,16 @@ class PageStore {
     ctx.fill()
 
     this.InstanceTeam.forEach((card) => {
-      if (!ifScreenCover({ ...option, y: card.y - this.scrollPosition }, this.InstanceScroll.option)) return
+      if (!ifScreenCover({ ...option, y: card.y - offsetY }, this.InstanceScroll.option)) return
 
-      card.scrollTop = this.scrollPosition
+      card.offsetY = 0 - offsetY
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
-  drawCard() {
-    const option = { x: 12, y: 84 + this.teamSelectHeight + this.teamHeight - this.emptyHeight + safeTop - this.scrollPosition, width: windowWidth - 24, height: this.cardHeight, radius: 12 }
+  drawCard(offsetY) {
+    const option = { x: 12, y: 84 + this.teamSelectHeight + this.teamHeight - this.emptyHeight + safeTop - offsetY, width: windowWidth - 24, height: this.cardHeight, radius: 12 }
 
     if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -192,16 +190,16 @@ class PageStore {
     ctx.fill()
 
     this.InstanceCard.forEach((card) => {
-      if (!ifScreenCover({ ...option, y: card.y - this.scrollPosition }, this.InstanceScroll.option)) return
+      if (!ifScreenCover({ ...option, y: card.y - offsetY }, this.InstanceScroll.option)) return
 
-      card.scrollTop = this.scrollPosition
+      card.offsetY = 0 - offsetY
       card.touchAble = this.preview ? false : true
       card.render()
     })
   }
 
-  drawTeamSelect() {
-    const option = { x: 12, y: 60 - this.scrollPosition + safeTop, width: windowWidth - 24, height: this.teamSelectHeight, radius: 12 }
+  drawTeamSelect(offsetY) {
+    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.teamSelectHeight, radius: 12 }
 
     if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -211,7 +209,7 @@ class PageStore {
     ctx.fill()
 
     new Array(4).fill().forEach((i, index) => {
-      const option = { y: 72 - this.scrollPosition + safeTop, width: 36, height: 36, radius: 12, fillStyle: 'black', strokeStyle: 'black', text: index }
+      const option = { y: 72 - offsetY + safeTop, width: 36, height: 36, fillStyle: 'black', strokeStyle: 'black', text: index + 1 }
 
       option.x = 24 + (index % 4) * (option.width + 12)
 
@@ -314,7 +312,9 @@ class PageStore {
     addEventListener('touchstart', event, option)
   }
 
-  compose(card) { }
+  compose(card) {
+    
+  }
 
   load(card) {
     const cardLibrary = Imitation.state.info.cardLibrary
@@ -336,8 +336,6 @@ class PageStore {
     const teamFind = team.find(i => i.key === card.key && i.level === card.level)
 
     Imitation.state.info.team[Imitation.state.info.teamIndex] = team.filter(i => i !== teamFind)
-
-    console.log(Imitation.state.info.team[Imitation.state.info.teamIndex].length)
 
     this.instance()
   }

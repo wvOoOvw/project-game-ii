@@ -11,7 +11,7 @@ import J_153344_22433013228 from '../media/153344_22433013228.jpg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_153344_22433013228)
+const backgroundImage = createImage(J_234521_92189037316)
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight

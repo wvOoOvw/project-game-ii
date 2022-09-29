@@ -4,10 +4,12 @@ import './data-imitation'
 
 import PageTransition from './page-transition'
 import PageHome from './page-home'
+import PageExplore from './page-explore'
 import PageStore from './page-store'
 // import PageBattle from './page-battle'
 
 import { mock } from '../source/card'
+import { origin as originExplore } from '../source/explore'
 
 import { hash } from './utils-common'
 
@@ -56,21 +58,22 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'store',
+        current: 'home',
         next: '',
         map: {
           'transition': PageTransition,
           'home': PageHome,
+          'explore': PageExplore,
           'store': PageStore,
         },
       },
       removeEventListener: [],
       info: {
         cardLibrary: [],
-        team: new Array(4).fill([]),
+        team: [[], [], [], []],
         teamIndex: 0,
       },
-      action: false
+      explore: []
     }
 
     Imitation.state.info.cardLibrary = mock(15).map(card => {
@@ -82,6 +85,8 @@ class Main {
     })
 
     Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40).map(i => ({ key: i.key, level: i.level }))
+
+    Imitation.state.explore = originExplore
   }
 }
 

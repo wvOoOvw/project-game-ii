@@ -9,6 +9,21 @@ const addEventListener = (type, callback, option) => {
 
   canvas.addEventListener(type, event, { passive: true })
 
+  // if (type === 'touchstart') {
+  //   canvas.addEventListener('mousedown', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousedown', event))
+  // }
+
+  // if (type === 'touchmove') {
+  //   canvas.addEventListener('mousemove', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousemove', event))
+  // }
+
+  // if (type === 'touchend') {
+  //   canvas.addEventListener('mouseup', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mouseup', event))
+  // }
+
   Imitation.state.removeEventListener.push(() => canvas.removeEventListener(type, event))
 }
 
@@ -16,6 +31,21 @@ const addEventListenerPure = (type, callback) => {
   const event = e => callback(e)
 
   canvas.addEventListener(type, event, { passive: true })
+
+  // if (type === 'touchstart') {
+  //   canvas.addEventListener('mousedown', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousedown', event))
+  // }
+
+  // if (type === 'touchmove') {
+  //   canvas.addEventListener('mousemove', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousemove', event))
+  // }
+
+  // if (type === 'touchend') {
+  //   canvas.addEventListener('mouseup', event, { passive: true })
+  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mouseup', event))
+  // }
 
   Imitation.state.removeEventListener.push(() => canvas.removeEventListener(type, event))
 }
@@ -34,7 +64,7 @@ const ifTouchCover = (e, option) => {
 
 const ifScreenCover = (inner, outer) => {
   const { x, y, width, height } = inner
-  const { x:x_, y:y_, width:width_, height:height_ } = outer
+  const { x: x_, y: y_, width: width_, height: height_ } = outer
 
   return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
 }

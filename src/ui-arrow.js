@@ -3,22 +3,17 @@ import { UI } from './ui'
 const ctx = canvas.getContext('2d')
 
 class Arrow extends UI {
-  constructor(option) {
-    super(option)
-    this.x = option.x
-    this.y = option.y
-    this.width = option.width
-    this.height = option.height
-    this.thick = option.thick || 8
-    this.lineWidth = option.lineWidth || 1
-    this.fillStyle = option.fillStyle || 'black'
-
-    this.direction = option.direction || 'top'
+  constructor(props) {
+    super(props)
+    this.thick = props.thick || 8
+    this.lineWidth = props.lineWidth || 1
+    this.fillStyle = props.fillStyle || 'black'
+    this.direction = props.direction || 'top'
   }
 
   render() {
-    const x = this.x
-    const y = this.y
+    const x = this.resultX
+    const y = this.resultY
     const width = this.width
     const height = this.height
     const thick = this.thick

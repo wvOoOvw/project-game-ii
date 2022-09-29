@@ -4,31 +4,33 @@ import { drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
-class ScrollY extends UI {
-  constructor(option) {
-    super(option)
-    this.x = option.x
-    this.y = option.y
-    this.width = option.width
-    this.height = option.height
-    this.radius = option.radius
+class Scroll extends UI {
+  constructor(props) {
+    super(props)
+    this.scrollX = 0
+    this.scrollY = 0
 
-    this.min = option.min
-    this.max = option.max
+    this.scrollbar = props.scrollbar || true
 
-    this.scrollbar = option.scrollbar || true
+    this.scrollbarOffset = props.scrollbarOffset
 
-    this.scrollbarOffset = option.scrollbarOffset
+    this.scrollbarThick = props.scrollbarThick
 
-    this.scrollbarThick = option.scrollbarThick
-
-    this.scrollbarColor = option.scrollbarColor || 'rgba(0, 0, 0, opacity)'
+    this.scrollbarColor = props.scrollbarColor || 'rgba(0, 0, 0, opacity)'
 
     this.scrollbarOpacity = 0
 
     this.scrollbarTimeout = false
 
-    this.scrollPosition = 0
+    this.scrollPosition = [0, 0]
+
+    this.clipFunction = () => {
+      const option = { x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius }
+
+      drawRadius(option)
+
+      return option
+    }
 
     this.mouseDownPosition = null
   }
@@ -52,26 +54,25 @@ class ScrollY extends UI {
     const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
     this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]
 
-    const result = this.scrollPosition - changeY
+    var resultX = this.scrollPosition[0] - changeX
+    var resultY = this.scrollPosition[1] - changeY
 
-    if (result < this.min) {
-      this.scrollPosition = this.min
-      return
+    if (this.scrollX > 0) {
+      if (resultX < 0) resultX = 0
+      if (resultX > this.scrollX) resultX = this.scrollX
     }
-    if (result > this.max) {
-      this.scrollPosition = this.max
-      return
+    if (this.scrollY > 0) {
+      if (resultY < 0) resultY = 0
+      if (resultY > this.scrollY) resultY = this.scrollY
     }
 
-    this.scrollPosition = this.scrollPosition - changeY
+    this.scrollPosition = [resultX, resultY]
   }
 
   render(callback) {
     ctx.save()
 
-    const option = { x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius }
-
-    drawRadius(option)
+    const option = this.clipFunction()
 
     addEventListener('touchstart', this.eventDown.bind(this), option)
     addEventListenerPure('touchmove', this.eventMove.bind(this), option)
@@ -81,23 +82,31 @@ class ScrollY extends UI {
 
     callback(this.scrollPosition)
 
-    if (this.scrollbar && this.max > 0) {
-      const lineH = this.height * (this.height / (this.max + this.height))
-      const lineY = this.y + (this.height - lineH) * (this.scrollPosition / this.max)
+    if (this.scrollbar) {
+      if (this.scrollX > 0) {
+        const lineW = this.width * (this.width / (this.scrollX + this.width))
+        const lineX = this.resultX + (this.width - lineW) * (this.scrollPosition[0] / this.scrollX)
 
-      if (this.scrollbarTimeout && this.scrollbarOpacity < 1) this.scrollbarOpacity = this.scrollbarOpacity + 0.05
-      if (!this.scrollbarTimeout && this.scrollbarOpacity > 0) this.scrollbarOpacity = this.scrollbarOpacity - 0.05
+        drawRect({ x: lineX, y: this.resultY + this.height - this.scrollbarOffset, width: lineW, height: this.scrollbarThick })
+      }
+      if (this.scrollY > 0) {
+        const lineH = this.height * (this.height / (this.scrollY + this.height))
+        const lineY = this.resultY + (this.height - lineH) * (this.scrollPosition[1] / this.scrollY)
 
-      ctx.fillStyle = this.scrollbarColor.replace('opacity', this.scrollbarOpacity)
+        drawRect({ x: this.resultX + this.width - this.scrollbarOffset, y: lineY, width: this.scrollbarThick, height: lineH })
+      }
+      if (this.scrollX > 0 || this.scrollY > 0) {
+        if (this.scrollbarTimeout && this.scrollbarOpacity < 1) this.scrollbarOpacity = this.scrollbarOpacity + 0.05
+        if (!this.scrollbarTimeout && this.scrollbarOpacity > 0) this.scrollbarOpacity = this.scrollbarOpacity - 0.05
 
-      drawRect({ x: this.x + this.width - this.scrollbarOffset, y: lineY, width: this.scrollbarThick, height: lineH })
+        ctx.fillStyle = this.scrollbarColor.replace('opacity', this.scrollbarOpacity)
 
-      ctx.fill()
+        ctx.fill()
+      }
     }
-
 
     ctx.restore()
   }
 }
 
-export { ScrollY } 
+export { Scroll } 
