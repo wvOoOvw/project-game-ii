@@ -69,7 +69,8 @@ class Main {
         cardLibrary: [],
         team: new Array(4).fill([]),
         teamIndex: 0,
-      }
+      },
+      action: false
     }
 
     Imitation.state.info.cardLibrary = mock(15).map(card => {

@@ -65,7 +65,7 @@ class PageStore {
   }
 
   get emptyHeight() {
-    const r = 0
+    var r = 0
 
     if (this.team.length === 0) r = r + 12
 
@@ -302,7 +302,7 @@ class PageStore {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 36, height: 36, radius: 18, text: 'H' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Back' }
 
     new Button(option).render()
 
