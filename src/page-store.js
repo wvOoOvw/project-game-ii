@@ -5,7 +5,7 @@ import { Scroll } from './ui-scroll'
 import { Card } from './ui-card'
 import { Button } from './ui-button'
 
-import { parse } from '../source/card'
+import { origin as originCard } from '../source/card'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'
@@ -18,6 +18,29 @@ const backgroundImage = createImage(J_205624_78456047248)
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
+
+const parseCard = (array, numberFlat) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originCard.find(i_ => i.key === i_.key)
+
+    i.value.forEach(i_ => {
+      if (numberFlat) {
+        const item = { ...origin, ...i_ }
+        delete item.number
+        result_.push(...new Array(i_.number).fill(item))
+      }
+      if (!numberFlat) {
+        result_.push({ ...origin, ...i_ })
+      }
+    })
+
+    return result_
+  }, [])
+
+  return result
+}
 
 class PageStore {
   constructor() {
@@ -71,8 +94,8 @@ class PageStore {
   }
 
   instance() {
-    this.card = Imitation.state.info.cardLibrary.map(i => parse(i))
-    this.team = Imitation.state.info.team[Imitation.state.info.teamIndex].map(i => parse(i))
+    this.card = parseCard(Imitation.state.info.cardLibrary)
+    this.team = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true)
 
     this.instanceScroll()
     this.instanceCard()
@@ -313,29 +336,49 @@ class PageStore {
   }
 
   compose(card) {
-    
+
   }
 
   load(card) {
-    const cardLibrary = Imitation.state.info.cardLibrary
+    const library = Imitation.state.info.cardLibrary
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
 
-    const length = cardLibrary.filter(i => i.key === card.key && i.level === card.level)
-    const length_ = team.filter(i => i.key === card.key && i.level === card.level)
+    const teamOrigin = team.find(i => i.key === card.key)
 
-    if (length.length === length_.length) return
+    const libraryFind = library.find(i => i.key === card.key).value.find(i => i.level === card.level)
+    const teamFind = teamOrigin.value.find(i => i.level === card.level)
 
-    team.push({ key: card.key, level: card.level })
+    if (teamFind && teamFind.number === libraryFind.number) return
+
+    if (teamFind) {
+      teamFind.number = teamFind.number + 1
+    }
+    if (!teamFind) {
+      teamOrigin.value.push({ key: card.key, level: card.level, number: 1 })
+    }
 
     this.instance()
   }
 
   unload(card) {
-    const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
+    const team = Imitation.state.info.team
 
-    const teamFind = team.find(i => i.key === card.key && i.level === card.level)
+    const index = Imitation.state.info.teamIndex
 
-    Imitation.state.info.team[Imitation.state.info.teamIndex] = team.filter(i => i !== teamFind)
+    const teamCurrent = team[index]
+
+    const teamOrigin = teamCurrent.find(i => i.key === card.key)
+
+    const teamFind = teamOrigin.value.find(i => i.level === card.level)
+
+    teamFind.number = teamFind.number - 1
+
+    if (teamFind.number === 0) {
+      teamOrigin.value = teamOrigin.value.filter(i => i !== teamFind)
+    }
+    if (teamOrigin.value.length === 0) {
+      team[index] = team[index].filter(i => i !== teamOrigin)
+    }
 
     this.instance()
   }

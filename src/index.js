@@ -5,13 +5,13 @@ import './data-imitation'
 import PageTransition from './page-transition'
 import PageHome from './page-home'
 import PageExplore from './page-explore'
+import PageBattle from './page-battle'
 import PageStore from './page-store'
-// import PageBattle from './page-battle'
 
-import { mock } from '../source/card'
+import { origin as originCard } from '../source/card'
 import { origin as originExplore } from '../source/explore'
 
-import { hash } from './utils-common'
+import { hash, arrayRandom } from './utils-common'
 
 const ctx = canvas.getContext('2d')
 
@@ -64,6 +64,7 @@ class Main {
           'transition': PageTransition,
           'home': PageHome,
           'explore': PageExplore,
+          'battle': PageBattle,
           'store': PageStore,
         },
       },
@@ -75,20 +76,57 @@ class Main {
       },
       explore: {
         map: []
+      },
+      battle: {
+        self: {
+          HP: 1000,
+          MP: 1000,
+          card: [],
+          buff: [],
+          cemetery: [],
+          consume: []
+        },
+        target: {
+          HP: 1000,
+          MP: 1000,
+          card: [],
+          buff: [],
+          cemetery: [],
+          consume: []
+        }
+      },
+      function: {
+        render: this.render,
+        loopStart: this.loopStart,
+        loopEnd: this.loopEnd,
       }
     }
 
-    Imitation.state.info.cardLibrary = mock(15).map(card => {
+    Imitation.state.info.cardLibrary = originCard.map(i => {
       return {
-        key: card.key,
-        level: 1,
-        number: 4
+        key: i.key,
+        value: [
+          {
+            level: 1,
+            number: 10
+          },
+          {
+            level: 2,
+            number: 4
+          },
+        ]
       }
     })
 
-    Imitation.state.info.team[0] = [...Imitation.state.info.cardLibrary].filter((i, index) => index < 40).map(i => ({ key: i.key, level: i.level }))
+    const oneTeam = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
+
+    Imitation.state.info.team[0] = oneTeam
 
     Imitation.state.explore.map = originExplore
+
+    Imitation.state.battle.self.card = oneTeam
+
+    Imitation.state.battle.target.card = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
   }
 }
 

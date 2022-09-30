@@ -33,18 +33,18 @@ const origin = [
     function: (self, target, round) => {
 
     }
-  }
+  },
+  {
+    key: 4,
+    name: '堕天',
+    type: '进攻卡',
+    attribute: '暗',
+    image: J_162926_76690565815,
+    description: l => `消耗50MP，造成 ${l * 30 + 300} 伤害`,
+    function: (self, target, round) => {
+
+    }
+  },
 ]
 
 export { origin }
-
-const parse = (card) => {
-  const c = origin.find(i => card.key === i.key)
-  return { ...c, ...card }
-}
-
-export { parse }
-
-const mock = (number = 12) => new Array(number).fill(origin).reduce((t, i) => [...t, ...i], [])
-
-export { mock }

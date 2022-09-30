@@ -71,7 +71,7 @@ class Card extends UI {
 
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.48, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
+      drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
     }
 
     if (this.displayMode === 'team') {
@@ -87,15 +87,12 @@ class Card extends UI {
     if (this.displayMode === 'preview') {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
       ctx.textAlign = 'start'
 
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-      ctx.fillText(card.type, x + width * 0.08, y + width * 0.48)
-      ctx.fillText(card.attribute, x + width * 0.08, y + width * 0.60)
+      ctx.fillText(`${card.attribute} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.72, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
+      drawText({ x: x + width * 0.08, y: y + width * 0.60, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
     }
 
     ctx.restore()

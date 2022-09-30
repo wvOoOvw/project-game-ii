@@ -7,10 +7,10 @@ const ctx = canvas.getContext('2d')
 class Scroll extends UI {
   constructor(props) {
     super(props)
-    this.scrollX = 0
-    this.scrollY = 0
+    this.scrollX = props.scrollX || 0
+    this.scrollY = props.scrollY || 0
 
-    this.scrollbar = props.scrollbar || true
+    this.scrollbarHidden = props.scrollbarHidden || false
 
     this.scrollbarOffset = props.scrollbarOffset || 4
 
@@ -25,7 +25,7 @@ class Scroll extends UI {
     this.scrollPosition = [0, 0]
 
     this.clipFunction = () => {
-      const option = { x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius }
+      const option = { x: this.resultX, y: this.resultY, width: this.width, height: this.height, radius: this.radius }
 
       drawRadius(option)
 
@@ -45,7 +45,7 @@ class Scroll extends UI {
   }
   eventMove(e) {
     if (!this.mouseDownPosition) return
-    if (this.max < 0) return
+    if (this.scrollX <= 0 && this.scrollY <= 0) return
 
     clearTimeout(this.scrollbarTimeout)
     this.scrollbarTimeout = setTimeout(() => this.scrollbarTimeout = null, 1000)
@@ -58,11 +58,11 @@ class Scroll extends UI {
     var resultY = this.scrollPosition[1] - changeY
 
     if (this.scrollX > 0) {
-      if (resultX < 0) resultX = 0
+      if (resultX <= 0) resultX = 0
       if (resultX > this.scrollX) resultX = this.scrollX
     }
     if (this.scrollY > 0) {
-      if (resultY < 0) resultY = 0
+      if (resultY <= 0) resultY = 0
       if (resultY > this.scrollY) resultY = this.scrollY
     }
 
@@ -82,7 +82,7 @@ class Scroll extends UI {
 
     callback(this.scrollPosition)
 
-    if (this.scrollbar) {
+    if (!this.scrollbarHidden) {
       if (this.scrollX > 0) {
         const lineW = this.width * (this.width / (this.scrollX + this.width))
         const lineX = this.resultX + (this.width - lineW) * (this.scrollPosition[0] / this.scrollX)

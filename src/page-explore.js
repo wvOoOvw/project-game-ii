@@ -2,7 +2,6 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Card } from './ui-card'
 import { Button } from './ui-button'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
@@ -19,9 +18,9 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class PageHome {
+class PageExplore {
   constructor() {
-    this.map
+    this.exploreMap
 
     this.InstanceScrollBox
     this.InstanceScrollList
@@ -29,28 +28,44 @@ class PageHome {
     this.instance()
   }
 
+  get scrollListHeight() {
+    const row = this.exploreMap.length
+
+    if (row === 0) return 0
+
+    const real = 160 * row
+
+    const margin = row ? 12 * (row - 1) : 0
+
+    return real + margin
+  }
+
   instance() {
-    this.map = Imitation.state.explore.map
+    this.exploreMap = Imitation.state.explore.map
 
     this.instanceScrollBox()
     this.instanceScrollList()
   }
 
   instanceScrollBox() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbar: false }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12, scrollbarHidden: true }
 
     this.InstanceScrollBox = new Scroll(scrollOption)
 
-    this.InstanceScrollBox.scrollY = 800
+    this.InstanceScrollBox.scrollY = this.scrollListHeight - this.InstanceScrollBox.height
   }
 
   instanceScrollList() {
-    this.InstanceScrollList = this.map.map((i, index) => {
-      const scrollOption = { x: 12, y: 60 + 212 * index + safeTop, width: windowWidth - 24, height: 200, radius: 12 }
+    this.InstanceScrollList = this.exploreMap.map((i, index) => {
+      const scrollOption = { x: 12, y: 60 + 172 * index + safeTop, width: windowWidth - 24, height: 160, radius: 12, scrollbarHidden: true }
 
-      scrollOption.scrollX = 600
+      const instance = new Scroll(scrollOption)
 
-      return new Scroll(scrollOption)
+      instance.extra = i
+
+      instance.scrollX = 92 * i.list.length + 12 - instance.width
+
+      return instance
     })
   }
 
@@ -65,7 +80,7 @@ class PageHome {
   }
 
   drawScrollList(offsetY) {
-    this.InstanceScrollList.forEach(i => {
+    this.InstanceScrollList.forEach((i, index) => {
       const option = { ...i.option, y: i.y - offsetY, radius: i.radius }
 
       drawRadius(option)
@@ -75,7 +90,29 @@ class PageHome {
 
       i.offsetY = 0 - offsetY
 
-      i.render(new Function)
+      const event = (scroll) => {
+        const offsetX = scroll[0]
+
+        this.drawScrollContent(i.extra, offsetX, offsetY, index)
+      }
+
+      i.render(event)
+    })
+  }
+
+  drawScrollContent(content, offsetX, offsetY, index) {
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.fillStyle = 'black'
+    ctx.font = 'bold 12px monospace'
+    ctx.fillText(content.name, 24, 72 + 172 * index - offsetY + safeTop)
+
+    content.list.forEach((i, index_) => {
+      const option = { width: 80, height: 80, y: 108 + 172 * index - offsetY + safeTop, fillStyle: 'black', strokeStyle: 'black', font: 12, text: i.name }
+
+      option.x = 24 + (option.width + 12) * index_ - offsetX
+
+      new Button(option).render()
     })
   }
 
@@ -103,4 +140,4 @@ class PageHome {
   }
 }
 
-export default PageHome
+export default PageExplore

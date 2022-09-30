@@ -2,7 +2,22 @@ const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
 }
 
-export { hash }
+const arrayRandom = (array, number) => {
+  if (array.length <= number) return array
+
+  var r = []
+  var c = array.map(i => i)
+
+  new Array(number).fill().forEach(() => {
+    const index = Math.floor(Math.random() * c.length)
+    r.push(c[index])
+    c = c.filter((i, index_) => index_ !== index)
+  })
+
+  return r
+}
+
+export { hash, arrayRandom }
 
 const addEventListener = (type, callback, option) => {
   const event = e => ifTouchCover(e, option) ? callback(e) : null
