@@ -17,7 +17,22 @@ const arrayRandom = (array, number) => {
   return r
 }
 
-export { hash, arrayRandom }
+const setArrayRandom = (array) => {
+  var length = array.length
+
+  while (length > 1) {
+    const index = Math.floor(Math.random() * length)
+
+    length = length - 1
+
+    array[length] = array[index]
+    array[index] = array[length]
+  }
+  
+  return array
+}
+
+export { hash, arrayRandom, setArrayRandom }
 
 const addEventListener = (type, callback, option) => {
   const event = e => ifTouchCover(e, option) ? callback(e) : null

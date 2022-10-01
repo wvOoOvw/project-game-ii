@@ -58,7 +58,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'home',
+        current: 'battle',
         next: '',
         map: {
           'transition': PageTransition,
@@ -81,18 +81,26 @@ class Main {
         self: {
           HP: 1000,
           MP: 1000,
-          card: [],
+          card: {
+            team: [],
+            store: [],
+            hand: [],
+            cemetery: [],
+            consume: []
+          },
           buff: [],
-          cemetery: [],
-          consume: []
         },
         target: {
           HP: 1000,
           MP: 1000,
-          card: [],
+          card: {
+            team: [],
+            store: [],
+            hand: [],
+            cemetery: [],
+            consume: []
+          },
           buff: [],
-          cemetery: [],
-          consume: []
         }
       },
       function: {
@@ -118,15 +126,13 @@ class Main {
       }
     })
 
-    const oneTeam = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
-
-    Imitation.state.info.team[0] = oneTeam
+    Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
 
     Imitation.state.explore.map = originExplore
 
-    Imitation.state.battle.self.card = oneTeam
+    Imitation.state.battle.self.card.team = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
 
-    Imitation.state.battle.target.card = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
+    Imitation.state.battle.target.card.team = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
   }
 }
 

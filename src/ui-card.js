@@ -10,10 +10,6 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 class Card extends UI {
   constructor(props) {
     super(props)
-    this.fillStyle = props.fillStyle || 'white'
-    this.fontSize = props.fontSize || props.width * 0.075
-    this.radius = props.radius || props.width * 0.08
-
     this.card = props.card
 
     this.touchAble = props.touchAble
@@ -43,7 +39,7 @@ class Card extends UI {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: this.radius })
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
 
     ctx.clip()
 
@@ -55,12 +51,12 @@ class Card extends UI {
       drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
     }
 
-    ctx.fillStyle = this.fillStyle
+    ctx.fillStyle = 'white'
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `bold ${this.fontSize}px monospace`
+    ctx.font = `bold ${this.width * 0.075}px monospace`
 
     if (this.displayMode === 'library') {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)

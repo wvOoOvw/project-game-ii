@@ -24,6 +24,8 @@ class Scroll extends UI {
 
     this.scrollPosition = [0, 0]
 
+    this.mouseDownPosition = null
+
     this.clipFunction = () => {
       const option = { x: this.resultX, y: this.resultY, width: this.width, height: this.height, radius: this.radius }
 
@@ -31,8 +33,6 @@ class Scroll extends UI {
 
       return option
     }
-
-    this.mouseDownPosition = null
   }
 
   eventDown(e) {

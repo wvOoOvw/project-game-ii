@@ -345,19 +345,27 @@ class PageStore {
 
     const teamOrigin = team.find(i => i.key === card.key)
 
-    const libraryFind = library.find(i => i.key === card.key).value.find(i => i.level === card.level)
+    if (!teamOrigin) {
+      team.push({ key: card.key, value: [{ level: card.level, number: 1 }] })
+      this.instance()
+      return
+    }
+
     const teamFind = teamOrigin.value.find(i => i.level === card.level)
 
-    if (teamFind && teamFind.number === libraryFind.number) return
-
-    if (teamFind) {
-      teamFind.number = teamFind.number + 1
-    }
     if (!teamFind) {
-      teamOrigin.value.push({ key: card.key, level: card.level, number: 1 })
+      teamOrigin.value.push({ level: card.level, number: 1 })
+      this.instance()
+      return
     }
 
-    this.instance()
+    const libraryFind = library.find(i => i.key === card.key).value.find(i => i.level === card.level)
+
+    if (teamFind && teamFind.number < libraryFind.number) {
+      teamFind.number = teamFind.number + 1
+      this.instance()
+      return
+    }
   }
 
   unload(card) {
