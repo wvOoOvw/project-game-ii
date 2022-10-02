@@ -81,13 +81,7 @@ class Card extends UI {
 
     ctx.clip()
 
-    if (this.imageMode === 'center') {
-      drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
-    }
-
-    if (this.imageMode === 'overspread') {
-      drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-    }
+    drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
 
     ctx.fillStyle = 'white'
 
@@ -106,16 +100,6 @@ class Card extends UI {
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
 
       drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-    }
-
-    if (this.displayMode === 'team') {
-      ctx.textAlign = 'start'
-
-      ctx.fillText(card.name, x + width * 0.05, y + height / 2)
-
-      ctx.textAlign = 'end'
-
-      ctx.fillText('Lv' + card.level, x + width - width * 0.05, y + height / 2)
     }
 
     if (this.displayMode === 'preview') {
@@ -189,11 +173,28 @@ class Battler extends UI {
     this.battler = props.battler
     this.type = props.type
 
-    this.animation = false
+    this.InstanceCard
   }
 
-  animation(type) {
-    this.animation = type
+  instanceCard() {
+    this.InstanceCard = this.battler.card.hand.map((i, index) => {
+
+      const option = { width: 120, height: 160 }
+
+      option.x = windowWidth / 2 - option.width / 2
+      option.x = this.resultY + this.height - 12
+
+      return new Card({ ...option, ...i })
+    })
+  }
+
+  cardPosition() {
+    this.InstanceCard.forEach((i, index) => {
+      const maxIndex = this.InstanceCard.length
+      const centerIndex = maxIndex / 2 - 0.5
+
+      const offset = centerIndex - maxIndex
+    })
   }
 
   render() {
@@ -212,8 +213,6 @@ class Battler extends UI {
 
     ctx.clip()
 
-    // drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
-
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.font = `bold 12px monospace`
 
@@ -225,6 +224,8 @@ class Battler extends UI {
     ctx.fillText(`牌库: ${battler.card.store.length}`, x + 12, y + 48)
     ctx.fillText(`手牌: ${battler.card.hand.length}`, x + 12, y + 66)
     ctx.fillText(`墓地: ${battler.card.cemetery.length}`, x + 12, y + 84)
+
+    this.InstanceCard.forEach(i => i.render())
 
     ctx.restore()
   }

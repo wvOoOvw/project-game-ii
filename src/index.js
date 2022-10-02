@@ -8,10 +8,10 @@ import PageExplore from './page-explore'
 import PageBattle from './page-battle'
 import PageStore from './page-store'
 
+import { Message } from './ui-message'
+
 import { origin as originCard } from '../source/card'
 import { origin as originExplore } from '../source/explore'
-
-import { hash, arrayRandom } from './utils-common'
 
 const ctx = canvas.getContext('2d')
 
@@ -19,6 +19,8 @@ class Main {
   constructor() {
     this.animationFrameId
     this.instance
+
+    this.instanceMessage = new Message()
 
     this.ImitationInit()
     this.loopStart()
@@ -40,6 +42,7 @@ class Main {
     }
 
     this.instance.render()
+    this.instanceMessage.render()
   }
 
   loopStart() {
@@ -58,7 +61,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'battle',
+        current: 'store',
         next: '',
         map: {
           'transition': PageTransition,
@@ -107,6 +110,7 @@ class Main {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
+        message: (m) => this.instanceMessage.send(m)
       }
     }
 

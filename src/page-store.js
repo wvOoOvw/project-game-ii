@@ -1,11 +1,9 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, sortCard } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Card } from './ui-card'
 import { Button } from './ui-button'
-
-import { origin as originCard } from '../source/card'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'
@@ -71,8 +69,8 @@ class PageStore {
   }
 
   instance() {
-    this.card = parseCard(Imitation.state.info.cardLibrary)
-    this.team = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true)
+    this.card = sortCard(parseCard(Imitation.state.info.cardLibrary))
+    this.team = sortCard(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true))
 
     this.instanceScroll()
     this.instanceCard()
@@ -322,9 +320,14 @@ class PageStore {
 
     const teamOrigin = team.find(i => i.key === card.key)
 
+    const final = () => {
+      this.instance()
+      Imitation.state.function.message('装载成功')
+    }
+
     if (!teamOrigin) {
       team.push({ key: card.key, value: [{ level: card.level, number: 1 }] })
-      this.instance()
+      final()
       return
     }
 
@@ -332,7 +335,7 @@ class PageStore {
 
     if (!teamFind) {
       teamOrigin.value.push({ level: card.level, number: 1 })
-      this.instance()
+      final()
       return
     }
 
@@ -340,7 +343,7 @@ class PageStore {
 
     if (teamFind && teamFind.number < libraryFind.number) {
       teamFind.number = teamFind.number + 1
-      this.instance()
+      final()
       return
     }
   }
@@ -366,6 +369,7 @@ class PageStore {
     }
 
     this.instance()
+    Imitation.state.function.message('卸载成功')
   }
 
   render() {

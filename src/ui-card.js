@@ -51,7 +51,7 @@ class Card extends UI {
       drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
     }
 
-    ctx.fillStyle = 'white'
+    ctx.fillStyle = `rgba(255, 255, 255, ${1 - this.animationTwinkleNumber})`
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'

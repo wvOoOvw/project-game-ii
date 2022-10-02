@@ -1,4 +1,4 @@
-import { createImage } from './utils-common'
+import { createImage, numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
@@ -21,7 +21,7 @@ class PageTransition {
 
   render() {
     if (this.count <= 20) {
-      this.opacity = this.opacity + 0.05
+      this.opacity = numberFix(this.opacity + 0.05)
       this.count = this.count + 1
     }
 
@@ -30,7 +30,7 @@ class PageTransition {
     }
 
     if (this.count > 40 && this.count <= 60) {
-      this.opacity = this.opacity - 0.05
+      this.opacity = numberFix(this.opacity - 0.05)
       this.count = this.count + 1
     }
 

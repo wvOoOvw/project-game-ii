@@ -2,7 +2,6 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Card } from './ui-card'
 import { Button } from './ui-button'
 import { Battler } from './ui-battler'
 
@@ -84,12 +83,11 @@ class PageBattle {
   battleInit() {
     this.InstanceSelf.battler.card.store = this.InstanceSelf.battler.card.team
 
-    this.InstanceSelf.battler.card.hand =  this.InstanceSelf.battler.card.store.filter((i, index) => index < 4)
-
+    this.InstanceSelf.battler.card.hand = this.InstanceSelf.battler.card.store.filter((i, index) => index < 4)
 
     this.InstanceTarget.battler.card.store = this.InstanceTarget.battler.card.team
 
-    this.InstanceTarget.battler.card.hand =  this.InstanceTarget.battler.card.store.filter((i, index) => index < 4)
+    this.InstanceTarget.battler.card.hand = this.InstanceTarget.battler.card.store.filter((i, index) => index < 4)
   }
 
   render() {
