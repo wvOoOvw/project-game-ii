@@ -1,3 +1,30 @@
+import { origin as originCard } from '../source/card'
+
+const parseCard = (array, numberFlat) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originCard.find(i_ => i.key === i_.key)
+
+    i.value.forEach(i_ => {
+      if (numberFlat) {
+        const item = { ...origin, ...i_ }
+        delete item.number
+        result_.push(...new Array(i_.number).fill(item))
+      }
+      if (!numberFlat) {
+        result_.push({ ...origin, ...i_ })
+      }
+    })
+
+    return result_
+  }, [])
+
+  return result
+}
+
+export { parseCard }
+
 const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
 }
@@ -18,18 +45,17 @@ const arrayRandom = (array, number) => {
 }
 
 const setArrayRandom = (array) => {
-  var length = array.length
+  var result = []
+  var origin = array
 
-  while (length > 1) {
-    const index = Math.floor(Math.random() * length)
+  while (origin.length) {
+    const index = Math.floor(Math.random() * origin.length)
 
-    length = length - 1
-
-    array[length] = array[index]
-    array[index] = array[length]
+    result.push(origin[index])
+    origin.splice(index, index + 1)
   }
-  
-  return array
+
+  return result
 }
 
 export { hash, arrayRandom, setArrayRandom }

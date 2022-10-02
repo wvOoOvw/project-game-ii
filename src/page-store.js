@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -18,29 +18,6 @@ const backgroundImage = createImage(J_205624_78456047248)
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
-
-const parseCard = (array, numberFlat) => {
-  const result = array.reduce((t, i) => {
-    const result_ = [...t]
-
-    const origin = originCard.find(i_ => i.key === i_.key)
-
-    i.value.forEach(i_ => {
-      if (numberFlat) {
-        const item = { ...origin, ...i_ }
-        delete item.number
-        result_.push(...new Array(i_.number).fill(item))
-      }
-      if (!numberFlat) {
-        result_.push({ ...origin, ...i_ })
-      }
-    })
-
-    return result_
-  }, [])
-
-  return result
-}
 
 class PageStore {
   constructor() {

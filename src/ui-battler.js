@@ -11,9 +11,25 @@ class Card extends UI {
   constructor(props) {
     super(props)
     this.card = props.card
-    this.index = props.index
 
-    this.scrollPosition = [0, 0]
+    this.touchAble = props.touchAble
+
+    this.touchMode = props.touchMode
+
+    this.touchEvent = props.touchEvent
+
+    this.touchDelayTime = props.touchDelayTime
+
+    this.touchArea = props.touchArea
+
+    this.touchTimeout = null
+
+    this.displayMode = props.displayMode
+    this.imageMode = props.imageMode
+
+    this.imageIns = props.imageIns
+
+    this.movePosition = [0, 0]
 
     this.mouseDownPosition = null
   }
@@ -37,8 +53,8 @@ class Card extends UI {
     const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
     this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]
 
-    var resultX = this.scrollPosition[0] - changeX
-    var resultY = this.scrollPosition[1] - changeY
+    var resultX = this.movePosition[0] - changeX
+    var resultY = this.movePosition[1] - changeY
 
     if (this.scrollX > 0) {
       if (resultX <= 0) resultX = 0
@@ -49,7 +65,7 @@ class Card extends UI {
       if (resultY > this.scrollY) resultY = this.scrollY
     }
 
-    this.scrollPosition = [resultX, resultY]
+    this.movePosition = [resultX, resultY]
   }
 
   render() {
@@ -57,7 +73,113 @@ class Card extends UI {
     const y = this.resultY
     const width = this.width
     const height = this.height
-    const battler = this.battler
+    const card = this.card
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    if (this.imageMode === 'center') {
+      drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
+    }
+
+    if (this.imageMode === 'overspread') {
+      drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    }
+
+    ctx.fillStyle = 'white'
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.font = `bold ${this.width * 0.075}px monospace`
+
+    if (this.displayMode === 'library') {
+      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+
+      ctx.textAlign = 'start'
+
+      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+
+      drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    }
+
+    if (this.displayMode === 'team') {
+      ctx.textAlign = 'start'
+
+      ctx.fillText(card.name, x + width * 0.05, y + height / 2)
+
+      ctx.textAlign = 'end'
+
+      ctx.fillText('Lv' + card.level, x + width - width * 0.05, y + height / 2)
+    }
+
+    if (this.displayMode === 'preview') {
+      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+      ctx.textAlign = 'start'
+
+      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+      ctx.fillText(`${card.attribute} · ${card.type}`, x + width * 0.08, y + width * 0.48)
+
+      drawText({ x: x + width * 0.08, y: y + width * 0.60, text: card.description(1), width: width - width * 0.25, fontHeight: width * 0.12 })
+    }
+
+    ctx.restore()
+
+    if (this.touchMode === 'immediate' && this.touchAble) {
+      const event = (e) => {
+        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
+
+        this.touchEvent()
+      }
+
+      addEventListener('touchstart', event, { x, y, width, height })
+    }
+
+    if (this.touchMode === 'delay' && this.touchAble) {
+      const event = (e) => {
+        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
+
+        this.touchTimeout = setTimeout(() => this.touchEvent(), this.touchDelayTime)
+      }
+
+      addEventListener('touchstart', event, { x, y, width, height })
+
+      const event_ = () => {
+        clearTimeout(this.touchTimeout)
+      }
+
+      addEventListenerPure('touchmove', event_)
+      addEventListenerPure('touchend', event_)
+    }
+
+    if (this.touchMode === 'click' && this.touchAble) {
+      const event = (e) => {
+        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
+
+        this.touchTimeout = true
+      }
+
+      addEventListener('touchstart', event, { x, y, width, height })
+
+      const event_ = () => {
+        this.touchTimeout = false
+      }
+
+      addEventListenerPure('touchmove', event_)
+
+      const event__ = () => {
+        if (this.touchTimeout === true) this.touchEvent()
+        this.touchTimeout = false
+      }
+
+      addEventListenerPure('touchend', event__)
+    }
   }
 }
 
@@ -93,15 +215,16 @@ class Battler extends UI {
     // drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
 
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.font = `bold 14px monospace`
+    ctx.font = `bold 12px monospace`
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
     ctx.fillText(`HP: ${battler.HP}`, x + 12, y + 12)
-    ctx.fillText(`MP: ${battler.MP}`, x + 12, y + 24)
-
-    // console.log(battler)
+    ctx.fillText(`MP: ${battler.MP}`, x + 12, y + 30)
+    ctx.fillText(`牌库: ${battler.card.store.length}`, x + 12, y + 48)
+    ctx.fillText(`手牌: ${battler.card.hand.length}`, x + 12, y + 66)
+    ctx.fillText(`墓地: ${battler.card.cemetery.length}`, x + 12, y + 84)
 
     ctx.restore()
   }

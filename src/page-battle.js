@@ -1,12 +1,10 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Card } from './ui-card'
 import { Button } from './ui-button'
 import { Battler } from './ui-battler'
-
-import { origin as originCard } from '../source/card'
 
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'
@@ -19,24 +17,6 @@ const backgroundImage = createImage(J_205624_78456047248)
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
-
-const parseCard = (array) => {
-  const result = array.reduce((t, i) => {
-    const result_ = [...t]
-
-    const origin = originCard.find(i_ => i.key === i_.key)
-
-    i.value.forEach(i_ => {
-      const item = { ...origin, ...i_ }
-      delete item.number
-      result_.push(...new Array(i_.number).fill(item))
-    })
-
-    return result_
-  }, [])
-
-  return result
-}
 
 class PageBattle {
   constructor() {
@@ -60,9 +40,7 @@ class PageBattle {
       battler: Imitation.state.battle.self
     })
 
-    this.InstanceSelf.battler.card.team = setArrayRandom(parseCard(this.InstanceSelf.battler.card.team))
-
-    console.log(Imitation.state.battle.self)
+    this.InstanceSelf.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
 
     this.InstanceTarget = new Battler({
       x: 12,
@@ -73,7 +51,9 @@ class PageBattle {
       battler: Imitation.state.battle.target
     })
 
-    this.InstanceTarget.battler.card.team = setArrayRandom(parseCard(this.InstanceTarget.battler.card.team))
+    this.InstanceTarget.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
+
+    this.battleInit()
   }
 
   drawSelf() {

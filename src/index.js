@@ -129,10 +129,6 @@ class Main {
     Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
 
     Imitation.state.explore.map = originExplore
-
-    Imitation.state.battle.self.card.team = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
-
-    Imitation.state.battle.target.card.team = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
   }
 }
 
