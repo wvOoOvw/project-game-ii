@@ -8,10 +8,14 @@ import { Battler } from './ui-battler'
 import J_205624_78456047248 from '../media/205624_78456047248.jpg'
 import J_162926_76690565815 from '../media/162926_76690565815.jpg'
 import J_234521_92189037316 from '../media/234521_92189037316.jpg'
+import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
+import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
 
 const ctx = canvas.getContext('2d')
 
 const backgroundImage = createImage(J_205624_78456047248)
+const targetImage = createImage(J_music_47a83799595b4a5b97145a6e594620310)
+const selfImage = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -21,46 +25,45 @@ class PageBattle {
   constructor() {
     this.left = 0
 
-    this.InstanceSelf
-    this.InstanceTarget
+    this.InstanceSelfBattler
+    this.InstanceTargetBattler
 
     this.instance()
   }
 
   instance() {
-    const height = (windowHeight - 60 - safeTop - 48) / 2
-
-    this.InstanceSelf = new Battler({
+    const height = (windowHeight * 0.5) / 2
+    this.InstanceSelfBattler = new Battler({
       x: 12,
-      y: windowHeight - height - 12,
+      y: 72 + height + safeTop,
       width: windowWidth - 24,
       height: height,
-      type: 'self',
+      imageIns: selfImage,
       battler: Imitation.state.battle.self
     })
 
-    this.InstanceSelf.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
+    this.InstanceSelfBattler.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
 
-    this.InstanceTarget = new Battler({
+    this.InstanceTargetBattler = new Battler({
       x: 12,
       y: 60 + safeTop,
       width: windowWidth - 24,
       height: height,
-      type: 'target',
+      imageIns: targetImage,
       battler: Imitation.state.battle.target
     })
 
-    this.InstanceTarget.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
+    this.InstanceTargetBattler.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
 
     this.battleInit()
   }
 
-  drawSelf() {
-    this.InstanceSelf.render()
+  drawSelfBattler() {
+    this.InstanceSelfBattler.render()
   }
 
-  drawTarget() {
-    this.InstanceTarget.render()
+  drawTargetBattler() {
+    this.InstanceTargetBattler.render()
   }
 
   drawBackground() {
@@ -68,7 +71,7 @@ class PageBattle {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Back' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Home' }
 
     new Button(option).render()
 
@@ -81,20 +84,21 @@ class PageBattle {
   }
 
   battleInit() {
-    this.InstanceSelf.battler.card.store = this.InstanceSelf.battler.card.team
+    this.InstanceSelfBattler.battler.card.store = this.InstanceSelfBattler.battler.card.team
 
-    this.InstanceSelf.battler.card.hand = this.InstanceSelf.battler.card.store.filter((i, index) => index < 4)
+    this.InstanceSelfBattler.battler.card.hand = this.InstanceSelfBattler.battler.card.store.filter((i, index) => index < 4)
 
-    this.InstanceTarget.battler.card.store = this.InstanceTarget.battler.card.team
+    this.InstanceTargetBattler.battler.card.store = this.InstanceTargetBattler.battler.card.team
 
-    this.InstanceTarget.battler.card.hand = this.InstanceTarget.battler.card.store.filter((i, index) => index < 4)
+    this.InstanceTargetBattler.battler.card.hand = this.InstanceTargetBattler.battler.card.store.filter((i, index) => index < 4)
   }
 
   render() {
     this.drawBackground()
     this.drawButtonHome()
-    this.drawSelf()
-    this.drawTarget()
+
+    this.drawSelfBattler()
+    this.drawTargetBattler()
   }
 }
 

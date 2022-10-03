@@ -44,14 +44,14 @@ class Card extends UI {
     ctx.clip()
 
     if (this.imageMode === 'center') {
-      drawImage(this.imageIns, { x: x + width, y: y + width, width: width, height: height })
+      drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
     }
 
     if (this.imageMode === 'overspread') {
       drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
     }
 
-    ctx.fillStyle = `rgba(255, 255, 255, ${1 - this.animationTwinkleNumber})`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -71,17 +71,13 @@ class Card extends UI {
     }
 
     if (this.displayMode === 'team') {
-      ctx.textAlign = 'start'
-
-      ctx.fillText(card.name, x + width * 0.05, y + height / 2)
-
-      ctx.textAlign = 'end'
-
-      ctx.fillText('Lv' + card.level, x + width - width * 0.05, y + height / 2)
+      ctx.fillText(`${card.name} · Lv.${card.level}`, x + width / 2, y + height / 2)
     }
 
     if (this.displayMode === 'preview') {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
 
       ctx.textAlign = 'start'
 

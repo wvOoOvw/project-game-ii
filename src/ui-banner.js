@@ -1,6 +1,5 @@
 import { UI } from './ui'
-import { drawImage, drawText, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, addEventListenerPure, ifTouchCover } from './utils-common'
+import { drawImage, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
@@ -8,20 +7,19 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Battler extends UI {
+class Banner extends UI {
   constructor(props) {
     super(props)
-    this.battler = props.battler
+    this.text = props.text
     this.imageIns = props.imageIns
   }
-
 
   render() {
     const x = this.resultX
     const y = this.resultY
     const width = this.width
     const height = this.height
-    const battler = this.battler
+    const text = this.text
 
     ctx.save()
 
@@ -37,14 +35,19 @@ class Battler extends UI {
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
-    ctx.fillText(`HP: ${battler.HP}`, x + 12, y + 12)
-    ctx.fillText(`MP: ${battler.MP}`, x + 12, y + 30)
-    ctx.fillText(`牌库: ${battler.card.store.length}`, x + 12, y + 48)
-    ctx.fillText(`手牌: ${battler.card.hand.length}`, x + 12, y + 66)
-    ctx.fillText(`墓地: ${battler.card.cemetery.length}`, x + 12, y + 84)
+    if (typeof text === 'string') {
+      ctx.fillText(text, x + 12, y + 12)
+
+    }
+
+    if (typeof text === 'object') {
+      text.forEach((i, index) => {
+        ctx.fillText(i, x + 12, y + 12 + 18 * index)
+      })
+    }
 
     ctx.restore()
   }
 }
 
-export { Battler }
+export { Banner }
