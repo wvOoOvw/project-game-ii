@@ -7,24 +7,22 @@ class Button extends UI {
   constructor(props) {
     super(props)
     this.radius = props.radius || 8
-    this.text = props.text
     this.font = props.font || 14
-    this.lineWidth = props.lineWidth || 1
-    this.fillStyle = props.fillStyle || 'white'
-    this.strokeStyle = props.strokeStyle || 'white'
+    this.opacity = props.opacity || 1
+    this.text = props.text
   }
 
   render() {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `bold ${this.font}px monospace`
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = this.strokeStyle
-    ctx.fillStyle = this.fillStyle
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`
 
     drawRadius({ x: this.resultX, y: this.resultY, width: this.width, height: this.height, radius: this.radius })
 
-    ctx.stroke()
+    ctx.fill()
+
+    ctx.fillStyle = 'black'
 
     ctx.fillText(this.text, this.resultX + this.width / 2, this.resultY + this.height / 2)
   }

@@ -1,21 +1,18 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
-import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 import { Battler } from './ui-battler'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpg'
+import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
-import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
+import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_205624_78456047248)
-const targetImage = createImage(J_music_47a83799595b4a5b97145a6e594620310)
-const selfImage = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
+const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
+const ImageTarget = createImage(J_music_6e9e96c75cf04411baa154b1d6a3c7360)
+const ImageSelf = createImage(J_music_b40316005b55465b80ae4eecad8447960)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -38,7 +35,7 @@ class PageBattle {
       y: 72 + height + safeTop,
       width: windowWidth - 24,
       height: height,
-      imageIns: selfImage,
+      imageIns: ImageSelf,
       battler: Imitation.state.battle.self
     })
 
@@ -49,7 +46,7 @@ class PageBattle {
       y: 60 + safeTop,
       width: windowWidth - 24,
       height: height,
-      imageIns: targetImage,
+      imageIns: ImageTarget,
       battler: Imitation.state.battle.target
     })
 
@@ -67,7 +64,7 @@ class PageBattle {
   }
 
   drawBackground() {
-    drawImage(backgroundImage, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   drawButtonHome() {

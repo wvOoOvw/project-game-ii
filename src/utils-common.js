@@ -23,11 +23,7 @@ const parseCard = (array, numberFlat) => {
   return result
 }
 
-const sortCard = (array) => {
-  return array.sort((a, b) => a.name - b.name)
-}
-
-export { parseCard, sortCard }
+export { parseCard }
 
 const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()

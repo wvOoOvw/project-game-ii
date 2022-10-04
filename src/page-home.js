@@ -3,15 +3,11 @@ import { drawImage } from './utils-canvas'
 
 import { Button } from './ui-button'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpg'
-import J_185550_35094491662 from '../media/185550_35094491662.jpg'
-import J_153344_22433013228 from '../media/153344_22433013228.jpg'
+import J_music_56280e428411459c823ce172d97da20c0 from '../media/music_56280e428411459c823ce172d97da20c0.jpeg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_234521_92189037316)
+const ImageBackground = createImage(J_music_56280e428411459c823ce172d97da20c0)
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
@@ -61,7 +57,7 @@ class PageHome {
   }
 
   drawBackground() {
-    drawImage(backgroundImage, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   render() {

@@ -4,15 +4,11 @@ import { drawImage, drawRect, drawRadius } from './utils-canvas'
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpg'
-import J_185550_35094491662 from '../media/185550_35094491662.jpg'
-import J_153344_22433013228 from '../media/153344_22433013228.jpg'
+import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_153344_22433013228)
+const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -108,7 +104,7 @@ class PageExplore {
     ctx.fillText(content.name, 24, 72 + 172 * index - offsetY + safeTop)
 
     content.list.forEach((i, index_) => {
-      const option = { width: 80, height: 80, y: 108 + 172 * index - offsetY + safeTop, fillStyle: 'black', strokeStyle: 'black', font: 12, text: i.name }
+      const option = { width: 80, height: 80, y: 108 + 172 * index - offsetY + safeTop, font: 12, text: i.name }
 
       option.x = 24 + (option.width + 12) * index_ - offsetX
 
@@ -130,7 +126,7 @@ class PageExplore {
   }
 
   drawBackground() {
-    drawImage(backgroundImage, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   render() {

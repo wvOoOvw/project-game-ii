@@ -1,20 +1,17 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, sortCard } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Card } from './ui-card'
 import { Button } from './ui-button'
 
-import J_205624_78456047248 from '../media/205624_78456047248.jpg'
-import J_162926_76690565815 from '../media/162926_76690565815.jpg'
-import J_234521_92189037316 from '../media/234521_92189037316.jpg'
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
 import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
 
 const ctx = canvas.getContext('2d')
 
-const backgroundImage = createImage(J_205624_78456047248)
-const cardImage = createImage(J_music_47a83799595b4a5b97145a6e594620310)
+const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
+const ImageBanner = createImage(J_music_47a83799595b4a5b97145a6e594620310)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -25,6 +22,7 @@ class PageStore {
     this.preview = null
 
     this.type = 'team'
+    this.sort = 'name'
 
     this.card
 
@@ -56,10 +54,10 @@ class PageStore {
 
   initCard() {
     if (this.type === 'team') {
-      this.card = sortCard(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true))
+      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true).sort((a, b) => b[this.sort] - a[this.sort])
     }
     if (this.type === 'library') {
-      this.card = sortCard(parseCard(Imitation.state.info.cardLibrary))
+      this.card = parseCard(Imitation.state.info.cardLibrary).sort((a, b) => b[this.sort] - a[this.sort])
     }
   }
 
@@ -79,8 +77,7 @@ class PageStore {
         touchMode: 'click',
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
-        displayMode: 'library',
-        imageMode: 'center'
+        displayMode: 'card',
       }
 
       option.height = option.width * 1.25
@@ -96,7 +93,6 @@ class PageStore {
       width: windowWidth * 0.7,
       card: this.preview,
       displayMode: 'preview',
-      imageMode: 'center',
     }
 
     option.height = option.width * 1.5
@@ -127,16 +123,16 @@ class PageStore {
 
     ctx.clip()
 
-    drawImage(cardImage, option)
+    drawImage(ImageBanner, option)
 
     const _drawTeamButton = () => {
       new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
 
-        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, font: 10, text: `队伍 ${index + 1}` }
+        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, font: 10, opacity: 0.5, text: `队伍 ${index + 1}` }
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        if (index === Imitation.state.info.teamIndex) option_.lineWidth = 4
+        if (index === Imitation.state.info.teamIndex) option_.opacity = 1
 
         new Button(option_).render()
 
@@ -150,19 +146,20 @@ class PageStore {
           this.initCard()
           this.instanceScroll()
           this.instanceCard()
-          this.instancePreview()
         }
 
         addEventListener('touchstart', event, option_)
       })
     }
 
+    _drawTeamButton()
+
     const _drawLibraryButton = () => {
-      const option_ = { x: windowWidth - 54, y: 12 + option.y, width: 30, height: 30, font: 12, radius: 15, text: `S` }
+      const option_ = { x: windowWidth - 54, y: 12 + option.y, width: 30, height: 30, font: 10, opacity: 0.5, radius: 15, text: `S` }
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-      if (this.type === 'library') option_.lineWidth = 4
+      if (this.type === 'library') option_.opacity = 1
 
       new Button(option_).render()
 
@@ -176,15 +173,13 @@ class PageStore {
           this.initCard()
           this.instanceScroll()
           this.instanceCard()
-          this.instancePreview()
           return
         }
         if (this.type === 'library') {
           this.type = 'team'
-          this.card = sortCard(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true))
+          this.initCard()
           this.instanceScroll()
           this.instanceCard()
-          this.instancePreview()
           return
         }
       }
@@ -192,8 +187,55 @@ class PageStore {
       addEventListener('touchstart', event, option_)
     }
 
-    _drawTeamButton()
     _drawLibraryButton()
+
+    const _drawSort = () => {
+      const array = [['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类'],]
+      new Array(...array).forEach((i, index) => {
+        const option_ = { x: 24 + index * 72, y: option.y + option.height - 42, width: 60, height: 30, font: 10, opacity: 0.5, text: i[1] }
+
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+
+        if (i[0] === this.sort) option_.opacity = 1
+
+        new Button(option_).render()
+
+        if (this.preview) return
+
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+
+          this.sort = i[0]
+          this.initCard()
+          this.instanceScroll()
+          this.instanceCard()
+        }
+
+        addEventListener('touchstart', event, option_)
+      })
+    }
+
+    _drawSort()
+
+    const _drawText = () => {
+      const option_ = { x: 24, y: 54 + option.y, width: option.width, height: 12 }
+
+      if (this.type === 'team') {
+        option_.text = `队伍 ${Imitation.state.info.teamIndex + 1}`
+      }
+      if (this.type === 'library') {
+        option_.text = '仓库'
+      }
+
+      ctx.textAlign = 'start'
+      ctx.textBaseline = 'top'
+      ctx.font = `bold 12px monospace`
+      ctx.lineWidth = 1
+
+      ctx.fillText(option_.text, option_.x, option_.y)
+    }
+
+    // _drawText()
 
     ctx.restore()
   }
@@ -273,7 +315,7 @@ class PageStore {
 
 
   drawBackground() {
-    drawImage(backgroundImage, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   drawButtonHome() {
@@ -318,7 +360,6 @@ class PageStore {
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    this.instancePreview()
   }
 
   load(card) {
@@ -381,12 +422,9 @@ class PageStore {
       team[index] = team[index].filter(i => i !== teamOrigin)
     }
 
-    this.card = sortCard(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true))
-
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    this.instancePreview()
   }
 
   render() {
