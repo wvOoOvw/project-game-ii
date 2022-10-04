@@ -1,6 +1,6 @@
 import { UI } from './ui'
 import { drawImage, drawText, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, addEventListenerPure, ifTouchCover } from './utils-common'
+import { addEventListener, addEventListenerPure, ifTouchCover, createImage } from './utils-common'
 
 const ctx = canvas.getContext('2d')
 
@@ -27,7 +27,7 @@ class Card extends UI {
     this.displayMode = props.displayMode
     this.imageMode = props.imageMode
 
-    this.imageIns = props.imageIns
+    this.image = props.image
   }
 
   render() {
@@ -43,13 +43,7 @@ class Card extends UI {
 
     ctx.clip()
 
-    if (this.imageMode === 'center') {
-      drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
-    }
-
-    if (this.imageMode === 'overspread') {
-      drawImage(this.imageIns, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-    }
+    drawImage(createImage(this.card.image), { x: x, y: y, width: width, height: height })
 
     ctx.fillStyle = `rgba(255, 255, 255, 1)`
 
@@ -71,7 +65,7 @@ class Card extends UI {
     }
 
     if (this.displayMode === 'team') {
-      ctx.fillText(`${card.name} · Lv.${card.level}`, x + width / 2, y + height / 2)
+      // ctx.fillText(`${card.name} · Lv.${card.level}`, x + width / 2, y + height / 2)
     }
 
     if (this.displayMode === 'preview') {

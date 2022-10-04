@@ -7,8 +7,6 @@ import PageHome from './page-home'
 import PageExplore from './page-explore'
 import PageBattle from './page-battle'
 import PageStore from './page-store'
-import PageStoreCard from './page-store-card'
-import PageStoreTeam from './page-store-team'
 
 import { Message } from './ui-message'
 
@@ -65,15 +63,12 @@ class Main {
       page: {
         current: 'store',
         next: '',
-        params: { index: 1 },
         map: {
           'transition': PageTransition,
           'home': PageHome,
           'explore': PageExplore,
           'battle': PageBattle,
           'store': PageStore,
-          'store-card': PageStoreCard,
-          'store-team': PageStoreTeam,
         },
       },
       removeEventListener: [],
@@ -135,9 +130,7 @@ class Main {
       }
     })
 
-    Imitation.state.info.cardLibrary = [...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary]
-
-    Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 10 }] }))
+    Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] }))
 
     Imitation.state.explore.map = originExplore
   }
