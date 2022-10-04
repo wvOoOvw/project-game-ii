@@ -61,7 +61,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'store',
+        current: 'battle',
         next: '',
         map: {
           'transition': PageTransition,
@@ -129,6 +129,8 @@ class Main {
         ]
       }
     })
+
+    Imitation.state.info.cardLibrary = [...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary]
 
     Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] }))
 

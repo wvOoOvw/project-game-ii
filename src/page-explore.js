@@ -14,7 +14,7 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class PageExplore {
+class Page {
   constructor() {
     this.exploreMap
 
@@ -136,4 +136,4 @@ class PageExplore {
   }
 }
 
-export default PageExplore
+export default Page

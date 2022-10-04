@@ -74,10 +74,6 @@ class Scroll extends UI {
 
     const option = this.clipFunction()
 
-    addEventListener('touchstart', this.eventDown.bind(this), option)
-    addEventListenerPure('touchmove', this.eventMove.bind(this), option)
-    addEventListenerPure('touchend', this.eventUp.bind(this), option)
-
     ctx.clip()
 
     callback(this.scrollPosition)
@@ -106,6 +102,10 @@ class Scroll extends UI {
     // }
 
     ctx.restore()
+
+    addEventListener('touchstart', this.eventDown.bind(this), option)
+    addEventListenerPure('touchmove', this.eventMove.bind(this), option)
+    addEventListenerPure('touchend', this.eventUp.bind(this), option)
   }
 }
 

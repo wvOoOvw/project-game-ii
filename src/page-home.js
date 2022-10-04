@@ -12,7 +12,7 @@ const ImageBackground = createImage(J_music_56280e428411459c823ce172d97da20c0)
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class PageHome {
+class Page {
   constructor() {
     
   }
@@ -68,4 +68,4 @@ class PageHome {
   }
 }
 
-export default PageHome
+export default Page
