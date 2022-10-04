@@ -25,7 +25,6 @@ class Battler extends UI {
     this.imageIns = props.imageIns
   }
 
-
   render() {
     const x = this.resultX
     const y = this.resultY
@@ -61,7 +60,7 @@ class Card extends UI {
   constructor(props) {
     super(props)
     this.card = props.card
-    this.rotate = props.rotate
+    this.touchStart = props.touchStart
 
     this.mouseDownPosition = null
 
@@ -71,6 +70,7 @@ class Card extends UI {
   eventDown(e) {
     try {
       this.mouseDownPosition = [e.x || e.touches[0].clientX, e.y || e.touches[0].clientY]
+      this.touchStart()
     } catch { }
   }
   eventUp(e) {
@@ -96,15 +96,13 @@ class Card extends UI {
   render() {
     if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
 
-    const x = this.resultX
-    const y = this.resultY
-    const width = this.width
-    const height = this.height
+    var x = this.resultX
+    var y = this.resultY
+    var width = this.width
+    var height = this.height
     const card = this.card
 
     ctx.save()
-
-    ctx.rotate(this.rotate)
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
@@ -142,6 +140,8 @@ class Console extends UI {
     super(props)
     this.cards = props.cards
 
+    this.touchCard
+
     this.InstanceCards = []
   }
 
@@ -165,6 +165,7 @@ class Console extends UI {
       }
       option.x = x + (width - option.width) / 2 + diff * (width / 4)
       option.y = y + (height - option.height) / 2
+      option.touchStart = () => this.touchCard = i
 
       return new Card({ card: i, ...option })
     })
@@ -182,7 +183,8 @@ class Console extends UI {
 
     ctx.fill()
 
-    this.InstanceCards.forEach(i => i.render())
+    this.InstanceCards.forEach(i => i.card !== this.touchCard ? i.render() : null)
+    this.InstanceCards.forEach(i => i.card === this.touchCard ? i.render() : null)
   }
 }
 
