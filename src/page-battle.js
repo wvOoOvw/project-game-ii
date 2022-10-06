@@ -1,5 +1,5 @@
 import { UI } from './ui'
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -23,6 +23,19 @@ class Battler extends UI {
     super(props)
     this.battler = props.battler
     this.imageIns = props.imageIns
+
+    this.beHitAnimation = false
+    this.beHitAnimationTime = 0
+    this.beCureAnimation = false
+    this.beCureAnimationTime = 0
+  }
+
+  beHit() {
+    this.beHitAnimation = true
+  }
+
+  beCure() {
+    this.beCureAnimation = true
   }
 
   render() {
@@ -61,8 +74,13 @@ class Card extends UI {
     super(props)
     this.card = props.card
     this.touchStart = props.touchStart
+    this.touchEnd = props.touchEnd
+
+    this.touchOpen = false
 
     this.mouseDownPosition = null
+
+    this.mouseDownPositionNumber = 0
 
     this.imageDOM
   }
@@ -78,6 +96,10 @@ class Card extends UI {
 
     this.offsetX = 0
     this.offsetY = 0
+
+    if (this.touchOpen) this.touchEnd()
+
+    this.touchOpen = false
   }
   eventMove(e) {
     if (!this.mouseDownPosition) return
@@ -91,20 +113,44 @@ class Card extends UI {
 
     this.offsetX = this.offsetX + changeX
     this.offsetY = this.offsetY + changeY
+
+    this.touchOpen = this.offsetY < -200
   }
 
   render() {
     if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
 
-    var x = this.resultX
-    var y = this.resultY
-    var width = this.width
-    var height = this.height
+    if (this.mouseDownPosition && this.mouseDownPositionNumber < 1) {
+      this.mouseDownPositionNumber = numberFix(this.mouseDownPositionNumber + 0.1)
+    }
+
+    if (!this.mouseDownPosition && this.mouseDownPositionNumber > 0) {
+      this.mouseDownPositionNumber = 0
+    }
+
     const card = this.card
+
+    const diff = {
+      x: -this.width * 0.5,
+      y: -this.height * 0.5,
+      width: this.width,
+      height: this.height
+    }
+
+    const x = this.resultX + diff.x * this.mouseDownPositionNumber
+    const y = this.resultY + diff.y * this.mouseDownPositionNumber
+    const width = this.width + diff.width * this.mouseDownPositionNumber
+    const height = this.height + diff.height * this.mouseDownPositionNumber
 
     ctx.save()
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    if (this.touchOpen) {
+      ctx.shadowBlur = 20
+      ctx.shadowColor = "black"
+      ctx.fill()
+    }
 
     ctx.clip()
 
@@ -115,17 +161,32 @@ class Card extends UI {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `bold ${this.width * 0.075}px monospace`
+    ctx.font = `bold ${width * 0.075}px monospace`
 
-    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+    if (!this.mouseDownPosition) {
+      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
 
-    ctx.textAlign = 'start'
+      ctx.textAlign = 'start'
 
-    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+      drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    }
+
+    if (this.mouseDownPosition) {
+      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+
+      ctx.textAlign = 'start'
+
+      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+      ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
+
+      drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    }
 
     ctx.restore()
 
@@ -139,6 +200,7 @@ class Console extends UI {
   constructor(props) {
     super(props)
     this.cards = props.cards
+    this.useCard = props.useCard
 
     this.touchCard
 
@@ -160,12 +222,13 @@ class Console extends UI {
       const diff = index - centerIndex
 
       const option = {
-        width: width / 4,
-        height: width / 4 * 1.35
+        width: width / 4 - 12
       }
+      option.height = option.width * 1.35
       option.x = x + (width - option.width) / 2 + diff * (width / 4)
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
+      option.touchEnd = () => this.useCard(i)
 
       return new Card({ card: i, ...option })
     })
@@ -190,7 +253,7 @@ class Console extends UI {
 
 class Page {
   constructor() {
-    this.left = 0
+    this.animationing = false
 
     this.env = {
       round: 1
@@ -207,13 +270,12 @@ class Page {
   }
 
   initBattler() {
-    this.InstanceBattlerSelf.battler.card.store = this.InstanceBattlerSelf.battler.card.team
+    this.InstanceBattlerSelf.battler.card.store = [...this.InstanceBattlerSelf.battler.card.team]
 
-    this.InstanceBattlerTarget.battler.card.store = this.InstanceBattlerTarget.battler.card.team
+    this.InstanceBattlerTarget.battler.card.store = [...this.InstanceBattlerTarget.battler.card.team]
 
-    this.pumpCard(this.InstanceBattlerSelf.battler.card.store, this.InstanceBattlerSelf.battler.card.hand, 4)
-
-    this.pumpCard(this.InstanceBattlerTarget.battler.card.store, this.InstanceBattlerTarget.battler.card.hand, 4)
+    this.pumpCard(4, this.InstanceBattlerSelf)
+    this.pumpCard(4, this.InstanceBattlerTarget)
 
     this.InstanceConsole.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
@@ -255,7 +317,8 @@ class Page {
       y: windowHeight - height - 12,
       width: windowWidth - 24,
       height: height,
-      cards: this.InstanceBattlerSelf.battler.card.hand
+      cards: this.InstanceBattlerSelf.battler.card.hand,
+      useCard: this.useCard
     })
   }
 
@@ -288,17 +351,31 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  pumpCard(store, hand, times) {
+  pumpCard(times, Battler = this.InstanceBattlerSelf) {
     while (times) {
-      const index = store.length - 1
-      hand.push(store[index])
-      store.splice(index, index + 1)
+      const index = Battler.battler.card.store.length - 1
+
+      Battler.battler.card.hand.push(Battler.battler.card.store[index])
+      Battler.battler.card.store.splice(index, index + 1)
+
       times = times - 1
     }
   }
 
-  useCard(card, hand, cemetery, consume) {
+  async useCard(card, Battler = this.InstanceBattlerSelf) {
+    this.animationing = true
 
+    const [self, target] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerTarget] : [this.InstanceBattlerTarget, this.InstanceBattlerSelf]
+
+    const result = card.function(card, self, target, this.env)
+
+    while (result.length) {
+
+
+      result.splice(result.length - 1, result.length)
+    }
+
+    this.animationing = false
   }
 
   render() {

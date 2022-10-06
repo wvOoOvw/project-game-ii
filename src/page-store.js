@@ -61,7 +61,7 @@ class Card extends UI {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `bold ${this.width * 0.075}px monospace`
+    ctx.font = `bold ${width * 0.075}px monospace`
 
     if (this.displayMode === 'card') {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -201,10 +201,10 @@ class Page {
       const option = {
         width: (windowWidth - 60) / 4,
         card: card,
+        displayMode: 'card',
         touchMode: 'click',
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
-        displayMode: 'card',
       }
 
       option.height = option.width * 1.35
@@ -222,9 +222,9 @@ class Page {
       displayMode: 'preview',
     }
 
-    option.height = option.width * 1.5
+    option.height = option.width * 1.35
     option.x = windowWidth * 0.15
-    option.y = (windowHeight - option.width * 1.5) / 2 - 80
+    option.y = (windowHeight - option.width * 1.5) / 2 - 60
 
     this.InstancePreview = new Card(option)
   }
@@ -390,12 +390,12 @@ class Page {
 
     this.InstancePreview.render()
 
-    const buttonY = windowHeight - this.InstancePreview.y - 160
+    const buttonY = windowHeight - this.InstancePreview.y - 120
 
     var option, option_
 
     if (this.type === 'library') {
-      option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '装载' }
+      option = { x: windowWidth / 2 - 60, y: buttonY, width: 120, height: 40, radius: 8, text: '装载' }
 
       new Button(option).render()
 
@@ -406,7 +406,7 @@ class Page {
 
       addEventListener('touchstart', load, option)
 
-      option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, radius: 8, text: '合成' }
+      option_ = { x: windowWidth / 2 - 60, y: buttonY + 60, width: 120, height: 40, radius: 8, text: '合成' }
 
       new Button(option_).render()
 
@@ -419,7 +419,7 @@ class Page {
     }
 
     if (this.type === 'team') {
-      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, text: '卸载' }
+      const option = { x: windowWidth / 2 - 60, y: buttonY, width: 120, height: 40, radius: 8, text: '卸载' }
 
       new Button(option).render()
 

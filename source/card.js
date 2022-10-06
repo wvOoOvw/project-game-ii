@@ -14,8 +14,10 @@ const origin = [
     limit: 3,
     image: J_music_1c31bcc267a545ef971109512053f3e50,
     description: l => `消耗10MP，造成 ${l * 15 + 100} 伤害，并附加给目标一层灼烧印记。`,
-    function: (self, target, round) => {
-
+    function: (card, self, target, round) => {
+      return [
+        { type: 'hit', value: card.level * 15 + 100}
+      ]
     }
   },
   {
