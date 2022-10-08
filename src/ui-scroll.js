@@ -1,12 +1,16 @@
-import { UI } from './ui'
 import { addEventListener, addEventListenerPure } from './utils-common'
 import { drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
-class Scroll extends UI {
+class Scroll {
   constructor(props) {
-    super(props)
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+    this.radius = props.radius
+
     this.scrollX = props.scrollX || 0
     this.scrollY = props.scrollY || 0
 
@@ -27,12 +31,16 @@ class Scroll extends UI {
     this.mouseDownPosition = null
 
     this.clipFunction = () => {
-      const option = { x: this.resultX, y: this.resultY, width: this.width, height: this.height, radius: this.radius }
+      const option = { x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius }
 
       drawRadius(option)
 
       return option
     }
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
   }
 
   eventDown(e) {

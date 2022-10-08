@@ -1,4 +1,3 @@
-import { UI } from './ui'
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
@@ -17,9 +16,16 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Card extends UI {
+class Card {
   constructor(props) {
-    super(props)
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = props.offsetX || 0
+    this.offsetY = props.offsetY || 0
+
     this.card = props.card
 
     this.touchAble = props.touchAble
@@ -39,11 +45,15 @@ class Card extends UI {
     this.imageDOM
   }
 
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
   render() {
     if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
 
-    const x = this.resultX
-    const y = this.resultY
+    const x = this.x + this.offsetX
+    const y = this.y + this.offsetY
     const width = this.width
     const height = this.height
     const card = this.card

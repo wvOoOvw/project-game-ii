@@ -68,20 +68,11 @@ const addEventListener = (type, callback, option) => {
 
   canvas.addEventListener(type, event, { passive: true })
 
-  // if (type === 'touchstart') {
-  //   canvas.addEventListener('mousedown', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousedown', event))
-  // }
-
-  // if (type === 'touchmove') {
-  //   canvas.addEventListener('mousemove', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousemove', event))
-  // }
-
-  // if (type === 'touchend') {
-  //   canvas.addEventListener('mouseup', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mouseup', event))
-  // }
+  if (false) {
+    if (type === 'touchstart') type = 'mousedown'
+    if (type === 'touchmove') type = 'mouseup'
+    if (type === 'touchend') type = 'mousedown'
+  }
 
   Imitation.state.removeEventListener.push(() => canvas.removeEventListener(type, event))
 }
@@ -91,20 +82,11 @@ const addEventListenerPure = (type, callback) => {
 
   canvas.addEventListener(type, event, { passive: true })
 
-  // if (type === 'touchstart') {
-  //   canvas.addEventListener('mousedown', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousedown', event))
-  // }
-
-  // if (type === 'touchmove') {
-  //   canvas.addEventListener('mousemove', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mousemove', event))
-  // }
-
-  // if (type === 'touchend') {
-  //   canvas.addEventListener('mouseup', event, { passive: true })
-  //   Imitation.state.removeEventListener.push(() => canvas.removeEventListener('mouseup', event))
-  // }
+  if (false) {
+    if (type === 'touchstart') type = 'mousedown'
+    if (type === 'touchmove') type = 'mouseup'
+    if (type === 'touchend') type = 'mousedown'
+  }
 
   Imitation.state.removeEventListener.push(() => canvas.removeEventListener(type, event))
 }

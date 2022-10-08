@@ -1,4 +1,3 @@
-import { UI } from './ui'
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
@@ -18,9 +17,13 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Battler extends UI {
+class Battler {
   constructor(props) {
-    super(props)
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
     this.battler = props.battler
     this.imageIns = props.imageIns
 
@@ -39,8 +42,8 @@ class Battler extends UI {
   }
 
   render() {
-    const x = this.resultX
-    const y = this.resultY
+    const x = this.x
+    const y = this.y
     const width = this.width
     const height = this.height
     const battler = this.battler
@@ -69,18 +72,29 @@ class Battler extends UI {
   }
 }
 
-class Card extends UI {
+class Card {
   constructor(props) {
-    super(props)
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = props.offsetX || 0
+    this.offsetY = props.offsetY || 0
+
+    // this.x_ = 0
+
     this.card = props.card
     this.touchStart = props.touchStart
     this.touchEnd = props.touchEnd
+    this.consoleHeight = props.consoleHeight
 
-    this.touchOpen = false
+    this.useAble = false
+    this.useAbleTime = 0
 
     this.mouseDownPosition = null
 
-    this.mouseDownPositionNumber = 0
+    this.mouseDownPositionTime = 0
 
     this.imageDOM
   }
@@ -97,9 +111,7 @@ class Card extends UI {
     this.offsetX = 0
     this.offsetY = 0
 
-    if (this.touchOpen) this.touchEnd()
-
-    this.touchOpen = false
+    if (this.useAble) this.touchEnd()
   }
   eventMove(e) {
     if (!this.mouseDownPosition) return
@@ -113,19 +125,35 @@ class Card extends UI {
 
     this.offsetX = this.offsetX + changeX
     this.offsetY = this.offsetY + changeY
-
-    this.touchOpen = this.offsetY < -200
   }
 
   render() {
     if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
 
-    if (this.mouseDownPosition && this.mouseDownPositionNumber < 1) {
-      this.mouseDownPositionNumber = numberFix(this.mouseDownPositionNumber + 0.1)
+    // if (this.x_ !== this.x) {
+    //   const diff = this.x - this.x_
+
+    //   if (diff > 1) this.x_ = this.x_ + 1
+    //   if (diff >= -1 && diff <= 1) this.x_ = this.x
+    //   if (diff < -1) this.x_ = this.x_ - 1
+    // }
+
+    this.useAble = this.offsetY < 0 - this.consoleHeight / 2
+
+    if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.1)
     }
 
-    if (!this.mouseDownPosition && this.mouseDownPositionNumber > 0) {
-      this.mouseDownPositionNumber = 0
+    if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
+      this.mouseDownPositionTime = 0
+    }
+
+    if (this.useAble && this.useAbleTime < 1) {
+      this.useAbleTime = numberFix(this.useAbleTime + 0.1)
+    }
+
+    if (!this.useAble && this.useAbleTime > 0) {
+      this.useAbleTime = numberFix(this.useAbleTime - 0.1)
     }
 
     const card = this.card
@@ -137,19 +165,21 @@ class Card extends UI {
       height: this.height
     }
 
-    const x = this.resultX + diff.x * this.mouseDownPositionNumber
-    const y = this.resultY + diff.y * this.mouseDownPositionNumber
-    const width = this.width + diff.width * this.mouseDownPositionNumber
-    const height = this.height + diff.height * this.mouseDownPositionNumber
+    const x = this.x + this.offsetX + diff.x * this.mouseDownPositionTime
+    const y = this.y + this.offsetY + diff.y * this.mouseDownPositionTime
+    const width = this.width + diff.width * this.mouseDownPositionTime
+    const height = this.height + diff.height * this.mouseDownPositionTime
 
     ctx.save()
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
-    if (this.touchOpen) {
-      ctx.shadowBlur = 20
+    if (this.useAbleTime) {
+      ctx.shadowBlur = this.useAbleTime * 40
       ctx.shadowColor = "black"
       ctx.fill()
+
+      ctx.shadowBlur = 0
     }
 
     ctx.clip()
@@ -190,21 +220,35 @@ class Card extends UI {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), this.option)
-    addEventListenerPure('touchmove', this.eventMove.bind(this), this.option)
-    addEventListenerPure('touchend', this.eventUp.bind(this), this.option)
+    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
+    addEventListenerPure('touchmove', this.eventMove.bind(this))
+    addEventListenerPure('touchend', this.eventUp.bind(this))
   }
 }
 
-class Console extends UI {
+class Console {
   constructor(props) {
-    super(props)
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
     this.cards = props.cards
+    this.env = props.env
     this.useCard = props.useCard
+    this.overRound = props.overRound
 
     this.touchCard
 
     this.InstanceCards = []
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  get cardHeight() {
+    return (this.width / 4 - 12) * 1.35
   }
 
   updateCards(cards) {
@@ -229,22 +273,46 @@ class Console extends UI {
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
       option.touchEnd = () => this.useCard(i)
+      option.consoleHeight = this.height
 
       return new Card({ card: i, ...option })
     })
   }
 
-  render() {
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
+  updateEnv(env) {
+    this.env = env
+  }
 
-    ctx.fillStyle = 'white'
+  drawEnv() {
+    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `ROUND ${this.env.round}` }
 
-    drawRadius({ x, y, width, height, radius: 0 })
+    new Button(option).render()
+  }
+
+  drawButtonOverRound() {
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '结束回合' }
+
+    new Button(option).render()
+
+    const event = () => {
+      this.overRound()
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  drawBackground() {
+    drawRadius({ ...this.option, radius: 12 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
 
     ctx.fill()
+  }
+
+  render() {
+    this.drawBackground()
+    this.drawEnv()
+    this.drawButtonOverRound()
 
     this.InstanceCards.forEach(i => i.card !== this.touchCard ? i.render() : null)
     this.InstanceCards.forEach(i => i.card === this.touchCard ? i.render() : null)
@@ -312,13 +380,16 @@ class Page {
 
   instanceConsole() {
     const height = windowHeight * 0.5 - 96
+
     this.InstanceConsole = new Console({
       x: 12,
       y: windowHeight - height - 12,
       width: windowWidth - 24,
       height: height,
       cards: this.InstanceBattlerSelf.battler.card.hand,
-      useCard: this.useCard
+      env: this.env,
+      useCard: this.useCard,
+      overRound: this.overRound,
     })
   }
 
@@ -351,7 +422,7 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  pumpCard(times, Battler = this.InstanceBattlerSelf) {
+  pumpCard = (times, Battler = this.InstanceBattlerSelf) => {
     while (times) {
       const index = Battler.battler.card.store.length - 1
 
@@ -362,20 +433,32 @@ class Page {
     }
   }
 
-  async useCard(card, Battler = this.InstanceBattlerSelf) {
+  useCard = (card, Battler = this.InstanceBattlerSelf) => {
     this.animationing = true
 
     const [self, target] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerTarget] : [this.InstanceBattlerTarget, this.InstanceBattlerSelf]
 
-    const result = card.function(card, self, target, this.env)
+    const result = card.function(card, self.battler, target.battler, this.env)
 
     while (result.length) {
+      const current = result.shift()
 
-
-      result.splice(result.length - 1, result.length)
+      if (current.type === 'hit-target') {
+        target.battler.HP = target.battler.HP + current.value
+      }
     }
 
+    self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
+
+    self.battler.card.cemetery.push(card)
+
     this.animationing = false
+
+    this.InstanceConsole.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+  }
+
+  overRound = () => {
+
   }
 
   render() {

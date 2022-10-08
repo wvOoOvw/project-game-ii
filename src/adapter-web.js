@@ -24,7 +24,7 @@
   body.style.position = 'absolute'
   body.style.width = '100%'
   body.style.height = '100%'
-  body.style['max-width'] = '425px'
+  // body.style['max-width'] = '425px'
 
   const canvas = document.createElement('canvas')
 
