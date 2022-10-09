@@ -93,7 +93,7 @@ class Main {
           },
           buff: [],
         },
-        target: {
+        opposite: {
           HP: 1000,
           MP: 1000,
           card: {
@@ -133,6 +133,8 @@ class Main {
     Imitation.state.info.cardLibrary = [...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary]
 
     Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] }))
+
+    Imitation.state.info.team[0] = [...Imitation.state.info.team[0], ...Imitation.state.info.team[0]]
 
     Imitation.state.explore.map = originExplore
   }

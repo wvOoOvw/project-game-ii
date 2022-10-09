@@ -14,9 +14,11 @@ const origin = [
     limit: 3,
     image: J_music_1c31bcc267a545ef971109512053f3e50,
     description: l => `消耗10MP，造成 ${l * 15 + 100} 伤害，并附加给目标一层灼烧印记。`,
-    function: (card, self, target, round) => {
+    function: (card, self, opposite, round) => {
       return [
-        { type: 'hit-target', value: -(card.level * 15 + 100)}
+        { type: 'cost-mp', target: 'self', value: -10 },
+        { type: 'hit', target: 'opposite', value: -(card.level * 15 + 100) },
+        { type: 'buff', target: 'opposite', value: 'fire' }
       ]
     }
   },
@@ -28,9 +30,10 @@ const origin = [
     limit: 3,
     image: J_music_47a83799595b4a5b97145a6e594620310,
     description: l => `造成 ${l * 15 + 30} 伤害，恢复 30MP。`,
-    function: (card, self, target, round) => {
+    function: (card, self, opposite, round) => {
       return [
-        { type: 'hit-target', value: -(card.level * 15 + 100)}
+        { type: 'cost-mp', target: 'self', value: 30 },
+        { type: 'hit', target: 'opposite', value: -(card.level * 15 + 30) }
       ]
     }
   },
@@ -41,10 +44,12 @@ const origin = [
     race: '木',
     limit: 3,
     image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
-    description: l => `恢复 50HP、20MP`,
-    function: (card, self, target, round) => {
+    description: l => `恢复 50HP、20MP，抽一张卡`,
+    function: (card, self, opposite, round) => {
       return [
-        { type: 'hit-target', value: -(card.level * 15 + 100)}
+        { type: 'cure-hp', target: 'self', value: 50 },
+        { type: 'cure-mp', target: 'self', value: 20 },
+        { type: 'pump-positive', target: 'self', value: 1 },
       ]
     }
   },
@@ -56,9 +61,10 @@ const origin = [
     limit: 3,
     image: J_music_072c59684f6c401dad40cadf0d0dd6290,
     description: l => `消耗50MP，造成 ${l * 30 + 300} 伤害`,
-    function: (card, self, target, round) => {
+    function: (card, self, opposite, round) => {
       return [
-        { type: 'hit-target', value: -(card.level * 15 + 100)}
+        { type: 'cost-mp', target: 'self', value: -50 },
+        { type: 'hit', target: 'opposite', value: -(card.level * 15 + 100) }
       ]
     }
   },

@@ -10,7 +10,7 @@ import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/music_6e9e96c75c
 const ctx = canvas.getContext('2d')
 
 const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
-const ImageTarget = createImage(J_music_6e9e96c75cf04411baa154b1d6a3c7360)
+const ImageOpposite = createImage(J_music_6e9e96c75cf04411baa154b1d6a3c7360)
 const ImageSelf = createImage(J_music_b40316005b55465b80ae4eecad8447960)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
@@ -67,6 +67,7 @@ class Battler {
     ctx.fillText(`牌库: ${battler.card.store.length}`, x + 12, y + 48)
     ctx.fillText(`手牌: ${battler.card.hand.length}`, x + 12, y + 66)
     ctx.fillText(`墓地: ${battler.card.cemetery.length}`, x + 12, y + 84)
+    ctx.fillText(this.battler.buff.join(' · '), x + 12, y + 102)
 
     ctx.restore()
   }
@@ -82,12 +83,13 @@ class Card {
     this.offsetX = props.offsetX || 0
     this.offsetY = props.offsetY || 0
 
-    // this.x_ = 0
+    this.nova = props.nova
+    this.novaTime = this.nova ? 0 : 1
 
     this.card = props.card
     this.touchStart = props.touchStart
     this.touchEnd = props.touchEnd
-    this.consoleHeight = props.consoleHeight
+    this.actionHeight = props.actionHeight
 
     this.useAble = false
     this.useAbleTime = 0
@@ -132,15 +134,11 @@ class Card {
   render() {
     if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
 
-    // if (this.x_ !== this.x) {
-    //   const diff = this.x - this.x_
+    if (this.novaTime < 1) {
+      this.novaTime = numberFix(this.novaTime + 0.05)
+    }
 
-    //   if (diff > 1) this.x_ = this.x_ + 1
-    //   if (diff >= -1 && diff <= 1) this.x_ = this.x
-    //   if (diff < -1) this.x_ = this.x_ - 1
-    // }
-
-    this.useAble = this.offsetY < 0 - this.consoleHeight / 2
+    this.useAble = this.offsetY < 0 - this.actionHeight / 2
 
     if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
       this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.1)
@@ -173,6 +171,8 @@ class Card {
     const height = this.height + diff.height * this.mouseDownPositionTime
 
     ctx.save()
+
+    ctx.globalAlpha = this.novaTime
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
@@ -228,12 +228,15 @@ class Card {
   }
 }
 
-class Console {
+class Action {
   constructor(props) {
     this.x = props.x
     this.y = props.y
     this.width = props.width
     this.height = props.height
+
+    this.InstanceBattlerSelf = props.InstanceBattlerSelf
+    this.InstanceBattlerOpposite = props.InstanceBattlerOpposite
 
     this.cards = props.cards
     this.env = props.env
@@ -261,7 +264,9 @@ class Console {
     const width = this.width
     const height = this.height
 
-    this.InstanceCards = this.cards.map((i, index) => {
+    this.InstanceCards = this.InstanceCards.filter(i => this.cards.find(i_ => i_ === i.card))
+
+    this.cards.forEach((i, index) => {
       const maxIndex = cards.length
       const centerIndex = maxIndex / 2 - 0.5
 
@@ -274,10 +279,18 @@ class Console {
       option.x = x + (width - option.width) / 2 + diff * (width / 4)
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
-      option.touchEnd = () => this.useCard(i)
-      option.consoleHeight = this.height
+      option.touchEnd = () => this.useCard(i, this.InstanceBattlerSelf)
+      option.actionHeight = this.height
 
-      return new Card({ card: i, ...option })
+      const find = this.InstanceCards.find(i_ => i_.card === i)
+
+      if (find) {
+        find.x = option.x
+      }
+
+      if (!find) {
+        this.InstanceCards.push(new Card({ card: i, nova: true, ...option }))
+      }
     })
   }
 
@@ -330,24 +343,29 @@ class Page {
     }
 
     this.InstanceBattlerSelf
-    this.InstanceBattlerTarget
-    this.InstanceConsole
+    this.InstanceBattlerOpposite
+    this.InstanceAction
 
     this.instanceBattlerSelf()
-    this.instanceBattlerTarget()
-    this.instanceConsole()
+    this.instanceBattlerOpposite()
+    this.instanceAction()
     this.initBattler()
   }
 
   initBattler() {
     this.InstanceBattlerSelf.battler.card.store = [...this.InstanceBattlerSelf.battler.card.team]
 
-    this.InstanceBattlerTarget.battler.card.store = [...this.InstanceBattlerTarget.battler.card.team]
+    this.InstanceBattlerOpposite.battler.card.store = [...this.InstanceBattlerOpposite.battler.card.team]
 
-    this.pumpCard(4, this.InstanceBattlerSelf)
-    this.pumpCard(4, this.InstanceBattlerTarget)
+    new Array(4).fill().forEach(i => {
+      this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+    })
 
-    this.InstanceConsole.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    new Array(4).fill().forEach(i => {
+      this.InstanceBattlerOpposite.battler.card.hand.push(this.InstanceBattlerOpposite.battler.card.store.shift())
+    })
+
+    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
   instanceBattlerSelf() {
@@ -365,32 +383,34 @@ class Page {
     this.InstanceBattlerSelf.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
   }
 
-  instanceBattlerTarget() {
+  instanceBattlerOpposite() {
     const height = (windowHeight * 0.5) / 2
 
-    this.InstanceBattlerTarget = new Battler({
+    this.InstanceBattlerOpposite = new Battler({
       x: 12,
       y: 60 + safeTop,
       width: windowWidth - 24,
       height: height,
-      imageIns: ImageTarget,
-      battler: Imitation.state.battle.target
+      imageIns: ImageOpposite,
+      battler: Imitation.state.battle.opposite
     })
 
-    this.InstanceBattlerTarget.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
+    this.InstanceBattlerOpposite.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
   }
 
-  instanceConsole() {
+  instanceAction() {
     const width = windowWidth < (windowHeight - 160) ? windowWidth - 24 : (windowHeight - 160)
     const height = windowHeight * 0.5 - 96
 
-    this.InstanceConsole = new Console({
+    this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
       y: windowHeight - height - 12,
       width: width,
       height: height,
       cards: this.InstanceBattlerSelf.battler.card.hand,
       env: this.env,
+      InstanceBattlerSelf: this.InstanceBattlerSelf,
+      InstanceBattlerOpposite: this.InstanceBattlerOpposite,
       useCard: this.useCard,
       overRound: this.overRound,
     })
@@ -400,12 +420,12 @@ class Page {
     this.InstanceBattlerSelf.render()
   }
 
-  drawBattlerTarget() {
-    this.InstanceBattlerTarget.render()
+  drawBattlerOpposite() {
+    this.InstanceBattlerOpposite.render()
   }
 
-  drawConsole() {
-    this.InstanceConsole.render()
+  drawAction() {
+    this.InstanceAction.render()
   }
 
   drawBackground() {
@@ -425,29 +445,55 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  pumpCard = (times, Battler = this.InstanceBattlerSelf) => {
-    while (times) {
-      const index = Battler.battler.card.store.length - 1
-
-      Battler.battler.card.hand.push(Battler.battler.card.store[index])
-      Battler.battler.card.store.splice(index, index + 1)
-
-      times = times - 1
-    }
-  }
-
-  useCard = (card, Battler = this.InstanceBattlerSelf) => {
+  useCard = (card, Battler) => {
     this.animationing = true
 
-    const [self, target] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerTarget] : [this.InstanceBattlerTarget, this.InstanceBattlerSelf]
+    const [self, opposite] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerOpposite] : [this.InstanceBattlerOpposite, this.InstanceBattlerSelf]
 
-    const result = card.function(card, self.battler, target.battler, this.env)
+    const result = card.function(card, self.battler, opposite.battler, this.env)
 
     while (result.length) {
       const current = result.shift()
 
-      if (current.type === 'hit-target') {
-        target.battler.HP = target.battler.HP + current.value
+      if (current.type === 'cost-mp') {
+        if (current.target === 'self') {
+          self.battler.MP = self.battler.MP + current.value
+        }
+      }
+
+      if (current.type === 'hit') {
+        if (current.target === 'opposite') {
+          opposite.battler.HP = opposite.battler.HP + current.value
+        }
+      }
+
+      if (current.type === 'buff') {
+        if (current.target === 'self') {
+          self.battler.buff.push(current.value)
+        }
+        if (current.target === 'opposite') {
+          opposite.battler.buff.push(current.value)
+        }
+      }
+
+      if (current.type === 'cure-hp') {
+        if (current.target === 'self') {
+          self.battler.HP = self.battler.HP + current.value
+        }
+      }
+
+      if (current.type === 'cure-mp') {
+        if (current.target === 'self') {
+          self.battler.MP = self.battler.MP + current.value
+        }
+      }
+
+      if (current.type === 'pump-positive') {
+        if (current.target === 'self') {
+          new Array(current.value).fill().forEach(i => {
+            this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+          })
+        }
       }
     }
 
@@ -457,7 +503,7 @@ class Page {
 
     this.animationing = false
 
-    this.InstanceConsole.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
   overRound = () => {
@@ -468,8 +514,8 @@ class Page {
     this.drawBackground()
     this.drawButtonHome()
     this.drawBattlerSelf()
-    this.drawBattlerTarget()
-    this.drawConsole()
+    this.drawBattlerOpposite()
+    this.drawAction()
   }
 }
 
