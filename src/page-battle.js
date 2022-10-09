@@ -2,6 +2,7 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
+import { Scroll } from './ui-scroll'
 
 import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
@@ -273,10 +274,10 @@ class Action {
       const diff = index - centerIndex
 
       const option = {
-        width: width / 4 - width / 48
+        width: (width / 4 - 4) - width / 48
       }
       option.height = option.width * 1.35
-      option.x = x + (width - option.width) / 2 + diff * (width / 4)
+      option.x = x + (width - option.width) / 2 + diff * (width / 4 - 4)
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
       option.touchEnd = () => this.useCard(i, this.InstanceBattlerSelf)
@@ -299,13 +300,37 @@ class Action {
   }
 
   drawEnv() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `ROUND ${this.env.round}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - this.cardHeight / 2 - 42, width: this.width - 24, height: 30, font: 10, text: `ROUND ${this.env.round}` }
 
     new Button(option).render()
   }
 
   drawButtonOverRound() {
     const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '结束回合' }
+
+    new Button(option).render()
+
+    const event = () => {
+      this.overRound()
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  drawButtonConsume() {
+    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '查看消耗' }
+
+    new Button(option).render()
+
+    const event = () => {
+      this.overRound()
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  drawButtonCemetery() {
+    const option = { x: this.x + 96, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '查看墓地' }
 
     new Button(option).render()
 
@@ -328,15 +353,29 @@ class Action {
     this.drawBackground()
     this.drawEnv()
     this.drawButtonOverRound()
+    this.drawButtonConsume()
+    this.drawButtonCemetery()
 
     this.InstanceCards.forEach(i => i.card !== this.touchCard ? i.render() : null)
     this.InstanceCards.forEach(i => i.card === this.touchCard ? i.render() : null)
   }
 }
 
+class Modal {
+  constructor() {
+    this.cards = []
+  }
+
+  render() {
+
+  }
+}
+
 class Page {
   constructor() {
     this.animationing = false
+
+    this.modal = null
 
     this.env = {
       round: 1
@@ -345,10 +384,12 @@ class Page {
     this.InstanceBattlerSelf
     this.InstanceBattlerOpposite
     this.InstanceAction
+    this.InstanceModal
 
     this.instanceBattlerSelf()
     this.instanceBattlerOpposite()
     this.instanceAction()
+    this.instanceModal()
     this.initBattler()
   }
 
@@ -399,8 +440,11 @@ class Page {
   }
 
   instanceAction() {
-    const width = windowWidth < (windowHeight - 160) ? windowWidth - 24 : (windowHeight - 160)
-    const height = windowHeight * 0.5 - 96
+    var width = windowWidth - 24
+    var height = windowHeight * 0.5 - 96
+
+    if (width > windowHeight - 160) width = windowHeight - 160
+    if (height > width / 2 + 60) height = width / 2 + 60
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
@@ -414,6 +458,10 @@ class Page {
       useCard: this.useCard,
       overRound: this.overRound,
     })
+  }
+
+  instanceModal() {
+    this.InstanceModal = new Modal()
   }
 
   drawBattlerSelf() {
@@ -500,6 +548,7 @@ class Page {
     self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
 
     self.battler.card.cemetery.push(card)
+    self.battler.card.consume.push(card)
 
     this.animationing = false
 
