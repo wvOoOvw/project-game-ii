@@ -30,8 +30,6 @@ class Card {
 
     this.touchAble = props.touchAble
 
-    this.touchMode = props.touchMode
-
     this.touchEvent = props.touchEvent
 
     this.touchDelayTime = props.touchDelayTime
@@ -47,6 +45,21 @@ class Card {
 
   get option() {
     return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  eventDown(e) {
+    if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
+
+    this.touchTimeout = true
+  }
+
+  eventUp(e) {
+    if (this.touchTimeout === true) this.touchEvent()
+    this.touchTimeout = false
+  }
+
+  eventMove(e) {
+    this.touchTimeout = false
   }
 
   render() {
@@ -102,55 +115,9 @@ class Card {
 
     if (!this.touchAble) return
 
-    if (this.touchMode === 'immediate') {
-      const event = (e) => {
-        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
-
-        this.touchEvent()
-      }
-
-      addEventListener('touchstart', event, { x, y, width, height })
-    }
-
-    if (this.touchMode === 'delay') {
-      const event = (e) => {
-        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
-
-        this.touchTimeout = setTimeout(() => this.touchEvent(), this.touchDelayTime)
-      }
-
-      addEventListener('touchstart', event, { x, y, width, height })
-
-      const event_ = () => {
-        clearTimeout(this.touchTimeout)
-      }
-
-      addEventListenerPure('touchmove', event_)
-      addEventListenerPure('touchend', event_)
-    }
-
-    if (this.touchMode === 'click') {
-      const event = (e) => {
-        if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
-
-        this.touchTimeout = true
-      }
-
-      addEventListener('touchstart', event, { x, y, width, height })
-
-      const event_ = () => {
-        this.touchTimeout = false
-      }
-
-      addEventListenerPure('touchmove', event_)
-
-      const event__ = () => {
-        if (this.touchTimeout === true) this.touchEvent()
-        this.touchTimeout = false
-      }
-
-      addEventListenerPure('touchend', event__)
-    }
+    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
+    addEventListenerPure('touchmove', this.eventMove.bind(this))
+    addEventListenerPure('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -212,7 +179,6 @@ class Page {
         width: (windowWidth - 60) / 4,
         card: card,
         displayMode: 'card',
-        touchMode: 'click',
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
       }

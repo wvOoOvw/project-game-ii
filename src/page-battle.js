@@ -105,6 +105,7 @@ class Card {
       this.touchStart()
     } catch { }
   }
+
   eventUp(e) {
     this.mouseDownPosition = null
 
@@ -113,6 +114,7 @@ class Card {
 
     if (this.useAble) this.touchEnd()
   }
+
   eventMove(e) {
     if (!this.mouseDownPosition) return
 
@@ -266,7 +268,7 @@ class Console {
       const diff = index - centerIndex
 
       const option = {
-        width: width / 4 - 12
+        width: width / 4 - width / 48
       }
       option.height = option.width * 1.35
       option.x = x + (width - option.width) / 2 + diff * (width / 4)
@@ -302,7 +304,7 @@ class Console {
   }
 
   drawBackground() {
-    drawRadius({ ...this.option, radius: 12 })
+    drawRadius({ ...this.option, radius: 12, x: 12, width: windowWidth - 24 })
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
 
@@ -379,12 +381,13 @@ class Page {
   }
 
   instanceConsole() {
+    const width = windowWidth < (windowHeight - 160) ? windowWidth - 24 : (windowHeight - 160)
     const height = windowHeight * 0.5 - 96
 
     this.InstanceConsole = new Console({
-      x: 12,
+      x: (windowWidth - width) / 2,
       y: windowHeight - height - 12,
-      width: windowWidth - 24,
+      width: width,
       height: height,
       cards: this.InstanceBattlerSelf.battler.card.hand,
       env: this.env,
