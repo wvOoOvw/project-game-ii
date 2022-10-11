@@ -132,12 +132,10 @@ class Page {
 
     this.InstanceScroll
     this.InstanceCard
-    this.InstancePreview
 
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    this.instancePreview()
   }
 
   get bannerHeight() {
@@ -179,6 +177,7 @@ class Page {
         width: (windowWidth - 60) / 4,
         card: card,
         displayMode: 'card',
+        touchAble: true,
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
       }
@@ -189,20 +188,6 @@ class Page {
 
       return new Card(option)
     })
-  }
-
-  instancePreview() {
-    const option = {
-      width: windowWidth * 0.7,
-      card: this.preview,
-      displayMode: 'preview',
-    }
-
-    option.height = option.width * 1.35
-    option.x = windowWidth * 0.15
-    option.y = (windowHeight - option.width * 1.5) / 2 - 60
-
-    this.InstancePreview = new Card(option)
   }
 
   drawScroll() {
@@ -239,8 +224,6 @@ class Page {
 
         new Button(option_).render()
 
-        if (this.preview) return
-
         const event = (e) => {
           if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
@@ -258,15 +241,13 @@ class Page {
     _drawTeamButton()
 
     const _drawLibraryButton = () => {
-      const option_ = { x: windowWidth - 54, y: 12 + option.y, width: 30, height: 30, font: 10, opacity: 0.5, radius: 15, text: `S` }
+      const option_ = { x: windowWidth - 54, y: 12 + option.y, width: 30, height: 30, font: 10, opacity: 0.5, radius: 15, text: `仓` }
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
       if (this.type === 'library') option_.opacity = 1
 
       new Button(option_).render()
-
-      if (this.preview) return
 
       const event = (e) => {
         if (!ifTouchCover(e, this.InstanceScroll.option)) return
@@ -302,8 +283,6 @@ class Page {
         if (i[0] === this.sort) option_.opacity = 1
 
         new Button(option_).render()
-
-        if (this.preview) return
 
         const event = (e) => {
           if (!ifTouchCover(e, this.InstanceScroll.option)) return
@@ -348,25 +327,26 @@ class Page {
       if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
 
       i.offsetY = 0 - offsetY
-      i.touchAble = this.preview ? false : true
       i.render()
     })
   }
 
   drawPreview() {
-    if (!this.preview) return
+    const optionPreview = {
+      width: windowWidth * 0.7,
+      card: this.preview,
+      displayMode: 'preview',
+    }
 
-    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
+    optionPreview.height = optionPreview.width * 1.35
+    optionPreview.x = windowWidth * 0.15
+    optionPreview.y = (windowHeight - optionPreview.width * 1.5) / 2 - 60
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    const InstancePreview = new Card(optionPreview)
 
-    ctx.fill()
+    InstancePreview.render()
 
-    this.InstancePreview.card = this.preview
-
-    this.InstancePreview.render()
-
-    const buttonY = windowHeight - this.InstancePreview.y - 120
+    const buttonY = windowHeight - InstancePreview.y - 120
 
     var option, option_
 
@@ -426,8 +406,6 @@ class Page {
 
     new Button(option).render()
 
-    if (this.preview) return
-
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'home'
@@ -475,7 +453,6 @@ class Page {
       this.initCard()
       this.instanceScroll()
       this.instanceCard()
-      this.instancePreview()
     }
 
     if (!teamOrigin) {
@@ -533,8 +510,14 @@ class Page {
   render() {
     this.drawBackground()
     this.drawButtonHome()
-    this.drawScroll()
-    this.drawPreview()
+
+    if (this.preview) {
+      this.drawPreview()
+    }
+
+    if (!this.preview) {
+      this.drawScroll()
+    }
   }
 }
 

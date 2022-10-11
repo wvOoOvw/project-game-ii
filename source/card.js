@@ -4,7 +4,6 @@ import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/music_6e9e96c75c
 import J_music_072c59684f6c401dad40cadf0d0dd6290 from '../media/music_072c59684f6c401dad40cadf0d0dd6290.jpeg'
 import J_music_56280e428411459c823ce172d97da20c0 from '../media/music_56280e428411459c823ce172d97da20c0.jpeg'
 
-
 const origin = [
   {
     key: 1,
@@ -18,7 +17,7 @@ const origin = [
       return [
         { type: 'cost-mp', target: 'self', value: -10 },
         { type: 'hit', target: 'opposite', value: -(card.level * 15 + 100) },
-        { type: 'buff', target: 'opposite', value: 'fire' }
+        { type: 'buff', target: 'opposite', value: '燃' }
       ]
     }
   },

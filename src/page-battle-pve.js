@@ -18,7 +18,7 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Battler {
+class Opposite {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -27,19 +27,6 @@ class Battler {
 
     this.battler = props.battler
     this.imageIns = props.imageIns
-
-    this.beHitAnimation = false
-    this.beHitAnimationTime = 0
-    this.beCureAnimation = false
-    this.beCureAnimationTime = 0
-  }
-
-  beHit() {
-    this.beHitAnimation = true
-  }
-
-  beCure() {
-    this.beCureAnimation = true
   }
 
   render() {
@@ -57,18 +44,129 @@ class Battler {
 
     drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = 'white'
     ctx.font = `bold 12px monospace`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'center'
 
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
+    {
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
 
-    ctx.fillText(`HP: ${battler.HP}`, x + 12, y + 12)
-    ctx.fillText(`MP: ${battler.MP}`, x + 12, y + 30)
-    ctx.fillText(`牌库: ${battler.card.store.length}`, x + 12, y + 48)
-    ctx.fillText(`手牌: ${battler.card.hand.length}`, x + 12, y + 66)
-    ctx.fillText(`墓地: ${battler.card.cemetery.length}`, x + 12, y + 84)
-    ctx.fillText(this.battler.buff.join(' · '), x + 12, y + 102)
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+      ctx.fill()
+
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
+      ctx.fill()
+
+      ctx.fillStyle = 'white'
+
+      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 24)
+    }
+
+    {
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+      ctx.fill()
+
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
+      ctx.fill()
+
+      ctx.fillStyle = 'white'
+
+      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 60)
+    }
+
+    this.battler.buff
+      .reduce((t, i) => {
+        const find = t.find(i_ => i_.name === i)
+        if (find) find.number = find.number + 1
+        if (!find) t.push({ name: i, number: 1 })
+        return t
+      }, [])
+      .forEach((i, index) => {
+        new Button({ x: 12 + this.x + index * 48, y: this.y + 84, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
+      })
+
+    ctx.restore()
+  }
+}
+
+class Battler {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.battler = props.battler
+    this.imageIns = props.imageIns
+  }
+
+  render() {
+    const x = this.x
+    const y = this.y
+    const width = this.width
+    const height = this.height
+    const battler = this.battler
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: 12 })
+
+    ctx.clip()
+
+    drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
+
+    ctx.font = `bold 12px monospace`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'center'
+
+    {
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+      ctx.fill()
+
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
+      ctx.fill()
+
+      ctx.fillStyle = 'white'
+
+      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 24)
+    }
+
+    {
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+      ctx.fill()
+
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
+
+      ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
+      ctx.fill()
+
+      ctx.fillStyle = 'white'
+
+      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 60)
+    }
+
+    this.battler.buff
+      .reduce((t, i) => {
+        const find = t.find(i_ => i_.name === i)
+        if (find) find.number = find.number + 1
+        if (!find) t.push({ name: i, number: 1 })
+        return t
+      }, [])
+      .forEach((i, index) => {
+        new Button({ x: 12 + this.x + index * 48, y: this.y + 84, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
+      })
 
     ctx.restore()
   }
@@ -318,8 +416,8 @@ class Action {
     addEventListener('touchstart', event, option)
   }
 
-  drawButtonConsume() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '查看消耗' }
+  drawButtonStore() {
+    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看牌库x${this.InstanceBattlerSelf.battler.card.store.length}` }
 
     new Button(option).render()
 
@@ -331,7 +429,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: '查看墓地' }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看墓地x${this.InstanceBattlerSelf.battler.card.cemetery.length}` }
 
     new Button(option).render()
 
@@ -354,7 +452,7 @@ class Action {
     this.drawBackground()
     this.drawEnv()
     this.drawButtonOverRound()
-    this.drawButtonConsume()
+    this.drawButtonStore()
     this.drawButtonCemetery()
 
     this.InstanceCards.forEach(i => i.card !== this.touchCard ? i.render() : null)
@@ -365,10 +463,72 @@ class Action {
 class Modal {
   constructor() {
     this.cards = []
+
+    this.InstanceScroll
+
+    this.instanceScroll()
+  }
+
+  instanceScroll() {
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
+
+    this.InstanceScroll = new Scroll(scrollOption)
+
+    this.InstanceScroll.scrollY = this.bannerHeight + this.cardHeight - this.InstanceScroll.height + 12
+  }
+
+  drawScroll() {
+    const event = (scroll) => {
+      const offsetY = scroll[1]
+      this.drawCard(offsetY)
+    }
+
+    this.InstanceScroll.render(event)
+  }
+
+  drawCard(offsetY) {
+    this.InstanceCard = this.card.map((card, index) => {
+      const option = {
+        width: (windowWidth - 60) / 4,
+        card: card,
+        displayMode: 'card',
+        touchArea: this.InstanceScroll.option,
+        touchEvent: () => this.preview = card,
+      }
+
+      option.height = option.width * 1.35
+      option.x = 12 + parseInt(index % 4) * (option.width + 12)
+      option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
+
+      return new Card(option)
+    })
+
+    this.InstanceCard.forEach((i) => {
+      if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
+
+      i.offsetY = 0 - offsetY
+      i.touchAble = this.preview ? false : true
+      i.render()
+    })
+  }
+
+  drawButtonBack() {
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Home' }
+
+    new Button(option).render()
+
+    if (this.preview) return
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'home'
+    }
+
+    addEventListener('touchstart', event, option)
   }
 
   render() {
-
+    drawScroll()
   }
 }
 
@@ -379,6 +539,7 @@ class Page {
     this.modal = null
 
     this.env = {
+
       round: 1
     }
 
@@ -428,7 +589,7 @@ class Page {
   instanceBattlerOpposite() {
     const height = (windowHeight * 0.5) / 2
 
-    this.InstanceBattlerOpposite = new Battler({
+    this.InstanceBattlerOpposite = new Opposite({
       x: 12,
       y: 60 + safeTop,
       width: windowWidth - 24,
@@ -477,6 +638,7 @@ class Page {
     this.InstanceAction.render()
   }
 
+
   drawBackground() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
@@ -500,6 +662,8 @@ class Page {
     const [self, opposite] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerOpposite] : [this.InstanceBattlerOpposite, this.InstanceBattlerSelf]
 
     const result = card.function(card, self.battler, opposite.battler, this.env)
+
+    Imitation.state.function.message(card.name)
 
     while (result.length) {
       const current = result.shift()

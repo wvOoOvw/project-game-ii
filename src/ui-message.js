@@ -1,7 +1,10 @@
 import { numberFix } from './utils-common'
 
+import { Button } from './ui-button'
+
 const ctx = canvas.getContext('2d')
 
+const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
@@ -30,7 +33,7 @@ class Message {
   }
 
   render() {
-    if (this.show && this.opacity < 1) {
+    if (this.show && this.opacity < 0.8) {
       this.opacity = numberFix(this.opacity + 0.05)
     }
 
@@ -40,13 +43,24 @@ class Message {
 
     if (!this.show && this.opacity === 0) return
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = 'bold 14px monospace'
-    ctx.lineWidth = 1
-    ctx.fillStyle = `rgba(0, 0, 0, ${this.opacity})`
+    ctx.save()
 
-    ctx.fillText(this.message, windowWidth / 2, 24)
+    ctx.globalAlpha = this.opacity
+
+    const option = {
+      width: 72, 
+      height: 36,
+      font: 12,
+      text: this.message
+    }
+
+    option.x = (windowWidth - option.width) / 2
+    option.y = (windowHeight - option.height) / 2 + safeTop
+    option.y = 12 + safeTop
+
+    new Button(option).render()
+
+    ctx.restore()
   }
 }
 

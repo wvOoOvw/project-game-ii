@@ -9,7 +9,7 @@
   canvas.style.width = oldWidth + 'px'
   canvas.style.height = oldHeight + 'px'
 
-  window.dpr = 2
+  window.dpr = dpr
 
   canvas.getContext('2d').scale(dpr, dpr)
 })()

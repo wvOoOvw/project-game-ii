@@ -5,7 +5,7 @@ import './data-imitation'
 import PageTransition from './page-transition'
 import PageHome from './page-home'
 import PageExplore from './page-explore'
-import PageBattle from './page-battle'
+import PageBattlePve from './page-battle-pve'
 import PageStore from './page-store'
 
 import { Message } from './ui-message'
@@ -64,14 +64,14 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'battle',
+        current: 'battle-pve',
         next: '',
         map: {
           'save-image': SaveImage,
           'transition': PageTransition,
           'home': PageHome,
           'explore': PageExplore,
-          'battle': PageBattle,
+          'battle-pve': PageBattlePve,
           'store': PageStore,
         },
       },

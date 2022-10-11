@@ -28,7 +28,7 @@ class Button {
 
     ctx.fill()
 
-    ctx.fillStyle = 'black'
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2)
   }
