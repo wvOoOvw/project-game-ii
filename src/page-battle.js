@@ -171,21 +171,17 @@ class Card {
     const width = this.width + diff.width * this.mouseDownPositionTime
     const height = this.height + diff.height * this.mouseDownPositionTime
 
-    ctx.save()
-
     ctx.globalAlpha = this.novaTime
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
-
     if (this.useAbleTime) {
+      drawRect({ x, y, width, height })
+
       ctx.shadowBlur = this.useAbleTime * 40
-      ctx.shadowColor = "black"
+      ctx.shadowColor = 'rgba(0, 0, 0, 1)'
       ctx.fill()
 
       ctx.shadowBlur = 0
     }
-
-    ctx.clip()
 
     drawImage(this.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -220,8 +216,6 @@ class Card {
 
       drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
     }
-
-    ctx.restore()
 
     addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
     addEventListenerPure('touchmove', this.eventMove.bind(this))
@@ -510,6 +504,8 @@ class Page {
       }
 
       if (current.type === 'hit') {
+        Imitation.state.function.sound('hit')
+
         if (current.target === 'opposite') {
           opposite.battler.HP = opposite.battler.HP + current.value
         }

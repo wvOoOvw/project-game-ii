@@ -9,6 +9,8 @@ import PageBattle from './page-battle'
 import PageStore from './page-store'
 
 import { Message } from './ui-message'
+import { Sound } from './utils-sound'
+import { SaveImage } from './utils-saveImage'
 
 import { origin as originCard } from '../source/card'
 import { origin as originExplore } from '../source/explore'
@@ -21,6 +23,9 @@ class Main {
     this.instance
 
     this.instanceMessage = new Message()
+    this.instanceSound = new Sound()
+
+    // this.instanceSound.play('JOJO_HBY', true)
 
     this.ImitationInit()
     this.loopStart()
@@ -37,9 +42,7 @@ class Main {
 
     const ifCurrent = this.instance instanceof pageClass
 
-    if (!ifCurrent) {
-      this.instance = new pageClass()
-    }
+    if (!ifCurrent) this.instance = new pageClass()
 
     this.instance.render()
     this.instanceMessage.render()
@@ -61,9 +64,10 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'battle',
+        current: 'home',
         next: '',
         map: {
+          'save-image': SaveImage,
           'transition': PageTransition,
           'home': PageHome,
           'explore': PageExplore,
@@ -110,7 +114,8 @@ class Main {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
-        message: (m) => this.instanceMessage.send(m)
+        message: (m) => this.instanceMessage.send(m),
+        sound: (k) => this.instanceSound.play(k)
       }
     }
 

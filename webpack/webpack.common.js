@@ -23,7 +23,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpg|jpeg|gif|mp3)$/i,
+        test: /\.(png|jpg|jpeg|gif|mp3|m4a)$/i,
         use: [
           {
             loader: 'file-loader',
