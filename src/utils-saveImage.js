@@ -16,6 +16,23 @@ class SaveImage {
       a.download = 'image'
       a.click()
     }
+
+    this.card = {
+      key: 1,
+      name: '燃烧',
+      type: '进攻卡',
+      race: '火',
+      limit: 3,
+      image: createImage('https://img2.huashi6.com/images/resource/f196633863275/2022/09/05/13842_52253234441.jpg'),
+      description: l => `消耗10MP，造成 ${l * 15 + 100} 伤害，并附加给目标一层灼烧印记。`,
+      function: (card, self, opposite, round) => {
+        return [
+          { type: 'cost-mp', target: 'self', value: -10 },
+          { type: 'hit', target: 'opposite', value: -(card.level * 15 + 100) },
+          { type: 'buff', target: 'opposite', value: 'fire' }
+        ]
+      }
+    }
   }
 
   render() {
@@ -23,13 +40,13 @@ class SaveImage {
     const y = 0
     const width = windowWidth
     const height = windowHeight
-    const card = originCard[0]
+    const card = this.card
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
     ctx.clip()
 
-    drawImage(createImage(card.image), { x: x, y: y, width: width, height: height })
+    drawImage(card.image, { x: x, y: y, width: width, height: height })
 
     ctx.fillStyle = `rgba(255, 255, 255, 1)`
 

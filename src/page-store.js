@@ -71,6 +71,12 @@ class Card {
     const height = this.height
     const card = this.card
 
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
     drawImage(this.imageDOM, { x: x, y: y, width: width, height: height })
 
     ctx.fillStyle = `rgba(255, 255, 255, 1)`
@@ -104,6 +110,8 @@ class Card {
 
       drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
     }
+
+    ctx.restore()
 
     if (!this.touchAble) return
 
