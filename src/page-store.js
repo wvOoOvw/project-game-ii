@@ -402,7 +402,7 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Home' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
 
     new Button(option).render()
 

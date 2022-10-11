@@ -298,26 +298,22 @@ class Card {
     if (!this.mouseDownPosition) {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
       ctx.textAlign = 'start'
 
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+      drawText({ x: x + width * 0.08, y: y + width * 0.42, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
     }
 
     if (this.mouseDownPosition) {
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
 
       ctx.textAlign = 'start'
 
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
       ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+      drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
     }
 
     ctx.restore()
@@ -644,7 +640,7 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Home' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
 
     new Button(option).render()
 
