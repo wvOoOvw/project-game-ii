@@ -118,7 +118,7 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Back' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: '返回' }
 
     new Button(option).render()
 

@@ -519,13 +519,13 @@ class Page {
 
   render() {
     this.drawBackground()
-    this.drawButtonHome()
 
     if (this.preview) {
       this.drawPreview()
     }
 
     if (!this.preview) {
+      this.drawButtonHome()
       this.drawScroll()
     }
   }

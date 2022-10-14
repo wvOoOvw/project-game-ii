@@ -65,7 +65,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'explore',
+        current: 'home',
         next: '',
         map: {
           'save-image': SaveImage,
@@ -81,6 +81,7 @@ class Main {
         cardLibrary: null,
         team: null,
         teamIndex: null,
+        gold: null,
       },
       explore: {
         map: null
@@ -118,6 +119,7 @@ class Main {
         []
       ],
       teamIndex: 0,
+      gold: 10000
     }
 
     Imitation.state.info = responseHTTP

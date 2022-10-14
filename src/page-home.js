@@ -17,19 +17,6 @@ class Page {
     
   }
 
-  drawButtonBattle() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 - 60, width: 120, height: 40, text: '战斗' }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'battle-pve'
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
   drawButtonExplore() {
     const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, text: '探索' }
 
@@ -62,7 +49,6 @@ class Page {
 
   render() {
     this.drawBackground()
-    this.drawButtonBattle()
     this.drawButtonExplore()
     this.drawButtonStore()
   }

@@ -336,6 +336,8 @@ class Action {
     this.env = props.env
     this.useCard = props.useCard
     this.overRound = props.overRound
+    this.watchStore = props.watchStore
+    this.watchCemetery = props.watchCemetery
 
     this.touchCard
 
@@ -416,7 +418,7 @@ class Action {
     new Button(option).render()
 
     const event = () => {
-      this.overRound()
+      this.watchStore()
     }
 
     addEventListener('touchstart', event, option)
@@ -428,7 +430,7 @@ class Action {
     new Button(option).render()
 
     const event = () => {
-      this.overRound()
+      this.watchCemetery()
     }
 
     addEventListener('touchstart', event, option)
@@ -454,21 +456,98 @@ class Action {
   }
 }
 
+class CardModal {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = props.offsetX || 0
+    this.offsetY = props.offsetY || 0
+
+    this.card = props.card
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  render() {
+    const x = this.x + this.offsetX
+    const y = this.y + this.offsetY
+    const width = this.width
+    const height = this.height
+    const card = this.card
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+
+    ctx.fill()
+
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.font = `bold ${width * 0.075}px monospace`
+
+    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+
+    ctx.textAlign = 'start'
+
+    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+
+    drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+
+    ctx.restore()
+  }
+}
+
 class Modal {
-  constructor() {
+  constructor(props) {
     this.cards = []
+
+    this.back = props.back
 
     this.InstanceScroll
 
     this.instanceScroll()
   }
 
+  get cardHeight() {
+    const row = Math.ceil(this.cards.length / 4)
+
+    if (row === 0) return 0
+
+    const real = ((windowWidth - 60) / 4 * 1.35) * row
+
+    const margin = row ? 12 * (row - 1) : 0
+
+    return real + margin
+  }
+
+  updateScrollY() {
+    this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height + 12
+  }
+
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 120 - safeTop, radius: 12 }
+
+    drawRadius(scrollOption)
+    ctx.fillStyle = 'black'
+    ctx.fill()
 
     this.InstanceScroll = new Scroll(scrollOption)
-
-    this.InstanceScroll.scrollY = this.bannerHeight + this.cardHeight - this.InstanceScroll.height + 12
   }
 
   drawScroll() {
@@ -481,48 +560,54 @@ class Modal {
   }
 
   drawCard(offsetY) {
-    this.InstanceCard = this.card.map((card, index) => {
+    this.InstanceCard = this.cards.map((card, index) => {
       const option = {
         width: (windowWidth - 60) / 4,
         card: card,
-        displayMode: 'card',
-        touchArea: this.InstanceScroll.option,
-        touchEvent: () => this.preview = card,
       }
 
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 72 + parseInt(index / 4) * (option.height + 12) + safeTop
 
-      return new Card(option)
+      return new CardModal(option)
     })
 
     this.InstanceCard.forEach((i) => {
       if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
 
       i.offsetY = 0 - offsetY
-      i.touchAble = this.preview ? false : true
       i.render()
     })
   }
 
   drawButtonBack() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: 'Home' }
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
 
     new Button(option).render()
 
-    if (this.preview) return
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-
-    addEventListener('touchstart', event, option)
+    addEventListener('touchstart', this.back, option)
   }
 
   render() {
-    drawScroll()
+    this.drawButtonBack()
+    this.drawScroll()
+  }
+}
+
+class Over {
+  constructor(props) {
+    this.status
+  }
+
+  render() {
+    if (this.status) {
+
+    }
+
+    if (!this.status) {
+
+    }
   }
 }
 
@@ -531,6 +616,7 @@ class Page {
     this.animationing = false
 
     this.modal = null
+    this.over = null
 
     this.env = {
       round: 1
@@ -599,11 +685,23 @@ class Page {
       InstanceBattlerOpposite: this.InstanceBattlerOpposite,
       useCard: this.useCard,
       overRound: this.overRound,
+      watchStore: () => {
+        this.modal = true
+        this.InstanceModal.cards = this.InstanceBattlerSelf.battler.card.store
+        this.InstanceModal.updateScrollY()
+      },
+      watchCemetery: () => {
+        this.modal = true
+        this.InstanceModal.cards = this.InstanceBattlerSelf.battler.card.cemetery
+        this.InstanceModal.updateScrollY()
+      }
     })
   }
 
   instanceModal() {
-    this.InstanceModal = new Modal()
+    this.InstanceModal = new Modal({
+      back: () => this.modal = false
+    })
   }
 
   drawBattlerSelf() {
@@ -616,6 +714,10 @@ class Page {
 
   drawAction() {
     this.InstanceAction.render()
+  }
+
+  drawModal() {
+    this.InstanceModal.render()
   }
 
 
@@ -702,10 +804,23 @@ class Page {
     }
 
     this.animationing = false
+
+    if (this.InstanceBattlerSelf.battler.HP <= 0 && this.InstanceBattlerOpposite.battler.HP <= 0) {
+      this.over = 'no result'
+      return
+    }
+    if (this.InstanceBattlerSelf.battler.HP <= 0) {
+      this.over = 'lose'
+      return
+    }
+    if (this.InstanceBattlerOpposite.battler.HP <= 0) {
+      this.over = 'win'
+      return
+    }
   }
 
   overRound = async () => {
-    this.useCard(arrayRandom(this.InstanceBattlerOpposite.battler.cards, 1)[0], this.InstanceBattlerOpposite)
+    this.useCard(arrayRandom(this.InstanceBattlerOpposite.battler.card, 1)[0], this.InstanceBattlerOpposite)
 
     this.env.round = this.env.round + 1
 
@@ -718,10 +833,17 @@ class Page {
 
   render() {
     this.drawBackground()
-    this.drawButtonHome()
-    this.drawBattlerSelf()
-    this.drawBattlerOpposite()
-    this.drawAction()
+
+    if (this.modal) {
+      this.drawModal()
+    }
+
+    if (!this.modal) {
+      this.drawButtonHome()
+      this.drawBattlerSelf()
+      this.drawBattlerOpposite()
+      this.drawAction()
+    }
   }
 }
 

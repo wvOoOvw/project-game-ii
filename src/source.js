@@ -110,7 +110,7 @@ var originBoss = [
     image: J_music_8abd849fe01a4fb68dceacc6018190fc0,
     HP: 1000,
     MP: 1000,
-    cards: [
+    card: [
       { ...originCard.find(i => i.key === 1), level: 3 },
       { ...originCard.find(i => i.key === 2), level: 3 },
     ]
@@ -122,7 +122,7 @@ var originBoss = [
     image: J_music_8abd849fe01a4fb68dceacc6018190fc0,
     HP: 1500,
     MP: 1000,
-    cards: [
+    card: [
       { ...originCard.find(i => i.key === 1), level: 8 },
       { ...originCard.find(i => i.key === 2), level: 8 },
     ]
@@ -141,13 +141,21 @@ var originExplore = [
     name: '梦境 I',
     image: J_music_47a83799595b4a5b97145a6e594620310,
     boss: { ...originBoss.find(i => i.key === 1) },
-    reward: []
+    reward: [
+      {
+        gold: 400
+      }
+    ]
   },
   {
     name: '梦境 II',
     image: J_music_072c59684f6c401dad40cadf0d0dd6290,
     boss: { ...originBoss.find(i => i.key === 2) },
-    reward: []
+    reward: [
+      {
+        gold: 800
+      }
+    ]
   },
 ]
 
