@@ -1,7 +1,7 @@
 import { createImage, numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
-import J_162926_76690565815 from '../media/162926_76690565815.jpg'
+import J_162926_76690565815 from '../media/162926_76690565815.jpeg'
 
 const ctx = canvas.getContext('2d')
 

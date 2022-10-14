@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, parseCard, numberFix } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -45,39 +45,45 @@ class Opposite {
     drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
 
     ctx.font = `bold 12px monospace`
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+
+    ctx.fillText(this.battler.name, this.x + 12, this.y + 12)
+
     ctx.textAlign = 'center'
     ctx.textBaseline = 'center'
 
     {
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 36, width: this.width - 24, height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
       ctx.fill()
 
       ctx.fillStyle = 'white'
 
-      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 24)
+      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 42)
     }
 
     {
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 72, width: this.width - 24, height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
       ctx.fill()
 
       ctx.fillStyle = 'white'
 
-      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 60)
+      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 78)
     }
 
     this.battler.buff
@@ -88,7 +94,7 @@ class Opposite {
         return t
       }, [])
       .forEach((i, index) => {
-        new Button({ x: 12 + this.x + index * 48, y: this.y + 84, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
+        new Button({ x: 12 + this.x + index * 48, y: this.y + 106, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
       })
 
     ctx.restore()
@@ -535,7 +541,6 @@ class Page {
     this.modal = null
 
     this.env = {
-
       round: 1
     }
 
@@ -552,18 +557,9 @@ class Page {
   }
 
   initBattler() {
-    this.InstanceBattlerSelf.battler.card.store = [...this.InstanceBattlerSelf.battler.card.team]
-
-    this.InstanceBattlerOpposite.battler.card.store = [...this.InstanceBattlerOpposite.battler.card.team]
-
     new Array(4).fill().forEach(i => {
       this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
     })
-
-    new Array(4).fill().forEach(i => {
-      this.InstanceBattlerOpposite.battler.card.hand.push(this.InstanceBattlerOpposite.battler.card.store.shift())
-    })
-
     this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
@@ -578,8 +574,6 @@ class Page {
       imageIns: ImageSelf,
       battler: Imitation.state.battle.self
     })
-
-    this.InstanceBattlerSelf.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
   }
 
   instanceBattlerOpposite() {
@@ -593,8 +587,6 @@ class Page {
       imageIns: ImageOpposite,
       battler: Imitation.state.battle.opposite
     })
-
-    this.InstanceBattlerOpposite.battler.card.team = setArrayRandom(parseCard(Imitation.state.info.team[0], true))
   }
 
   instanceAction() {

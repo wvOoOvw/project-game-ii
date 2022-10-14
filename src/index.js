@@ -12,14 +12,15 @@ import { Message } from './ui-message'
 import { Sound } from './utils-sound'
 import { SaveImage } from './utils-saveImage'
 
-import { origin as originCard } from '../source/card'
-import { origin as originExplore } from '../source/explore'
+import { originCard, originBoss, originExplore } from './source'
 
 const ctx = canvas.getContext('2d')
 
 class Main {
   constructor() {
+    this.loadingInformation = false
     this.animationFrameId
+
     this.instance
 
     this.instanceMessage = new Message()
@@ -64,7 +65,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'battle-pve',
+        current: 'explore',
         next: '',
         map: {
           'save-image': SaveImage,
@@ -77,12 +78,12 @@ class Main {
       },
       removeEventListener: [],
       info: {
-        cardLibrary: [],
-        team: [[], [], [], []],
-        teamIndex: 0,
+        cardLibrary: null,
+        team: null,
+        teamIndex: null,
       },
       explore: {
-        map: []
+        map: null
       },
       battle: {
         self: {
@@ -119,27 +120,32 @@ class Main {
       }
     }
 
-    Imitation.state.info.cardLibrary = originCard.map(i => {
-      return {
-        key: i.key,
-        value: [
-          {
-            level: 1,
-            number: 10
-          },
-          {
-            level: 2,
-            number: 4
-          },
-        ]
-      }
-    })
+    const responseHTTP = {
+      cardLibrary: originCard.map(i => {
+        return {
+          key: i.key,
+          value: [
+            {
+              level: 1,
+              number: 10
+            },
+            {
+              level: 2,
+              number: 4
+            },
+          ]
+        }
+      }),
+      team: [
+        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
+        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
+        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
+        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
+      ],
+      teamIndex: 0,
+    }
 
-    Imitation.state.info.cardLibrary = [...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary, ...Imitation.state.info.cardLibrary]
-
-    Imitation.state.info.team[0] = originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] }))
-
-    Imitation.state.info.team[0] = [...Imitation.state.info.team[0], ...Imitation.state.info.team[0]]
+    Imitation.state.info = responseHTTP
 
     Imitation.state.explore.map = originExplore
   }

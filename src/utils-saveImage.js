@@ -1,7 +1,7 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
-import { origin as originCard } from '../source/card'
+import { originCard, originBoss, originExplore } from './source'
 
 const ctx = canvas.getContext('2d')
 

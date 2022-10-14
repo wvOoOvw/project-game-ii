@@ -1,6 +1,6 @@
-import { origin as originCard } from '../source/card'
+import { originCard, originBoss, originExplore } from './source'
 
-const parseCard = (array, numberFlat) => {
+const parse = (array, numberFlat) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
 
@@ -23,7 +23,7 @@ const parseCard = (array, numberFlat) => {
   return result
 }
 
-export { parseCard }
+export { parse }
 
 const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()

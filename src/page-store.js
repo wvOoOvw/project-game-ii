@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -39,8 +39,6 @@ class Card {
     this.touchTimeout
 
     this.displayMode = props.displayMode
-
-    this.imageDOM
   }
 
   get option() {
@@ -63,8 +61,6 @@ class Card {
   }
 
   render() {
-    if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
-
     const x = this.x + this.offsetX
     const y = this.y + this.offsetY
     const width = this.width
@@ -77,7 +73,7 @@ class Card {
 
     ctx.clip()
 
-    drawImage(this.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
     ctx.fillStyle = `rgba(255, 255, 255, 1)`
 
@@ -156,11 +152,13 @@ class Page {
 
   initCard() {
     if (this.type === 'team') {
-      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex], true).sort((a, b) => b[this.sort] - a[this.sort])
+      this.card = parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true)
     }
     if (this.type === 'library') {
-      this.card = parseCard(Imitation.state.info.cardLibrary).sort((a, b) => b[this.sort] - a[this.sort])
+      this.card = parse(Imitation.state.info.cardLibrary)
     }
+
+    this.card = this.card.sort((a, b) => b[this.sort] - a[this.sort])
   }
 
   instanceScroll() {
