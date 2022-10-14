@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, numberFix } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -17,6 +17,12 @@ const ImageSelf = createImage(J_music_b40316005b55465b80ae4eecad8447960)
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
+
+const computeStatus = (value) => {
+  if (value > 1) return 1
+  if (value < 0) return 0
+  return value
+}
 
 class Opposite {
   constructor(props) {
@@ -60,7 +66,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
       ctx.fill()
@@ -76,7 +82,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
       ctx.fill()
@@ -137,7 +143,7 @@ class Battler {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * (battler.HP / 1000 > 1 ? 1 : battler.HP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
       ctx.fill()
@@ -153,7 +159,7 @@ class Battler {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * (battler.MP / 1000 > 1 ? 1 : battler.MP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
       ctx.fill()
@@ -202,8 +208,6 @@ class Card {
     this.mouseDownPosition = null
 
     this.mouseDownPositionTime = 0
-
-    this.imageDOM
   }
 
   eventDown(e) {
@@ -237,8 +241,6 @@ class Card {
   }
 
   render() {
-    if (!this.imageDOM || this.imageDOM.src !== this.card.image) this.imageDOM = createImage(this.card.image)
-
     if (this.novaTime < 1) {
       this.novaTime = numberFix(this.novaTime + 0.05)
     }
@@ -285,42 +287,32 @@ class Card {
       ctx.shadowBlur = this.useAbleTime * 40
       ctx.shadowColor = 'rgba(0, 0, 0, 1)'
       ctx.fill()
-
       ctx.shadowBlur = 0
     }
 
-
     ctx.clip()
 
-    drawImage(this.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+
+    ctx.fill()
+
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
     ctx.font = `bold ${width * 0.075}px monospace`
 
-    if (!this.mouseDownPosition) {
-      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-      ctx.textAlign = 'start'
+    ctx.textAlign = 'start'
 
-      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.42, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-    }
-
-    if (this.mouseDownPosition) {
-      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-      ctx.textAlign = 'start'
-
-      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-      ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
-
-      drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-    }
+    drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
 
     ctx.restore()
 
@@ -700,18 +692,28 @@ class Page {
       }
     }
 
-    self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
+    if (Battler === this.InstanceBattlerSelf) {
+      self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
 
-    self.battler.card.cemetery.push(card)
-    self.battler.card.consume.push(card)
+      self.battler.card.cemetery.push(card)
+      self.battler.card.consume.push(card)
+
+      this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    }
 
     this.animationing = false
-
-    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
-  overRound = () => {
+  overRound = async () => {
+    this.useCard(arrayRandom(this.InstanceBattlerOpposite.battler.cards, 1)[0], this.InstanceBattlerOpposite)
 
+    this.env.round = this.env.round + 1
+
+    new Array(1).fill().forEach(i => {
+      this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+    })
+
+    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
   render() {

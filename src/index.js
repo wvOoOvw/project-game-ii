@@ -85,32 +85,7 @@ class Main {
       explore: {
         map: null
       },
-      battle: {
-        self: {
-          HP: 1000,
-          MP: 1000,
-          card: {
-            team: [],
-            store: [],
-            hand: [],
-            cemetery: [],
-            consume: []
-          },
-          buff: [],
-        },
-        opposite: {
-          HP: 1000,
-          MP: 1000,
-          card: {
-            team: [],
-            store: [],
-            hand: [],
-            cemetery: [],
-            consume: []
-          },
-          buff: [],
-        }
-      },
+      battle: {},
       function: {
         render: this.render,
         loopStart: this.loopStart,
@@ -137,10 +112,10 @@ class Main {
         }
       }),
       team: [
-        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
-        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
-        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
-        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 1 }] })),
+        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 3 }] })),
+        [],
+        [],
+        []
       ],
       teamIndex: 0,
     }

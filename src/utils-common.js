@@ -10,7 +10,7 @@ const parse = (array, numberFlat) => {
       if (numberFlat) {
         const item = { ...origin, ...i_ }
         delete item.number
-        result_.push(...new Array(i_.number).fill(item))
+        result_.push(...new Array(i_.number).fill().map(i => ({ ...item })))
       }
       if (!numberFlat) {
         result_.push({ ...origin, ...i_ })

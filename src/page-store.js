@@ -75,7 +75,11 @@ class Card {
 
     drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+
+    ctx.fill()
+
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -439,11 +443,16 @@ class Page {
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
+    Imitation.state.function.message('合成成功')
   }
 
   load(card) {
     const library = Imitation.state.info.cardLibrary
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
+
+    if (team.reduce((t, i) => t + i.number, 0) > 40) {
+      return
+    }
 
     const teamOrigin = team.find(i => i.key === card.key)
 
@@ -451,6 +460,8 @@ class Page {
       this.initCard()
       this.instanceScroll()
       this.instanceCard()
+
+      Imitation.state.function.message('装载成功')
     }
 
     if (!teamOrigin) {
@@ -503,6 +514,7 @@ class Page {
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
+    Imitation.state.function.message('卸载成功')
   }
 
   render() {
