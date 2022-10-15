@@ -66,7 +66,7 @@ class Page {
 
     this.exploreMap.forEach((i, index) => {
       const x = 12
-      const y = 60 + index * 172 - offsetY
+      const y = 60 + index * 172 + safeTop - offsetY
       const width = windowWidth - 24
       const height = 160
 
