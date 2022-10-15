@@ -391,6 +391,7 @@ class Page {
       const load = () => {
         this.load(this.preview)
         this.preview = null
+        this.InstancePreview.novaTime = 0
       }
 
       addEventListener('touchstart', load, option)
@@ -402,6 +403,7 @@ class Page {
       const compose = () => {
         this.compose(this.preview)
         this.preview = null
+        this.InstancePreview.novaTime = 0
       }
 
       addEventListener('touchstart', compose, option_)
@@ -415,6 +417,7 @@ class Page {
       const unload = () => {
         this.unload(this.preview)
         this.preview = null
+        this.InstancePreview.novaTime = 0
       }
 
       addEventListener('touchstart', unload, option)
@@ -457,7 +460,7 @@ class Page {
     const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
 
     if (findInLibrary.number < 3) {
-      Imitation.state.function.message('卡牌数量不足', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.function.message('卡牌数量不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -490,7 +493,7 @@ class Page {
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    Imitation.state.function.message('合成成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('合成成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
   }
 
   load(card) {
@@ -501,17 +504,17 @@ class Page {
     const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
 
     if (team.reduce((t, i) => t + i.number, 0) > 40) {
-      Imitation.state.function.message('超出卡组数量限制', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
     if (team.filter(i => i.key === card.key).reduce((t, i) => t + i.number, 0) >= card.limit) {
-      Imitation.state.function.message('超出卡牌数量限制', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.function.message('超出卡牌数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
     if (findInTeam && findInTeam.number === findInLibrary.number) {
-      Imitation.state.function.message('卡组数量不足', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.function.message('卡组数量不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -527,7 +530,7 @@ class Page {
     this.instanceScroll()
     this.instanceCard()
 
-    Imitation.state.function.message('装载成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('装载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
   }
 
   unload(card) {
@@ -545,7 +548,7 @@ class Page {
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    Imitation.state.function.message('卸载成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('卸载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
   }
 
   render() {

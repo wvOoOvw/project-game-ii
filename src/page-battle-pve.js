@@ -61,15 +61,21 @@ class Opposite {
     ctx.textBaseline = 'center'
 
     {
+      ctx.save()
+
       drawRadius({ x: this.x + 12, y: this.y + 36, width: this.width - 24, height: 24, radius: 12 })
+
+      ctx.clip()
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24, radius: 12 })
+      drawRect({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24 })
 
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
+      ctx.fillStyle = 'rgba(185, 0, 0, 1)'
       ctx.fill()
+
+      ctx.restore()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
@@ -77,15 +83,21 @@ class Opposite {
     }
 
     {
+      ctx.save()
+
       drawRadius({ x: this.x + 12, y: this.y + 72, width: this.width - 24, height: 24, radius: 12 })
+
+      ctx.clip()
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24, radius: 12 })
+      drawRect({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24 })
 
-      ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
+      ctx.fillStyle = 'rgba(0, 0, 185, 1)'
       ctx.fill()
+
+      ctx.restore()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
@@ -145,7 +157,7 @@ class Battler {
 
       drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24, radius: 12 })
 
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
+      ctx.fillStyle = 'rgba(185, 0, 0, 1)'
       ctx.fill()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
@@ -161,7 +173,7 @@ class Battler {
 
       drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24, radius: 12 })
 
-      ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
+      ctx.fillStyle = 'rgba(0, 0, 185, 1)'
       ctx.fill()
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
@@ -571,7 +583,7 @@ class Modal {
     const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 120 - safeTop, radius: 12 }
 
     drawRadius(scrollOption)
-    ctx.fillStyle = 'black'
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.fill()
 
     this.InstanceScroll = new Scroll(scrollOption)
@@ -630,6 +642,8 @@ class Over {
 
   drawContent() {
     if (this.over === 'win') {
+      new Button({ x: 12, y: 60, width: windowWidth - 24, height: 36, text: '战斗胜利' }).render()
+
       this.reward.forEach((card, index) => {
         const option = {
           width: (windowWidth - 60) / 4,
@@ -638,19 +652,14 @@ class Over {
 
         option.height = option.width * 1.35
         option.x = 12 + parseInt(index % 4) * (option.width + 12)
-        option.y = 72 + parseInt(index / 4) * (option.height + 12) + safeTop
+        option.y = 108 + parseInt(index / 4) * (option.height + 12) + safeTop
 
         new CardInModal(option).render()
       })
     }
 
     if (this.over === 'lose') {
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = 'bold 12px monospace'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-      ctx.fillText('战斗失败', windowWidth / 2, (windowHeight - safeTop) / 2)
+      new Button({ x: 12, y: 72, width: windowWidth - 24, height: 36, text: '战斗失败' }).render()
     }
   }
 
@@ -825,7 +834,7 @@ class Page {
 
     const result = card.function(card, self.battler, opposite.battler, this.env)
 
-    Imitation.state.function.message(card.name, 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message(card.name, 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
 
     while (result.length) {
       const current = result.shift()
