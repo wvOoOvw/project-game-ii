@@ -90,7 +90,7 @@ class Main {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
-        message: (m) => this.instanceMessage.send(m),
+        message: (m, b, t) => this.instanceMessage.send(m, b, t),
         sound: (k) => this.instanceSound.play(k),
         saveInfo: () => {
 
@@ -99,23 +99,9 @@ class Main {
     }
 
     const responseHTTP = {
-      cardLibrary: originCard.map(i => {
-        return {
-          key: i.key,
-          value: [
-            {
-              level: 1,
-              number: 10
-            },
-            {
-              level: 2,
-              number: 4
-            },
-          ]
-        }
-      }),
+      cardLibrary: originCard.map(i => ({ key: i.key, level: 1, number: 10 })),
       team: [
-        originCard.map(i => ({ key: i.key, value: [{ level: 1, number: 3 }] })),
+        originCard.map(i => ({ key: i.key, level: 1, number: 3 })),
         [],
         [],
         []

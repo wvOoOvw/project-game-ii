@@ -6,16 +6,14 @@ const parse = (array, numberFlat) => {
 
     const origin = originCard.find(i_ => i.key === i_.key)
 
-    i.value.forEach(i_ => {
-      if (numberFlat) {
-        const item = { ...origin, ...i_ }
-        delete item.number
-        result_.push(...new Array(i_.number).fill().map(i => ({ ...item })))
-      }
-      if (!numberFlat) {
-        result_.push({ ...origin, ...i_ })
-      }
-    })
+    if (numberFlat) {
+      const item = { ...origin, ...i }
+      delete item.number
+      result_.push(...new Array(i.number).fill().map(i => ({ ...item })))
+    }
+    if (!numberFlat) {
+      result_.push({ ...origin, ...i })
+    }
 
     return result_
   }, [])
@@ -24,6 +22,26 @@ const parse = (array, numberFlat) => {
 }
 
 export { parse }
+
+const levelText = (level) => {
+  if (level === 1) return 'I'
+  if (level === 2) return 'II'
+  if (level === 3) return 'III'
+  if (level === 4) return 'IV'
+  if (level === 5) return 'V'
+  if (level === 6) return 'VI'
+  if (level === 7) return 'VII'
+  if (level === 8) return 'VIII'
+  if (level === 9) return 'IX'
+  if (level === 10) return 'X'
+  if (level === 11) return 'XI'
+  if (level === 12) return 'XII'
+  if (level === 13) return 'XIII'
+  if (level === 14) return 'XIV'
+  if (level === 15) return 'XV'
+}
+
+export { levelText }
 
 const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()

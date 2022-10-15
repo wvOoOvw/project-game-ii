@@ -108,7 +108,7 @@ var originBoss = [
     key: 1,
     name: '梦境守卫',
     image: J_music_8abd849fe01a4fb68dceacc6018190fc0,
-    HP: 1000,
+    HP: 1,
     MP: 1000,
     card: [
       { ...originCard.find(i => i.key === 1), level: 3 },

@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -71,7 +71,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
       ctx.fill()
 
-      ctx.fillStyle = 'white'
+      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 42)
     }
@@ -87,7 +87,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
       ctx.fill()
 
-      ctx.fillStyle = 'white'
+      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 78)
     }
@@ -148,7 +148,7 @@ class Battler {
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)'
       ctx.fill()
 
-      ctx.fillStyle = 'white'
+      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 24)
     }
@@ -164,7 +164,7 @@ class Battler {
       ctx.fillStyle = 'rgba(0, 0, 255, 0.7)'
       ctx.fill()
 
-      ctx.fillStyle = 'white'
+      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 60)
     }
@@ -184,7 +184,7 @@ class Battler {
   }
 }
 
-class Card {
+class CardInAction {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -194,20 +194,22 @@ class Card {
     this.offsetX = props.offsetX || 0
     this.offsetY = props.offsetY || 0
 
-    this.nova = props.nova
-    this.novaTime = this.nova ? 0 : 1
+    this.novaTime = 0
 
     this.card = props.card
     this.touchStart = props.touchStart
     this.touchEnd = props.touchEnd
     this.actionHeight = props.actionHeight
 
-    this.useAble = false
     this.useAbleTime = 0
 
     this.mouseDownPosition = null
 
     this.mouseDownPositionTime = 0
+  }
+
+  get useAble() {
+    return this.offsetY < 0 - this.actionHeight / 2
   }
 
   eventDown(e) {
@@ -218,12 +220,12 @@ class Card {
   }
 
   eventUp(e) {
+    if (this.useAble) this.touchEnd()
+
     this.mouseDownPosition = null
 
     this.offsetX = 0
     this.offsetY = 0
-
-    if (this.useAble) this.touchEnd()
   }
 
   eventMove(e) {
@@ -241,14 +243,10 @@ class Card {
   }
 
   render() {
-    if (this.novaTime < 1) {
-      this.novaTime = numberFix(this.novaTime + 0.05)
-    }
-
-    this.useAble = this.offsetY < 0 - this.actionHeight / 2
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
     if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
-      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.1)
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
     }
 
     if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
@@ -256,11 +254,11 @@ class Card {
     }
 
     if (this.useAble && this.useAbleTime < 1) {
-      this.useAbleTime = numberFix(this.useAbleTime + 0.1)
+      this.useAbleTime = numberFix(this.useAbleTime + 0.05)
     }
 
     if (!this.useAble && this.useAbleTime > 0) {
-      this.useAbleTime = numberFix(this.useAbleTime - 0.1)
+      this.useAbleTime = numberFix(this.useAbleTime - 0.05)
     }
 
     const card = this.card
@@ -283,36 +281,65 @@ class Card {
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
-    if (this.useAbleTime) {
-      ctx.shadowBlur = this.useAbleTime * 40
-      ctx.shadowColor = 'rgba(0, 0, 0, 1)'
-      ctx.fill()
-      ctx.shadowBlur = 0
-    }
-
     ctx.clip()
 
     drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+    const width_ = height * this.useAbleTime
+    const height_ = height * this.useAbleTime
+    const x_ = x + (width - width_) / 2
+    const y_ = y + (height - height_) / 2
+    const radius_ = width_ / 2
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
 
     ctx.fill()
 
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    if (this.mouseDownPositionTime) {
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `bold ${width * 0.075}px monospace`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
+      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-    ctx.font = `bold ${width * 0.075}px monospace`
+      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
 
-    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+      ctx.textAlign = 'start'
 
-    ctx.textAlign = 'start'
+      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+      ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
+      drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    }
+
+    if (!this.mouseDownPositionTime) {
+      const width_ = width * 0.6
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = width * 0.08
+
+      const text = [card.name, levelText(card.level)]
+
+      if (card.number) text.push('x' + card.number)
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `bold ${width * 0.075}px monospace`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    }
 
     ctx.restore()
 
@@ -385,7 +412,7 @@ class Action {
       }
 
       if (!find) {
-        this.InstanceCards.push(new Card({ card: i, nova: true, ...option }))
+        this.InstanceCards.push(new CardInAction({ card: i, ...option }))
       }
     })
   }
@@ -456,7 +483,7 @@ class Action {
   }
 }
 
-class CardModal {
+class CardInModal {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -570,7 +597,7 @@ class Modal {
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
       option.y = 72 + parseInt(index / 4) * (option.height + 12) + safeTop
 
-      return new CardModal(option)
+      return new CardInModal(option)
     })
 
     this.InstanceCard.forEach((i) => {
@@ -596,19 +623,53 @@ class Modal {
 }
 
 class Over {
-  constructor(props) {
-    this.status
+  constructor() {
+    this.over
     this.reward
   }
 
+  drawContent() {
+    if (this.over === 'win') {
+      this.reward.forEach((card, index) => {
+        const option = {
+          width: (windowWidth - 60) / 4,
+          card: card,
+        }
+
+        option.height = option.width * 1.35
+        option.x = 12 + parseInt(index % 4) * (option.width + 12)
+        option.y = 72 + parseInt(index / 4) * (option.height + 12) + safeTop
+
+        new CardInModal(option).render()
+      })
+    }
+
+    if (this.over === 'lose') {
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = 'bold 12px monospace'
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText('战斗失败', windowWidth / 2, (windowHeight - safeTop) / 2)
+    }
+  }
+
+  drawButtonHome() {
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
+
+    new Button(option).render()
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'home'
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
   render() {
-    if (this.status) {
-
-    }
-
-    if (!this.status) {
-
-    }
+    this.drawButtonHome()
+    this.drawContent()
   }
 }
 
@@ -639,7 +700,7 @@ class Page {
 
   initBattler() {
     new Array(4).fill().forEach(i => {
-      this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+      this.pumpCard(this.InstanceBattlerSelf.battler.card.store.shift(), this.InstanceBattlerSelf)
     })
     this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
@@ -708,7 +769,7 @@ class Page {
   }
 
   instanceOver() {
-    this.InstanceOver = new Over()
+    this.InstanceOver = new Over({})
   }
 
   drawBattlerSelf() {
@@ -728,7 +789,7 @@ class Page {
   }
 
   drawOver() {
-
+    this.InstanceOver.render()
   }
 
   drawBackground() {
@@ -748,6 +809,15 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
+  pumpCard = (card, Battler) => {
+    if (Battler.battler.card.hand.length === 4) {
+      Battler.battler.card.cemetery.push(card)
+    }
+    if (Battler.battler.card.hand.length < 4) {
+      Battler.battler.card.hand.push(card)
+    }
+  }
+
   useCard = (card, Battler) => {
     this.animationing = true
 
@@ -755,7 +825,7 @@ class Page {
 
     const result = card.function(card, self.battler, opposite.battler, this.env)
 
-    Imitation.state.function.message(card.name)
+    Imitation.state.function.message(card.name, 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
 
     while (result.length) {
       const current = result.shift()
@@ -823,8 +893,8 @@ class Page {
 
     this.env.round = this.env.round + 1
 
-    new Array(1).fill().forEach(i => {
-      this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+    new Array(2).fill().forEach(i => {
+      this.pumpCard(this.InstanceBattlerSelf.battler.card.store.shift(), this.InstanceBattlerSelf)
     })
 
     this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
@@ -836,29 +906,28 @@ class Page {
 
       this.InstanceOver.reward = Imitation.state.battle.reward()
 
-      this.InstanceOver.reward.forEach(i => {
-        const find = Imitation.state.info.cardLibrary.find(i_ => i_.key === i.key)
+      const library = Imitation.state.info.cardLibrary
 
-        if (find) {
-          const findLevel = find.value.find(i_ => i_.level === i.level)
-          if (findLevel) {
-            findLevel.number = findLevel.number + 1
-          }
-          if (!findLevel) {
-            find.value.push({ level: i.level, number: 1 })
-          }
+      this.InstanceOver.reward.forEach(i => {
+        const findInLibrary = library.find(i_ => i_.key === i.key)
+
+        if (findInLibrary) {
+          findInLibrary.number = findInLibrary.number + 1
         }
-        if (!find) {
-          Imitation.state.info.cardLibrary.push({ key: i.key, value: [{ level: i.level, number: 1 }] })
+        if (!findInLibrary) {
+          library.push({ key: i.key, level: i.level, number: 1 })
         }
       })
 
       Imitation.state.function.saveInfo()
 
+      this.InstanceOver.over = this.over
       return
     }
     if (this.InstanceBattlerSelf.battler.HP <= 0) {
       this.over = 'lose'
+
+      this.InstanceOver.over = this.over
       return
     }
   }
@@ -870,7 +939,11 @@ class Page {
       this.drawModal()
     }
 
-    if (!this.modal) {
+    if (this.over) {
+      this.drawOver()
+    }
+
+    if (!this.modal && !this.over) {
       this.drawButtonHome()
       this.drawBattlerSelf()
       this.drawBattlerOpposite()

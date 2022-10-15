@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse, levelText, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -16,7 +16,7 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Card {
+class CardInList {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -28,8 +28,6 @@ class Card {
 
     this.card = props.card
 
-    this.touchAble = props.touchAble
-
     this.touchEvent = props.touchEvent
 
     this.touchDelayTime = props.touchDelayTime
@@ -37,8 +35,6 @@ class Card {
     this.touchArea = props.touchArea
 
     this.touchTimeout
-
-    this.displayMode = props.displayMode
   }
 
   get option() {
@@ -75,49 +71,95 @@ class Card {
 
     drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+    const width_ = width * 0.6
+    const height_ = width * 0.2
+    const x_ = x + width / 2 - width_ / 2
+    const y_ = y + height - height_ - (x_ - x)
+    const radius_ = width * 0.08
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
 
     ctx.fill()
 
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
-
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-
     ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    if (this.displayMode === 'card') {
-      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
-      ctx.textAlign = 'start'
-
-      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-
-      drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-    }
-
-    if (this.displayMode === 'preview') {
-      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
-      ctx.textAlign = 'start'
-
-      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-      ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
-
-      drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-    }
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
 
     ctx.restore()
-
-    if (!this.touchAble) return
 
     addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
     addEventListenerPure('touchmove', this.eventMove.bind(this))
     addEventListenerPure('touchend', this.eventUp.bind(this))
+  }
+}
+
+class CardInPreview {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.card = props.card
+
+    this.novaTime = 0
+  }
+
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    const x = this.x
+    const y = this.y
+    const width = this.width
+    const height = this.height
+    const card = this.card
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    const width_ = height * this.novaTime
+    const height_ = height * this.novaTime
+    const x_ = x + (width - width_) / 2
+    const y_ = y + (height - height_) / 2
+    const radius_ = width_ / 2
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
+
+    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+
+    ctx.textAlign = 'start'
+
+    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
+
+    drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+
+    ctx.restore()
   }
 }
 
@@ -132,10 +174,12 @@ class Page {
 
     this.InstanceScroll
     this.InstanceCard
+    this.InstancePreview
 
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
+    this.instancePreview()
   }
 
   get bannerHeight() {
@@ -162,7 +206,12 @@ class Page {
       this.card = parse(Imitation.state.info.cardLibrary)
     }
 
-    this.card = this.card.sort((a, b) => b[this.sort] - a[this.sort])
+    this.card = this.card.sort((a, b) => {
+      const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+      const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+
+      return b_ - a_
+    })
   }
 
   instanceScroll() {
@@ -178,7 +227,6 @@ class Page {
       const option = {
         width: (windowWidth - 60) / 4,
         card: card,
-        displayMode: 'card',
         touchAble: true,
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
@@ -188,8 +236,21 @@ class Page {
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
       option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
 
-      return new Card(option)
+      return new CardInList(option)
     })
+  }
+
+  instancePreview() {
+    const option = {
+      width: windowWidth * 0.7,
+      card: this.preview,
+    }
+
+    option.height = option.width * 1.35
+    option.x = windowWidth * 0.15
+    option.y = (windowHeight - option.width * 1.5) / 2 - 60
+
+    this.InstancePreview = new CardInPreview(option)
   }
 
   drawScroll() {
@@ -243,7 +304,7 @@ class Page {
     _drawTeamButton()
 
     const _drawLibraryButton = () => {
-      const option_ = { x: windowWidth - 54, y: 12 + option.y, width: 30, height: 30, font: 10, opacity: 0.5, radius: 15, text: `仓` }
+      const option_ = { x: 24, y: option.y + option.height - 42, width: 60, height: 30, font: 10, opacity: 0.5, text: '查看仓库' }
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -276,9 +337,9 @@ class Page {
     _drawLibraryButton()
 
     const _drawSort = () => {
-      const array = [['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类'],]
+      const array = [['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']]
       new Array(...array).forEach((i, index) => {
-        const option_ = { x: 24 + index * 72, y: option.y + option.height - 42, width: 60, height: 30, font: 10, opacity: 0.5, text: i[1] }
+        const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, font: 10, opacity: 0.5, text: i[1] }
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -301,26 +362,6 @@ class Page {
 
     _drawSort()
 
-    const _drawText = () => {
-      const option_ = { x: 24, y: 54 + option.y, width: option.width, height: 12 }
-
-      if (this.type === 'team') {
-        option_.text = `队伍 ${Imitation.state.info.teamIndex + 1}`
-      }
-      if (this.type === 'library') {
-        option_.text = '仓库'
-      }
-
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-      ctx.font = `bold 12px monospace`
-      ctx.lineWidth = 1
-
-      ctx.fillText(option_.text, option_.x, option_.y)
-    }
-
-    // _drawText()
-
     ctx.restore()
   }
 
@@ -334,21 +375,11 @@ class Page {
   }
 
   drawPreview() {
-    const optionPreview = {
-      width: windowWidth * 0.7,
-      card: this.preview,
-      displayMode: 'preview',
-    }
+    this.InstancePreview.card = this.preview
 
-    optionPreview.height = optionPreview.width * 1.35
-    optionPreview.x = windowWidth * 0.15
-    optionPreview.y = (windowHeight - optionPreview.width * 1.5) / 2 - 60
+    this.InstancePreview.render()
 
-    const InstancePreview = new Card(optionPreview)
-
-    InstancePreview.render()
-
-    const buttonY = windowHeight - InstancePreview.y - 120
+    const buttonY = windowHeight - this.InstancePreview.y - 120
 
     var option, option_
 
@@ -393,6 +424,7 @@ class Page {
       if (option && ifTouchCover(e, option)) return
       if (option_ && ifTouchCover(e, option_)) return
       this.preview = null
+      this.InstancePreview.novaTime = 0
     }
 
     addEventListenerPure('touchstart', close)
@@ -418,103 +450,102 @@ class Page {
 
   compose(card) {
     const library = Imitation.state.info.cardLibrary
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
 
-    const libraryFind = library.find(i => i.key === card.key)
+    const findInLibrary = library.find(i_ => i_.key === card.key && i_.level === card.level)
+    const findInLibraryUpper = library.find(i_ => i_.key === card.key && i_.level === card.level + 1)
+    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
 
-    const libraryLevelFind = libraryFind.value.find(i => i.level === card.level)
-
-    if (libraryLevelFind.number < 3) return
-
-    libraryLevelFind.number = libraryLevelFind.number - 3
-
-    if (libraryLevelFind.number === 0) {
-      libraryFind.value = libraryFind.value.filter(i => i !== libraryLevelFind)
+    if (findInLibrary.number < 3) {
+      Imitation.state.function.message('卡牌数量不足', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+      return
     }
 
-    const libraryLevelUpFind = libraryFind.value.find(i => i.level === card.level + 1)
+    findInLibrary.number = findInLibrary.number - 3
 
-    if (libraryLevelUpFind) {
-      libraryLevelUpFind.number = libraryLevelUpFind.number + 1
+    if (findInLibrary.number === 0) {
+      const index = library.indexOf(findInLibrary)
+      library.splice(index, 1)
     }
-    if (!libraryLevelUpFind) {
-      libraryFind.value.push({ level: card.level + 1, number: 1 })
+
+    if (findInLibraryUpper) {
+      findInLibraryUpper.number = findInLibraryUpper.number + 1
+    }
+
+    if (!findInLibraryUpper) {
+      library.push({ key: card.key, level: card.level + 1, number: 1 })
+    }
+
+    if (findInTeam) {
+      if (findInTeam.number > findInLibrary.number) {
+        findInTeam.number = findInLibrary.number
+      }
+
+      if (findInTeam.number === 0) {
+        const index = team.indexOf(findInTeam)
+        team.splice(index, 1)
+      }
     }
 
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    Imitation.state.function.message('合成成功')
+    Imitation.state.function.message('合成成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
   }
 
   load(card) {
     const library = Imitation.state.info.cardLibrary
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
 
+    const findInLibrary = library.find(i_ => i_.key === card.key && i_.level === card.level)
+    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
+
     if (team.reduce((t, i) => t + i.number, 0) > 40) {
+      Imitation.state.function.message('超出卡组数量限制', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    const teamOrigin = team.find(i => i.key === card.key)
-
-    const final = () => {
-      this.initCard()
-      this.instanceScroll()
-      this.instanceCard()
-
-      Imitation.state.function.message('装载成功')
-    }
-
-    if (!teamOrigin) {
-      team.push({ key: card.key, value: [{ level: card.level, number: 1 }] })
-      final()
+    if (team.filter(i => i.key === card.key).reduce((t, i) => t + i.number, 0) >= card.limit) {
+      Imitation.state.function.message('超出卡牌数量限制', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    const total = teamOrigin.value.reduce((t, i) => t + i.number, 0)
-
-    if (total === card.limit) return
-
-    const teamFind = teamOrigin.value.find(i => i.level === card.level)
-
-    if (!teamFind) {
-      teamOrigin.value.push({ level: card.level, number: 1 })
-      final()
+    if (findInTeam && findInTeam.number === findInLibrary.number) {
+      Imitation.state.function.message('卡组数量不足', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    const libraryFind = library.find(i => i.key === card.key).value.find(i => i.level === card.level)
-
-    if (teamFind && teamFind.number < libraryFind.number) {
-      teamFind.number = teamFind.number + 1
-      final()
-      return
+    if (findInTeam) {
+      find.number = find.number + 1
     }
-  }
 
-  unload(card) {
-    const team = Imitation.state.info.team
-
-    const index = Imitation.state.info.teamIndex
-
-    const teamCurrent = team[index]
-
-    const teamOrigin = teamCurrent.find(i => i.key === card.key)
-
-    const teamFind = teamOrigin.value.find(i => i.level === card.level)
-
-    teamFind.number = teamFind.number - 1
-
-    if (teamFind.number === 0) {
-      teamOrigin.value = teamOrigin.value.filter(i => i !== teamFind)
-    }
-    if (teamOrigin.value.length === 0) {
-      team[index] = team[index].filter(i => i !== teamOrigin)
+    if (!findInTeam) {
+      team.push({ key: card.key, level: card.level, number: 1 })
     }
 
     this.initCard()
     this.instanceScroll()
     this.instanceCard()
-    Imitation.state.function.message('卸载成功')
+
+    Imitation.state.function.message('装载成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
+  }
+
+  unload(card) {
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex]
+
+    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
+
+    findInTeam.number = findInTeam.number - 1
+
+    if (findInTeam.number === 0) {
+      const index = team.indexOf(findInTeam)
+      team.splice(index, 1)
+    }
+
+    this.initCard()
+    this.instanceScroll()
+    this.instanceCard()
+    Imitation.state.function.message('卸载成功', 'rgba(0, 0, 255, 1)', 'rgba(255, 255, 255, 1)')
   }
 
   render() {

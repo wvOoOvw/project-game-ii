@@ -49,17 +49,17 @@ const drawRadius = (option) => {
   const y = option.y
   const width = option.width
   const height = option.height
-  const radius = option.radius
+  const radius = Array.isArray(option.radius) ? option.radius : new Array(4).fill(option.radius)
 
   ctx.beginPath()
-  ctx.moveTo(x, y + radius)
-  ctx.arcTo(x, y, x + radius, y, radius)
-  ctx.lineTo(x + width - radius, y)
-  ctx.arcTo(x + width, y, x + width, y + radius, radius)
-  ctx.lineTo(x + width, y + height - radius)
-  ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius)
-  ctx.lineTo(x + radius, y + height)
-  ctx.arcTo(x, y + height, x, y + height - radius, radius)
+  ctx.moveTo(x, y + radius[0])
+  ctx.arcTo(x, y, x + radius[0], y, radius[0])
+  ctx.lineTo(x + width - radius[1], y)
+  ctx.arcTo(x + width, y, x + width, y + radius[1], radius[1])
+  ctx.lineTo(x + width, y + height - radius[2])
+  ctx.arcTo(x + width, y + height, x + width - radius[2], y + height, radius[2])
+  ctx.lineTo(x + radius[3], y + height)
+  ctx.arcTo(x, y + height, x, y + height - radius[3], radius[3])
   ctx.closePath()
 }
 
