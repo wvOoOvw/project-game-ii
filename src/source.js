@@ -141,21 +141,23 @@ var originExplore = [
     name: '梦境 I',
     image: J_music_47a83799595b4a5b97145a6e594620310,
     boss: { ...originBoss.find(i => i.key === 1) },
-    reward: [
-      {
-        gold: 400
-      }
-    ]
+    reward: () => {
+      return [
+        { ...originCard.find(i => i.key === 1), level: 1 },
+        { ...originCard.find(i => i.key === 2), level: 1 },
+      ]
+    }
   },
   {
     name: '梦境 II',
     image: J_music_072c59684f6c401dad40cadf0d0dd6290,
     boss: { ...originBoss.find(i => i.key === 2) },
-    reward: [
-      {
-        gold: 800
-      }
-    ]
+    reward: () => {
+      return [
+        { ...originCard.find(i => i.key === 1), level: 1 },
+        { ...originCard.find(i => i.key === 2), level: 1 },
+      ]
+    }
   },
 ]
 

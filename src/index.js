@@ -81,7 +81,6 @@ class Main {
         cardLibrary: null,
         team: null,
         teamIndex: null,
-        gold: null,
       },
       explore: {
         map: null
@@ -92,7 +91,10 @@ class Main {
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
         message: (m) => this.instanceMessage.send(m),
-        sound: (k) => this.instanceSound.play(k)
+        sound: (k) => this.instanceSound.play(k),
+        saveInfo: () => {
+
+        }
       }
     }
 
@@ -118,8 +120,7 @@ class Main {
         [],
         []
       ],
-      teamIndex: 0,
-      gold: 10000
+      teamIndex: 0
     }
 
     Imitation.state.info = responseHTTP

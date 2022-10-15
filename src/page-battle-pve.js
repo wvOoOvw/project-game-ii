@@ -598,6 +598,7 @@ class Modal {
 class Over {
   constructor(props) {
     this.status
+    this.reward
   }
 
   render() {
@@ -626,11 +627,13 @@ class Page {
     this.InstanceBattlerOpposite
     this.InstanceAction
     this.InstanceModal
+    this.InstanceOver
 
     this.instanceBattlerSelf()
     this.instanceBattlerOpposite()
     this.instanceAction()
     this.instanceModal()
+    this.instanceOver()
     this.initBattler()
   }
 
@@ -704,6 +707,10 @@ class Page {
     })
   }
 
+  instanceOver() {
+    this.InstanceOver = new Over()
+  }
+
   drawBattlerSelf() {
     this.InstanceBattlerSelf.render()
   }
@@ -720,6 +727,9 @@ class Page {
     this.InstanceModal.render()
   }
 
+  drawOver() {
+
+  }
 
   drawBackground() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
@@ -786,7 +796,7 @@ class Page {
       }
 
       if (current.type === 'pump-positive') {
-        if (current.target === 'self') {
+        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
           new Array(current.value).fill().forEach(i => {
             this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
           })
@@ -805,18 +815,7 @@ class Page {
 
     this.animationing = false
 
-    if (this.InstanceBattlerSelf.battler.HP <= 0 && this.InstanceBattlerOpposite.battler.HP <= 0) {
-      this.over = 'no result'
-      return
-    }
-    if (this.InstanceBattlerSelf.battler.HP <= 0) {
-      this.over = 'lose'
-      return
-    }
-    if (this.InstanceBattlerOpposite.battler.HP <= 0) {
-      this.over = 'win'
-      return
-    }
+    this.overBattle()
   }
 
   overRound = async () => {
@@ -829,6 +828,39 @@ class Page {
     })
 
     this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+  }
+
+  overBattle = () => {
+    if (this.InstanceBattlerOpposite.battler.HP <= 0) {
+      this.over = 'win'
+
+      this.InstanceOver.reward = Imitation.state.battle.reward()
+
+      this.InstanceOver.reward.forEach(i => {
+        const find = Imitation.state.info.cardLibrary.find(i_ => i_.key === i.key)
+
+        if (find) {
+          const findLevel = find.value.find(i_ => i_.level === i.level)
+          if (findLevel) {
+            findLevel.number = findLevel.number + 1
+          }
+          if (!findLevel) {
+            find.value.push({ level: i.level, number: 1 })
+          }
+        }
+        if (!find) {
+          Imitation.state.info.cardLibrary.push({ key: i.key, value: [{ level: i.level, number: 1 }] })
+        }
+      })
+
+      Imitation.state.function.saveInfo()
+
+      return
+    }
+    if (this.InstanceBattlerSelf.battler.HP <= 0) {
+      this.over = 'lose'
+      return
+    }
   }
 
   render() {

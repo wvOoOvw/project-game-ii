@@ -33,7 +33,7 @@ class Message {
   }
 
   render() {
-    if (this.show && this.opacity < 0.8) {
+    if (this.show && this.opacity < 1) {
       this.opacity = numberFix(this.opacity + 0.05)
     }
 
@@ -48,15 +48,14 @@ class Message {
     ctx.globalAlpha = this.opacity
 
     const option = {
-      width: 72, 
+      width: windowWidth - 24, 
       height: 36,
       font: 12,
       text: this.message
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = (windowHeight - option.height) / 2 + safeTop
-    option.y = 12 + safeTop
+    option.y = windowHeight - 48
 
     new Button(option).render()
 
