@@ -13,7 +13,7 @@ class Message {
     this.backgroundColor = 'rgba(255, 255, 255, 1)'
     this.textColor = 'rgba(0, 0, 0, 1)'
 
-    this.timeout = 1000
+    this.timeout = 750
     this.timeoutRef = null
 
     this.show = false

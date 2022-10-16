@@ -141,9 +141,7 @@ var originBoss = [
       { ...originCard.find(i => i.key === 2), level: 3 },
     ],
     AI: (self, opposite, round) => {
-      return [
-        arrayRandom(self.card)[0]
-      ]
+      return arrayRandom(self.card, 2)
     },
   },
 
@@ -158,9 +156,7 @@ var originBoss = [
       { ...originCard.find(i => i.key === 2), level: 8 },
     ],
     AI: (self, opposite, round) => {
-      return [
-        arrayRandom(self.card)[0]
-      ]
+      return arrayRandom(self.card, 2)
     },
   }
 ]

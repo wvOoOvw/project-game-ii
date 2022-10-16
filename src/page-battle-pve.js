@@ -425,10 +425,6 @@ class Action {
     })
   }
 
-  updateEnv(env) {
-    this.env = env
-  }
-
   drawEnv() {
     const option = { x: this.x + 12, y: this.y + this.height / 2 - this.cardHeight / 2 - 42, width: this.width - 24, height: 30, font: 10, text: `ROUND ${this.env.round}` }
 
@@ -687,13 +683,11 @@ class Over {
 
 class Page {
   constructor() {
-    this.animationing = false
-
     this.modal = null
     this.over = null
 
     this.env = {
-      round: 1
+      round: 1,
     }
 
     this.InstanceBattlerSelf
@@ -831,8 +825,6 @@ class Page {
   }
 
   useCard = async (card, Battler) => {
-    this.animationing = true
-
     const [self, opposite] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerOpposite] : [this.InstanceBattlerOpposite, this.InstanceBattlerSelf]
 
     const result = card.function(card, self.battler, opposite.battler, this.env)
@@ -946,8 +938,6 @@ class Page {
       }
     }
 
-    this.animationing = false
-
     this.overBattle()
   }
 
@@ -969,8 +959,8 @@ class Page {
     const result = this.InstanceBattlerOpposite.battler.AI(this.InstanceBattlerOpposite.battler, this.InstanceBattlerSelf.battler, this.env)
 
     while (result.length) {
-      await this.useCard(result.shift())
-      await wait(1000)
+      await this.useCard(result.shift(), this.InstanceBattlerOpposite)
+      if (result.length) await wait(1000)
     }
   }
 

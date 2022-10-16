@@ -52,10 +52,8 @@ const hash = (n = 12, l = 1) => {
 const numberFix = (n) => Number(Number(n).toFixed(2))
 
 const arrayRandom = (array, number) => {
-  if (array.length <= number) return array
-
   var r = []
-  var c = array.map(i => i)
+  var c = [...array]
 
   new Array(number).fill().forEach(() => {
     const index = Math.floor(Math.random() * c.length)
@@ -68,7 +66,7 @@ const arrayRandom = (array, number) => {
 
 const setArrayRandom = (array) => {
   var result = []
-  var origin = array
+  var origin = [...array]
 
   while (origin.length) {
     const index = Math.floor(Math.random() * origin.length)
