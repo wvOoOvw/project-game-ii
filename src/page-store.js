@@ -521,7 +521,7 @@ class Page {
     }
 
     if (findInTeam) {
-      find.number = find.number + 1
+      findInTeam.number = findInTeam.number + 1
     }
 
     if (!findInTeam) {

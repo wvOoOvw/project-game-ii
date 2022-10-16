@@ -1,3 +1,5 @@
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
 
 import J_music_88c8411d068c455099456851ec84f65c0 from '../media/music_88c8411d068c455099456851ec84f65c0.jpeg'
@@ -19,81 +21,105 @@ import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/music_ff2679ad91
 var originCard = [
   {
     key: 1,
-    name: '燃烧',
+    name: '小火把',
     type: '进攻卡',
     race: '火',
     limit: 3,
     image: J_music_88c8411d068c455099456851ec84f65c0,
-    description: l => `消耗10MP，造成 ${l * 15 + 100} 伤害，并附加给目标一层灼烧印记。`,
+    description: l => `造成 ${l * 20 + 80} 伤害, 并附加给目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
-        { type: 'cost-mp', target: 'self', value: -10 },
-        { type: 'hit', target: 'opposite', value: -(card.level * 15 + 100) },
-        { type: 'buff', target: 'opposite', value: '燃' }
+        { type: 'hit', target: 'opposite', value: -(card.level * 20 + 80) },
+        { type: 'buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
   },
   {
     key: 2,
-    name: '冰冻',
-    type: '魔法卡',
-    race: '水',
+    name: '大火把',
+    type: '进攻卡',
+    race: '火',
     limit: 3,
     image: J_music_2fec7f9242b44b64a914f7cc19d25abe0,
-    description: l => `造成 ${l * 15 + 30} 伤害，恢复 30MP。`,
+    description: l => `造成 ${l * 30 + 120} 伤害, 并附加给目标 2 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
-        { type: 'cost-mp', target: 'self', value: 30 },
-        { type: 'hit', target: 'opposite', value: -(card.level * 15 + 30) }
+        { type: 'hit', target: 'opposite', value: -(card.level * 30 + 120) },
+        { type: 'buff', target: 'opposite', value: '燃', number: 2 }
       ]
     }
   },
   {
     key: 3,
-    name: '自然',
-    type: '治疗卡',
-    race: '木',
+    name: '点燃',
+    type: '魔法卡',
+    race: '火',
     limit: 3,
     image: J_music_4d7f219082ba4d86b1543c982d1156560,
-    description: l => `恢复 50HP、20MP，抽一张卡`,
+    description: l => `消耗 100 MP, 造成目标'燃'层数 * ${l * 50} 伤害`,
     function: (card, self, opposite, round) => {
+      if (self.MP < 100) return
+
       return [
-        { type: 'cure-hp', target: 'self', value: 50 },
-        { type: 'cure-mp', target: 'self', value: 20 },
-        { type: 'pump-positive', target: 'self', value: 1 },
+        { type: 'cost-mp', target: 'self', value: -100 },
+        { type: 'hit', target: 'opposite', value: -opposite.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 50 },
       ]
     }
   },
   {
     key: 4,
-    name: '堕天',
-    type: '进攻卡',
-    race: '暗',
-    limit: 3,
-    image: J_music_98a7a38ce58546a7841d18c96e41e3760,
-    description: l => `消耗50MP，造成 ${l * 30 + 300} 伤害`,
-    function: (card, self, opposite, round) => {
-      return [
-        { type: 'cost-mp', target: 'self', value: -50 },
-        { type: 'hit', target: 'opposite', value: -(card.level * 30 + 300) }
-      ]
-    }
-  },
-  {
-    key: 5,
-    name: '坠地',
-    type: '进攻卡',
-    race: '暗',
+    name: '火之纽带',
+    type: '魔法卡',
+    race: '火',
     limit: 3,
     image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
-    description: l => `消耗50MP，造成 ${l * 50 + 200} 伤害`,
+    description: l => `从牌库以及墓地抽取 1 张除自身外的火系卡牌, 回复 ${l * 20} MP`,
     function: (card, self, opposite, round) => {
-      return [
-        { type: 'cost-mp', target: 'self', value: -50 },
-        { type: 'hit', target: 'opposite', value: -(card.level * 50 + 200) }
+      const rt = [
+        { type: 'cure-mp', target: 'self', value: card.level * 20 },
       ]
+
+      const cardInStore = self.card.store.find(i => i.race === '火' && i.key !== card.key)
+
+      if (cardInStore) rt.push({ type: 'pump-store-point', target: 'self', value: [cardInStore] })
+
+      const cardInCemetery = self.card.cemetery.find(i => i.race === '火' && i.key !== card.key)
+
+      if (cardInCemetery) rt.push({ type: 'pump-cemetery-point', target: 'self', value: [cardInCemetery] })
+
+      return rt
     }
   },
+  // {
+  //   key: 4,
+  //   name: '堕天',
+  //   type: '进攻卡',
+  //   race: '暗',
+  //   limit: 3,
+  //   image: J_music_98a7a38ce58546a7841d18c96e41e3760,
+  //   description: l => `消耗50MP，造成 ${l * 30 + 300} 伤害`,
+  //   function: (card, self, opposite, round) => {
+  //     return [
+  //       { type: 'cost-mp', target: 'self', value: -50 },
+  //       { type: 'hit', target: 'opposite', value: -(card.level * 30 + 300) }
+  //     ]
+  //   }
+  // },
+  // {
+  //   key: 5,
+  //   name: '坠地',
+  //   type: '进攻卡',
+  //   race: '暗',
+  //   limit: 3,
+  //   image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
+  //   description: l => `消耗50MP，造成 ${l * 50 + 200} 伤害`,
+  //   function: (card, self, opposite, round) => {
+  //     return [
+  //       { type: 'cost-mp', target: 'self', value: -50 },
+  //       { type: 'hit', target: 'opposite', value: -(card.level * 50 + 200) }
+  //     ]
+  //   }
+  // },
 ]
 
 originCard = originCard.map(i => {
@@ -113,7 +139,12 @@ var originBoss = [
     card: [
       { ...originCard.find(i => i.key === 1), level: 3 },
       { ...originCard.find(i => i.key === 2), level: 3 },
-    ]
+    ],
+    AI: (self, opposite, round) => {
+      return [
+        arrayRandom(self.card)[0]
+      ]
+    },
   },
 
   {
@@ -125,7 +156,12 @@ var originBoss = [
     card: [
       { ...originCard.find(i => i.key === 1), level: 8 },
       { ...originCard.find(i => i.key === 2), level: 8 },
-    ]
+    ],
+    AI: (self, opposite, round) => {
+      return [
+        arrayRandom(self.card)[0]
+      ]
+    },
   }
 ]
 

@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse, setArrayRandom } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -99,7 +99,7 @@ class Page {
         MP: 1000,
         card: {
           team: parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true),
-          store: parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true),
+          store: setArrayRandom(parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true)),
           hand: [],
           cemetery: [],
           consume: []

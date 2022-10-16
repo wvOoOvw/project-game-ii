@@ -43,6 +43,8 @@ const levelText = (level) => {
 
 export { levelText }
 
+const wait = async (time) => await new Promise((resolve) => setTimeout(() => resolve(), time))
+
 const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
 }
@@ -79,7 +81,7 @@ const setArrayRandom = (array) => {
   return result
 }
 
-export { hash, numberFix, arrayRandom, setArrayRandom }
+export { wait, hash, numberFix, arrayRandom, setArrayRandom }
 
 const addEventListener = (type, callback, option) => {
   const event = e => ifTouchCover(e, option) ? callback(e) : null

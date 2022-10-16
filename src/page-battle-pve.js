@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -18,12 +18,6 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-const computeStatus = (value) => {
-  if (value > 1) return 1
-  if (value < 0) return 0
-  return value
-}
-
 class Opposite {
   constructor(props) {
     this.x = props.x
@@ -33,6 +27,9 @@ class Opposite {
 
     this.battler = props.battler
     this.imageIns = props.imageIns
+
+    this.HP = this.battler.HP
+    this.MP = this.battler.MP
   }
 
   render() {
@@ -70,7 +67,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRect({ x: this.x + 12, y: this.y + 36, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24 })
+      drawRect({ x: this.x + 12, y: this.y + 36, width: this.width - 24, height: 24 })
 
       ctx.fillStyle = 'rgba(185, 0, 0, 1)'
       ctx.fill()
@@ -92,7 +89,7 @@ class Opposite {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRect({ x: this.x + 12, y: this.y + 72, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24 })
+      drawRect({ x: this.x + 12, y: this.y + 72, width: this.width - 24, height: 24 })
 
       ctx.fillStyle = 'rgba(0, 0, 185, 1)'
       ctx.fill()
@@ -128,6 +125,9 @@ class Battler {
 
     this.battler = props.battler
     this.imageIns = props.imageIns
+
+    this.HP = this.battler.HP
+    this.MP = this.battler.MP
   }
 
   render() {
@@ -155,7 +155,7 @@ class Battler {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: (this.width - 24) * computeStatus(battler.HP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(185, 0, 0, 1)'
       ctx.fill()
@@ -171,7 +171,7 @@ class Battler {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
       ctx.fill()
 
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: (this.width - 24) * computeStatus(battler.MP / 1000), height: 24, radius: 12 })
+      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
 
       ctx.fillStyle = 'rgba(0, 0, 185, 1)'
       ctx.fill()
@@ -243,9 +243,6 @@ class CardInAction {
   eventMove(e) {
     if (!this.mouseDownPosition) return
 
-    clearTimeout(this.scrollbarTimeout)
-    this.scrollbarTimeout = setTimeout(() => this.scrollbarTimeout = null, 1000)
-
     const changeX = (e.pageX || e.targetTouches[0].pageX) - this.mouseDownPosition[0]
     const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
     this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]
@@ -309,11 +306,11 @@ class CardInAction {
 
     ctx.fill()
 
-    if (this.mouseDownPositionTime) {
+    if (this.mouseDownPositionTime === 1) {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.font = `bold ${width * 0.075}px monospace`
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
@@ -325,10 +322,9 @@ class CardInAction {
       ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
       drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
-
     }
 
-    if (!this.mouseDownPositionTime) {
+    if (this.mouseDownPositionTime === 0) {
       const width_ = width * 0.6
       const height_ = width * 0.2
       const x_ = x + width / 2 - width_ / 2
@@ -527,7 +523,7 @@ class CardInModal {
 
     drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.25)`
+    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
 
     ctx.fill()
 
@@ -580,7 +576,7 @@ class Modal {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 120 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 24 - safeTop, radius: 12 }
 
     drawRadius(scrollOption)
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -607,7 +603,7 @@ class Modal {
 
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 72 + parseInt(index / 4) * (option.height + 12) + safeTop
+      option.y = 12 + parseInt(index / 4) * (option.height + 12) + safeTop
 
       return new CardInModal(option)
     })
@@ -620,17 +616,10 @@ class Modal {
     })
   }
 
-  drawButtonBack() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
-
-    new Button(option).render()
-
-    addEventListener('touchstart', this.back, option)
-  }
-
   render() {
-    this.drawButtonBack()
     this.drawScroll()
+
+    addEventListenerPure('touchstart', this.back)
   }
 }
 
@@ -642,7 +631,7 @@ class Over {
 
   drawContent() {
     if (this.over === 'win') {
-      new Button({ x: 12, y: 60, width: windowWidth - 24, height: 36, text: '战斗胜利' }).render()
+      new Button({ x: 12, y: 12 + safeTop, width: windowWidth - 24, height: 36, text: '战斗胜利' }).render()
 
       this.reward.forEach((card, index) => {
         const option = {
@@ -652,19 +641,32 @@ class Over {
 
         option.height = option.width * 1.35
         option.x = 12 + parseInt(index % 4) * (option.width + 12)
-        option.y = 108 + parseInt(index / 4) * (option.height + 12) + safeTop
+        option.y = 60 + parseInt(index / 4) * (option.height + 12) + safeTop
 
         new CardInModal(option).render()
       })
     }
 
     if (this.over === 'lose') {
-      new Button({ x: 12, y: 72, width: windowWidth - 24, height: 36, text: '战斗失败' }).render()
+      new Button({ x: 12, y: 12 + safeTop, width: windowWidth - 24, height: 36, text: '战斗失败' }).render()
     }
   }
 
+  drawButtonExplore() {
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, text: '探索' }
+
+    new Button(option).render()
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'explore'
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, font: 12, text: '返回' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, text: '首页' }
 
     new Button(option).render()
 
@@ -677,8 +679,9 @@ class Over {
   }
 
   render() {
-    this.drawButtonHome()
     this.drawContent()
+    this.drawButtonExplore()
+    this.drawButtonHome()
   }
 }
 
@@ -711,7 +714,6 @@ class Page {
     new Array(4).fill().forEach(i => {
       this.pumpCard(this.InstanceBattlerSelf.battler.card.store.shift(), this.InstanceBattlerSelf)
     })
-    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
   instanceBattlerSelf() {
@@ -825,16 +827,31 @@ class Page {
     if (Battler.battler.card.hand.length < 4) {
       Battler.battler.card.hand.push(card)
     }
+    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
   }
 
-  useCard = (card, Battler) => {
+  useCard = async (card, Battler) => {
     this.animationing = true
 
     const [self, opposite] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerOpposite] : [this.InstanceBattlerOpposite, this.InstanceBattlerSelf]
 
     const result = card.function(card, self.battler, opposite.battler, this.env)
 
-    Imitation.state.function.message(card.name, 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+    if (!result) {
+      Imitation.state.function.message('无法使用', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      return
+    }
+
+    if (Battler === this.InstanceBattlerSelf) {
+      self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
+
+      self.battler.card.cemetery.push(card)
+      self.battler.card.consume.push(card)
+
+      this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    }
+
+    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
 
     while (result.length) {
       const current = result.shift()
@@ -846,8 +863,6 @@ class Page {
       }
 
       if (current.type === 'hit') {
-        Imitation.state.function.sound('hit')
-
         if (current.target === 'opposite') {
           opposite.battler.HP = opposite.battler.HP + current.value
         }
@@ -855,10 +870,30 @@ class Page {
 
       if (current.type === 'buff') {
         if (current.target === 'self') {
-          self.battler.buff.push(current.value)
+          self.battler.buff.push(...new Array(current.number).fill(current.value))
         }
         if (current.target === 'opposite') {
-          opposite.battler.buff.push(current.value)
+          opposite.battler.buff.push(...new Array(current.number).fill(current.value))
+        }
+      }
+
+      if (current.type === 'cost-buff') {
+        const count = 0
+        if (current.target === 'self') {
+          self.battler.buff = self.battler.buff.filter(i => {
+            if (count === current.number) return true
+            if (i === current) return true
+            count = count + 1
+            return false
+          })
+        }
+        if (current.target === 'opposite') {
+          opposite.battler.buff = opposite.battler.buff.filter(i => {
+            if (count === current.number) return true
+            if (i === current) return true
+            count = count + 1
+            return false
+          })
         }
       }
 
@@ -874,22 +909,41 @@ class Page {
         }
       }
 
-      if (current.type === 'pump-positive') {
+      if (current.type === 'pump-store-positive') {
         if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
           new Array(current.value).fill().forEach(i => {
-            this.InstanceBattlerSelf.battler.card.hand.push(this.InstanceBattlerSelf.battler.card.store.shift())
+            const card = this.InstanceBattlerSelf.battler.card.store.shift()
+            if (!card) return
+            this.pumpCard(card, this.InstanceBattlerSelf)
           })
         }
       }
-    }
 
-    if (Battler === this.InstanceBattlerSelf) {
-      self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
+      if (current.type === 'pump-store-point') {
+        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+          current.value.forEach(i => {
+            this.pumpCard(i, this.InstanceBattlerSelf)
+            this.InstanceBattlerSelf.battler.card.store = this.InstanceBattlerSelf.battler.card.store.filter(i_ => i_ !== i)
+          })
+        }
+      }
 
-      self.battler.card.cemetery.push(card)
-      self.battler.card.consume.push(card)
+      if (current.type === 'pump-cemetery-positive') {
+        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+          new Array(current.value).fill().forEach(i => {
+            this.pumpCard(this.InstanceBattlerSelf.battler.card.cemetery.shift(), this.InstanceBattlerSelf)
+          })
+        }
+      }
 
-      this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+      if (current.type === 'pump-cemetery-point') {
+        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+          current.value.forEach(i => {
+            this.pumpCard(i, this.InstanceBattlerSelf)
+            this.InstanceBattlerSelf.battler.card.cemetery = this.InstanceBattlerSelf.battler.card.cemetery.filter(i_ => i_ !== i)
+          })
+        }
+      }
     }
 
     this.animationing = false
@@ -898,15 +952,26 @@ class Page {
   }
 
   overRound = async () => {
-    this.useCard(arrayRandom(this.InstanceBattlerOpposite.battler.card, 1)[0], this.InstanceBattlerOpposite)
+    await this.oppositeAI()
 
     this.env.round = this.env.round + 1
 
-    new Array(2).fill().forEach(i => {
-      this.pumpCard(this.InstanceBattlerSelf.battler.card.store.shift(), this.InstanceBattlerSelf)
+    new Array(1).fill().forEach(i => {
+      const card = this.InstanceBattlerSelf.battler.card.store.shift()
+      if (!card) return
+      this.pumpCard(card, this.InstanceBattlerSelf)
     })
 
     this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+  }
+
+  oppositeAI = async () => {
+    const result = this.InstanceBattlerOpposite.battler.AI(this.InstanceBattlerOpposite.battler, this.InstanceBattlerSelf.battler, this.env)
+
+    while (result.length) {
+      await this.useCard(result.shift())
+      await wait(1000)
+    }
   }
 
   overBattle = () => {
