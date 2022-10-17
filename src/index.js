@@ -76,15 +76,9 @@ class Main {
         },
       },
       removeEventListener: [],
-      info: {
-        cardLibrary: null,
-        team: null,
-        teamIndex: null,
-      },
-      explore: {
-        map: null
-      },
-      battle: {},
+      info: null,
+      battle: null,
+      explore: originExplore,
       function: {
         render: this.render,
         loopStart: this.loopStart,
@@ -92,40 +86,47 @@ class Main {
         message: (m, b, t) => this.instanceMessage.send(m, b, t),
         sound: (k) => this.instanceSound.play(k),
         saveInfo: () => {
-
+          localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         }
       }
     }
 
-    const responseHTTP = {
-      library: {
-        master: originMaster.map(i => ({ key: i.key, level: 1 })),
-        card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
-      },
-      team: [
-        {
-          master: [{ key: 1 }],
-          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
-        },
-        {
-          master: [{ key: 1 }],
-          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
-        },
-        {
-          master: [{ key: 1 }],
-          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
-        },
-        {
-          master: [{ key: 1 }],
-          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
-        },
-      ],
-      teamIndex: 0
+    const info = localStorage.getItem('info')
+
+    if (info) {
+      Imitation.state.info = JSON.parse(info)
     }
 
-    Imitation.state.info = responseHTTP
-
-    Imitation.state.explore.map = originExplore
+    if (!info) {
+      const responseHTTP = {
+        library: {
+          master: originMaster.map(i => ({ key: i.key, level: 1 })),
+          card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
+        },
+        team: [
+          {
+            master: [{ key: 1 }],
+            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+          },
+          {
+            master: [{ key: 1 }],
+            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+          },
+          {
+            master: [{ key: 1 }],
+            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+          },
+          {
+            master: [{ key: 1 }],
+            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+          },
+        ],
+        teamIndex: 0
+      }
+  
+      Imitation.state.info = responseHTTP
+      Imitation.state.function.saveInfo()
+    }
   }
 }
 

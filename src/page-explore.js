@@ -16,7 +16,7 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class Page {
   constructor() {
-    this.exploreMap
+    this.explore
 
     this.InstanceScroll
 
@@ -24,7 +24,7 @@ class Page {
   }
 
   get scrollListHeight() {
-    const row = this.exploreMap.length
+    const row = this.explore.length
 
     if (row === 0) return 0
 
@@ -36,7 +36,7 @@ class Page {
   }
 
   instance() {
-    this.exploreMap = Imitation.state.explore.map
+    this.explore = Imitation.state.explore
 
     this.instanceScroll()
   }
@@ -64,7 +64,7 @@ class Page {
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.font = `900 12px ${window.fontFamily}`
 
-    this.exploreMap.forEach((i, index) => {
+    this.explore.forEach((i, index) => {
       const x = 12
       const y = 60 + index * 172 + safeTop - offsetY
       const width = windowWidth - 24
