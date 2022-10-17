@@ -96,7 +96,7 @@ class Page {
     Imitation.state.battle = {
       self: {
         master: {
-          ...parseMaster(Imitation.state.info.team[Imitation.state.info.teamIndex].master)[0],
+          ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])[0],
           buff: []
         },
         card: {
@@ -121,7 +121,7 @@ class Page {
         },
         AI: explore.AI
       },
-      reward: explore.reward
+      reward: parseCard(explore.reward())
     }
 
     Imitation.state.page.current = 'transition'

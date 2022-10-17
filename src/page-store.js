@@ -5,12 +5,10 @@ import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
-import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
 
 const ctx = canvas.getContext('2d')
 
 const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
-const ImageBanner = createImage(J_music_47a83799595b4a5b97145a6e594620310)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -65,7 +63,7 @@ class CardInList {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: 8 })
 
     ctx.clip()
 
@@ -75,7 +73,7 @@ class CardInList {
     const height_ = width * 0.2
     const x_ = x + width / 2 - width_ / 2
     const y_ = y + height - height_ - (x_ - x)
-    const radius_ = width * 0.08
+    const radius_ = height_ / 4
 
     const text = [card.name, levelText(card.level)]
 
@@ -152,14 +150,14 @@ class CardInPreview {
 
     ctx.textAlign = 'end'
 
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.08, y + width * 0.36)
+    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.08, y + width * 0.30)
 
     ctx.textAlign = 'start'
 
-    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
+    ctx.fillText('Lv ' + card.level, x + width * 0.08, y + width * 0.30)
+    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.42)
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
 
     ctx.restore()
   }
@@ -214,7 +212,7 @@ class MasterInList {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: width * 0.04 })
+    drawRadius({ x, y, width, height, radius: 12 })
 
     ctx.clip()
 
@@ -256,7 +254,13 @@ class MasterInPreview {
 
     this.master = props.master
 
+    this.skillIndex = 0
+
     this.novaTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
   }
 
   render() {
@@ -297,9 +301,11 @@ class MasterInPreview {
 
     ctx.textAlign = 'start'
 
-    ctx.fillText('Lv' + master.level, x + width * 0.08, y + width * 0.36)
+    ctx.fillText('Lv ' + master.level, x + width * 0.08, y + width * 0.30)
+    ctx.fillText('HP ' + master.HP, x + width * 0.08, y + width * 0.42)
+    ctx.fillText('MP ' + master.MP, x + width * 0.08, y + width * 0.54)
 
-    // drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.66, width: width - width * 0.25, fontHeight: width * 0.12, text: master.skill[this.skillIndex].description(master.level) })
 
     ctx.restore()
   }
@@ -356,7 +362,7 @@ class Page {
 
   init() {
     if (this.type === 'team') {
-      this.master = parseMaster(Imitation.state.info.team[Imitation.state.info.teamIndex].master)
+      this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])
 
       this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)
       this.card = this.card.sort((a, b) => {
@@ -488,11 +494,11 @@ class Page {
     const _drawTeamButton = () => {
       new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
 
-        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, font: 10, opacity: 0.5, text: `队伍 ${index + 1}` }
+        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, font: 10, text: `队伍 ${index + 1}` }
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        if (index === Imitation.state.info.teamIndex) option_.opacity = 1
+        option_.opacity = index === Imitation.state.info.teamIndex ? 1 : 0.5
 
         new Button(option_).render()
 
@@ -583,32 +589,56 @@ class Page {
   drawPreview() {
     var closeCover = []
 
+    const buttonY = this.InstanceMasterPreview.y + this.InstanceMasterPreview.height
+
     if (this.type === 'team') {
       if (this.InstanceCard.find(i => i.card === this.preview)) {
         this.InstanceCardPreview.card = this.preview
 
         this.InstanceCardPreview.render()
 
-        const buttonY = windowHeight - this.InstanceCardPreview.y - 120
-
-        const option = { x: windowWidth / 2 - 60, y: buttonY, width: 120, height: 40, radius: 8, text: '卸载' }
+        const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, text: '卸载' }
 
         new Button(option).render()
 
-        const unload = () => {
-          this.unload(this.preview)
+        const unloadCard = () => {
+          this.unloadCard(this.preview)
           this.preview = null
           this.InstanceCardPreview.novaTime = 0
         }
 
-        addEventListener('touchstart', unload, option)
+        addEventListener('touchstart', unloadCard, option)
 
         closeCover.push(option)
       }
+
       if (this.InstanceMaster.find(i => i.master === this.preview)) {
         this.InstanceMasterPreview.master = this.preview
 
         this.InstanceMasterPreview.render()
+
+        this.preview.skill.forEach((i, index) => {
+          const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, font: 10, text: i.name }
+
+          const maxIndex = this.preview.skill.length
+          const centerIndex = maxIndex / 2 - 0.5
+
+          const diff = (index - centerIndex) * option.width * 1.1
+
+          option.x = option.x + diff
+
+          option.opacity = index === this.InstanceMasterPreview.skillIndex ? 1 : 0.5
+
+          new Button(option).render()
+
+          const event = (e) => {
+            this.InstanceMasterPreview.skillIndex = index
+          }
+
+          addEventListener('touchstart', event, option)
+
+          closeCover.push(option)
+        })
       }
     }
 
@@ -617,39 +647,76 @@ class Page {
 
       this.InstanceCardPreview.render()
 
-      const buttonY = windowHeight - this.InstanceCardPreview.y - 120
-
-      const option = { x: windowWidth / 2 - 60, y: buttonY, width: 120, height: 40, radius: 8, text: '装载' }
+      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, text: '装载' }
 
       new Button(option).render()
 
-      const load = () => {
-        this.load(this.preview)
+      const loadCard = () => {
+        this.loadCard(this.preview)
         this.preview = null
         this.InstanceCardPreview.novaTime = 0
       }
 
-      addEventListener('touchstart', load, option)
+      addEventListener('touchstart', loadCard, option)
 
       closeCover.push(option)
 
-      const option_ = { x: windowWidth / 2 - 60, y: buttonY + 60, width: 120, height: 40, radius: 8, text: '合成' }
+      const option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, text: '合成' }
 
       new Button(option_).render()
 
-      const compose = () => {
-        this.compose(this.preview)
+      const composeCard = () => {
+        this.composeCard(this.preview)
         this.preview = null
         this.InstanceCardPreview.novaTime = 0
       }
 
-      addEventListener('touchstart', compose, option_)
+      addEventListener('touchstart', composeCard, option_)
 
       closeCover.push(option_)
     }
 
     if (this.type === 'library-master') {
+      this.InstanceMasterPreview.master = this.preview
 
+      this.InstanceMasterPreview.render()
+
+      this.preview.skill.forEach((i, index) => {
+        const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, font: 10, text: i.name }
+
+        const maxIndex = this.preview.skill.length
+        const centerIndex = maxIndex / 2 - 0.5
+
+        const diff = (index - centerIndex) * option.width * 1.1
+
+        option.x = option.x + diff
+
+        option.opacity = index === this.InstanceMasterPreview.skillIndex ? 1 : 0.5
+
+        new Button(option).render()
+
+        const event = (e) => {
+          this.InstanceMasterPreview.skillIndex = index
+        }
+
+        addEventListener('touchstart', event, option)
+
+        closeCover.push(option)
+      })
+
+      const option = { x: windowWidth / 2 - 60, y: buttonY + 80, width: 120, height: 40, text: '装载' }
+
+      new Button(option).render()
+
+      const loadMaster = () => {
+        this.loadMaster(this.preview)
+        this.preview = null
+        this.InstanceMasterPreview.novaTime = 0
+      }
+
+      addEventListener('touchstart', loadMaster, option)
+
+      closeCover.push(option)
     }
 
     const close = (e) => {
@@ -680,7 +747,7 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  compose(card) {
+  composeCard(card) {
     const library = Imitation.state.info.library.card
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
@@ -723,7 +790,7 @@ class Page {
     Imitation.state.function.message('合成成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
   }
 
-  load(card) {
+  loadCard(card) {
     const library = Imitation.state.info.library.card
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
@@ -758,7 +825,7 @@ class Page {
     Imitation.state.function.message('装载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
   }
 
-  unload(card) {
+  unloadCard(card) {
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
@@ -769,6 +836,13 @@ class Page {
       const index = team.indexOf(findInTeam)
       team.splice(index, 1)
     }
+
+    this.init()
+    Imitation.state.function.message('卸载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+  }
+
+  loadMaster(master) {
+    Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key = master.key
 
     this.init()
     Imitation.state.function.message('卸载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')

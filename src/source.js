@@ -25,12 +25,19 @@ var originMaster = [
     MP: 200,
     skill: [
       {
-        name: '庇护',
+        name: '庇护 I',
         description: l => `使用卡牌时, 回复 ${l * 15} MP`,
         function: (card, result, self, target, env) => {
           result.push({ type: 'cure-mp', target: 'self', value: self.master.level * 15 })
         }
-      }
+      },
+      {
+        name: '庇护 II',
+        description: l => `使用卡牌时, 回复 ${l * 15} HP`,
+        function: (card, result, self, target, env) => {
+          result.push({ type: 'cure-hp', target: 'self', value: self.master.level * 15 })
+        }
+      },
     ],
   },
   {

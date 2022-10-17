@@ -65,7 +65,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'store',
+        current: 'home',
         next: '',
         map: {
           'save-image': SaveImage,
@@ -105,19 +105,19 @@ class Main {
       },
       team: [
         {
-          master: [{ key: 1, level: 1 }],
+          master: [{ key: 1 }],
           card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
         },
         {
-          master: [{ key: 1, level: 1 }],
+          master: [{ key: 1 }],
           card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
         },
         {
-          master: [{ key: 1, level: 1 }],
+          master: [{ key: 1 }],
           card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
         },
         {
-          master: [{ key: 1, level: 1 }],
+          master: [{ key: 1 }],
           card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
         },
       ],

@@ -650,6 +650,8 @@ class Page {
     this.InstanceModal
     this.InstanceOver
 
+    console.log(Imitation.state.battle.self)
+
     this.instanceRoleSelf()
     this.instanceRoleOpposite()
     this.instanceAction()
@@ -923,7 +925,7 @@ class Page {
     if (this.InstanceRoleOpposite.information.master.HP <= 0) {
       this.over = 'win'
 
-      this.InstanceOver.reward = Imitation.state.battle.reward()
+      this.InstanceOver.reward = Imitation.state.battle.reward
 
       const library = Imitation.state.info.library.card
 
