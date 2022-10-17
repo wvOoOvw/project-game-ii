@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parse, setArrayRandom } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, setArrayRandom, parseMaster } from './utils-common'
 import { drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -95,20 +95,31 @@ class Page {
   enter(explore) {
     Imitation.state.battle = {
       self: {
-        HP: 1000,
-        MP: 1000,
+        master: {
+          ...parseMaster(Imitation.state.info.team[Imitation.state.info.teamIndex].master)[0],
+          buff: []
+        },
         card: {
-          team: parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true),
-          store: setArrayRandom(parse(Imitation.state.info.team[Imitation.state.info.teamIndex], true)),
+          team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true),
+          store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)),
           hand: [],
           cemetery: [],
           consume: []
         },
-        buff: [],
       },
       opposite: {
-        ...explore.boss,
-        buff: [],
+        master: {
+          ...parseMaster([explore.boss.master])[0],
+          buff: []
+        },
+        card: {
+          team: parseCard(explore.boss.card, true),
+          store: setArrayRandom(parseCard(explore.boss.card, true)),
+          hand: [],
+          cemetery: [],
+          consume: []
+        },
+        AI: explore.AI
       },
       reward: explore.reward
     }

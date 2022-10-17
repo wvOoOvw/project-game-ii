@@ -1,6 +1,6 @@
-import { originCard, originBoss, originExplore } from './source'
+import { originMaster, originCard, originBoss, originExplore } from './source'
 
-const parse = (array, numberFlat) => {
+const parseCard = (array, numberFlat) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
 
@@ -21,7 +21,21 @@ const parse = (array, numberFlat) => {
   return result
 }
 
-export { parse }
+const parseMaster = (array) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originMaster.find(i_ => i.key === i_.key)
+
+    result_.push({ ...origin, ...i })
+
+    return result_
+  }, [])
+
+  return result
+}
+
+export { parseCard, parseMaster }
 
 const levelText = (level) => {
   if (level === 1) return 'I'
@@ -57,8 +71,10 @@ const arrayRandom = (array, number) => {
 
   new Array(number).fill().forEach(() => {
     const index = Math.floor(Math.random() * c.length)
-    r.push(c[index])
-    c = c.filter((i, index_) => index_ !== index)
+    if (c[index]) {
+      r.push(c[index])
+      c = c.filter((i, index_) => index_ !== index)
+    }
   })
 
   return r

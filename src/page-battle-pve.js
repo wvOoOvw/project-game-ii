@@ -18,18 +18,14 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class Opposite {
+class role {
   constructor(props) {
     this.x = props.x
     this.y = props.y
     this.width = props.width
     this.height = props.height
 
-    this.battler = props.battler
-    this.imageIns = props.imageIns
-
-    this.HP = this.battler.HP
-    this.MP = this.battler.MP
+    this.information = props.information
   }
 
   render() {
@@ -37,7 +33,7 @@ class Opposite {
     const y = this.y
     const width = this.width
     const height = this.height
-    const battler = this.battler
+    const information = this.information
 
     ctx.save()
 
@@ -45,143 +41,84 @@ class Opposite {
 
     ctx.clip()
 
-    drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
+    drawImage(information.master.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.font = `bold 12px monospace`
+    const radiusPaneOption = {
+      width: height * 0.5,
+      height: height * 0.5,
+    }
 
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
+    radiusPaneOption.x = x + (height - radiusPaneOption.height) / 8
+    radiusPaneOption.y = y + (height - radiusPaneOption.height) / 8
+    radiusPaneOption.radius = radiusPaneOption.width / 2
 
-    ctx.fillText(this.battler.name, this.x + 12, this.y + 12)
+    drawRadius(radiusPaneOption)
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+    ctx.fill()
 
     ctx.textAlign = 'center'
-    ctx.textBaseline = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `bold 12px monospace`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    {
-      ctx.save()
+    ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), radiusPaneOption.x + radiusPaneOption.width / 2, radiusPaneOption.y + radiusPaneOption.height / 2)
 
-      drawRadius({ x: this.x + 12, y: this.y + 36, width: this.width - 24, height: 24, radius: 12 })
-
-      ctx.clip()
-
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-      ctx.fill()
-
-      drawRect({ x: this.x + 12, y: this.y + 36, width: this.width - 24, height: 24 })
-
-      ctx.fillStyle = 'rgba(185, 0, 0, 1)'
-      ctx.fill()
-
-      ctx.restore()
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-
-      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 42)
+    const HMLineOption = {
+      width: width - radiusPaneOption.width - (radiusPaneOption.x - x) * 3,
+      height: height * 0.15,
+      x: radiusPaneOption.width + radiusPaneOption.x + (radiusPaneOption.x - x),
+      radius: height * 0.075
     }
 
-    {
-      ctx.save()
+    ctx.save()
 
-      drawRadius({ x: this.x + 12, y: this.y + 72, width: this.width - 24, height: 24, radius: 12 })
+    HMLineOption.y = radiusPaneOption.y + radiusPaneOption.height / 2 - HMLineOption.height - HMLineOption.height * 0.2
 
-      ctx.clip()
+    drawRadius(HMLineOption)
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-      ctx.fill()
+    ctx.clip()
 
-      drawRect({ x: this.x + 12, y: this.y + 72, width: this.width - 24, height: 24 })
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+    ctx.fill()
 
-      ctx.fillStyle = 'rgba(0, 0, 185, 1)'
-      ctx.fill()
+    drawRect(HMLineOption)
 
-      ctx.restore()
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-
-      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 78)
-    }
-
-    this.battler.buff
-      .reduce((t, i) => {
-        const find = t.find(i_ => i_.name === i)
-        if (find) find.number = find.number + 1
-        if (!find) t.push({ name: i, number: 1 })
-        return t
-      }, [])
-      .forEach((i, index) => {
-        new Button({ x: 12 + this.x + index * 48, y: this.y + 106, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
-      })
+    ctx.fillStyle = 'rgba(185, 0, 0, 1)'
+    ctx.fill()
 
     ctx.restore()
-  }
-}
 
-class Battler {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    this.battler = props.battler
-    this.imageIns = props.imageIns
-
-    this.HP = this.battler.HP
-    this.MP = this.battler.MP
-  }
-
-  render() {
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
-    const battler = this.battler
+    ctx.fillText(`HP: ${information.master.HP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: 12 })
+    HMLineOption.y = radiusPaneOption.y + radiusPaneOption.height / 2 + HMLineOption.height * 0.2
+
+    drawRadius(HMLineOption)
 
     ctx.clip()
 
-    drawImage(this.imageIns, { x: x, y: y, width: width, height: height })
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
+    ctx.fill()
 
-    ctx.font = `bold 12px monospace`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'center'
+    drawRect(HMLineOption)
 
-    {
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
+    ctx.fillStyle = 'rgba(0, 0, 185, 1)'
+    ctx.fill()
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-      ctx.fill()
+    ctx.restore()
 
-      drawRadius({ x: this.x + 12, y: this.y + 12, width: this.width - 24, height: 24, radius: 12 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-      ctx.fillStyle = 'rgba(185, 0, 0, 1)'
-      ctx.fill()
+    ctx.fillText(`MP: ${information.master.MP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.font = `bold 8px monospace`
 
-      ctx.fillText(`HP: ${battler.HP}`, this.x + this.width / 2, y + 24)
-    }
-
-    {
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
-
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-      ctx.fill()
-
-      drawRadius({ x: this.x + 12, y: this.y + 48, width: this.width - 24, height: 24, radius: 12 })
-
-      ctx.fillStyle = 'rgba(0, 0, 185, 1)'
-      ctx.fill()
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-
-      ctx.fillText(`MP: ${battler.MP}`, this.x + this.width / 2, y + 60)
-    }
-
-    this.battler.buff
+    information.master.buff
       .reduce((t, i) => {
         const find = t.find(i_ => i_.name === i)
         if (find) find.number = find.number + 1
@@ -189,7 +126,24 @@ class Battler {
         return t
       }, [])
       .forEach((i, index) => {
-        new Button({ x: 12 + this.x + index * 48, y: this.y + 84, width: 36, height: 36, radius: 18, font: 10, text: i.name + 'x' + i.number }).render()
+        const option = {
+          width: height * 0.2,
+          height: height * 0.2,
+          y: radiusPaneOption.y + radiusPaneOption.height + (radiusPaneOption.y - y),
+          radius: height * 0.1
+        }
+
+        option.x = radiusPaneOption.x + index * (option.width + (radiusPaneOption.y - y))
+
+        drawRadius(option)
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+
+        ctx.fill()
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+        ctx.fillText(i.name + 'X' + i.number, option.x + option.width / 2, option.y + option.height / 2)
       })
 
     ctx.restore()
@@ -364,8 +318,8 @@ class Action {
     this.width = props.width
     this.height = props.height
 
-    this.InstanceBattlerSelf = props.InstanceBattlerSelf
-    this.InstanceBattlerOpposite = props.InstanceBattlerOpposite
+    this.InstanceRoleSelf = props.InstanceRoleSelf
+    this.InstanceRoleOpposite = props.InstanceRoleOpposite
 
     this.cards = props.cards
     this.env = props.env
@@ -410,7 +364,7 @@ class Action {
       option.x = x + (width - option.width) / 2 + diff * (width / 4 - 4)
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
-      option.touchEnd = () => this.useCard(i, this.InstanceBattlerSelf)
+      option.touchEnd = () => this.useCard(i, this.InstanceRoleSelf)
       option.actionHeight = this.height
 
       const find = this.InstanceCards.find(i_ => i_.card === i)
@@ -444,7 +398,7 @@ class Action {
   }
 
   drawButtonStore() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看牌库x${this.InstanceBattlerSelf.battler.card.store.length}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
 
     new Button(option).render()
 
@@ -456,7 +410,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看墓地x${this.InstanceBattlerSelf.battler.card.cemetery.length}` }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 + this.cardHeight / 2 + 12, width: 72, height: 30, font: 10, text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
 
     new Button(option).render()
 
@@ -690,49 +644,48 @@ class Page {
       round: 1,
     }
 
-    this.InstanceBattlerSelf
-    this.InstanceBattlerOpposite
+    this.InstanceRoleSelf
+    this.InstanceRoleOpposite
     this.InstanceAction
     this.InstanceModal
     this.InstanceOver
 
-    this.instanceBattlerSelf()
-    this.instanceBattlerOpposite()
+    this.instanceRoleSelf()
+    this.instanceRoleOpposite()
     this.instanceAction()
     this.instanceModal()
     this.instanceOver()
-    this.initBattler()
+    this.initRole()
   }
 
-  initBattler() {
+  initRole() {
     new Array(4).fill().forEach(i => {
-      this.pumpCard(this.InstanceBattlerSelf.battler.card.store.shift(), this.InstanceBattlerSelf)
+      this.pumpCard(this.InstanceRoleSelf.information.card.store.shift(), this.InstanceRoleSelf)
+      this.pumpCard(this.InstanceRoleOpposite.information.card.store.shift(), this.InstanceRoleOpposite)
     })
   }
 
-  instanceBattlerSelf() {
+  instanceRoleSelf() {
     const height = (windowHeight * 0.5) / 2
 
-    this.InstanceBattlerSelf = new Battler({
+    this.InstanceRoleSelf = new role({
       x: 12,
       y: 72 + height + safeTop,
       width: windowWidth - 24,
       height: height,
-      imageIns: ImageSelf,
-      battler: Imitation.state.battle.self
+      information: Imitation.state.battle.self
     })
   }
 
-  instanceBattlerOpposite() {
+  instanceRoleOpposite() {
     const height = (windowHeight * 0.5) / 2
 
-    this.InstanceBattlerOpposite = new Opposite({
+    this.InstanceRoleOpposite = new role({
       x: 12,
       y: 60 + safeTop,
       width: windowWidth - 24,
       height: height,
-      imageIns: ImageOpposite,
-      battler: Imitation.state.battle.opposite
+      information: Imitation.state.battle.opposite
     })
   }
 
@@ -748,20 +701,20 @@ class Page {
       y: windowHeight - height - 12,
       width: width,
       height: height,
-      cards: this.InstanceBattlerSelf.battler.card.hand,
+      cards: this.InstanceRoleSelf.information.card.hand,
       env: this.env,
-      InstanceBattlerSelf: this.InstanceBattlerSelf,
-      InstanceBattlerOpposite: this.InstanceBattlerOpposite,
+      InstanceRoleSelf: this.InstanceRoleSelf,
+      InstanceRoleOpposite: this.InstanceRoleOpposite,
       useCard: this.useCard,
       overRound: this.overRound,
       watchStore: () => {
         this.modal = true
-        this.InstanceModal.cards = this.InstanceBattlerSelf.battler.card.store
+        this.InstanceModal.cards = this.InstanceRoleSelf.information.card.store
         this.InstanceModal.updateScrollY()
       },
       watchCemetery: () => {
         this.modal = true
-        this.InstanceModal.cards = this.InstanceBattlerSelf.battler.card.cemetery
+        this.InstanceModal.cards = this.InstanceRoleSelf.information.card.cemetery
         this.InstanceModal.updateScrollY()
       }
     })
@@ -777,12 +730,12 @@ class Page {
     this.InstanceOver = new Over({})
   }
 
-  drawBattlerSelf() {
-    this.InstanceBattlerSelf.render()
+  drawRoleSelf() {
+    this.InstanceRoleSelf.render()
   }
 
-  drawBattlerOpposite() {
-    this.InstanceBattlerOpposite.render()
+  drawRoleOpposite() {
+    this.InstanceRoleOpposite.render()
   }
 
   drawAction() {
@@ -814,34 +767,36 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  pumpCard = (card, Battler) => {
-    if (Battler.battler.card.hand.length === 4) {
-      Battler.battler.card.cemetery.push(card)
+  pumpCard = (card, role) => {
+    if (role.information.card.hand.length === 4) {
+      role.information.card.cemetery.push(card)
     }
-    if (Battler.battler.card.hand.length < 4) {
-      Battler.battler.card.hand.push(card)
+    if (role.information.card.hand.length < 4) {
+      role.information.card.hand.push(card)
     }
-    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    this.InstanceAction.updateCards(this.InstanceRoleSelf.information.card.hand)
   }
 
-  useCard = async (card, Battler) => {
-    const [self, opposite] = Battler === this.InstanceBattlerSelf ? [this.InstanceBattlerSelf, this.InstanceBattlerOpposite] : [this.InstanceBattlerOpposite, this.InstanceBattlerSelf]
+  useCard = async (card, role) => {
+    const [self, opposite] = role === this.InstanceRoleSelf ? [this.InstanceRoleSelf, this.InstanceRoleOpposite] : [this.InstanceRoleOpposite, this.InstanceRoleSelf]
 
-    const result = card.function(card, self.battler, opposite.battler, this.env)
+    var result = card.function(card, self.information, opposite.information, this.env)
+
+    self.information.master.skill.forEach(skill => {
+      skill.function(card, result, self.information, opposite.information, this.env)
+    })
 
     if (!result) {
       Imitation.state.function.message('无法使用', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    if (Battler === this.InstanceBattlerSelf) {
-      self.battler.card.hand = self.battler.card.hand.filter(i => i !== card)
+    self.information.card.hand = self.information.card.hand.filter(i => i !== card)
 
-      self.battler.card.cemetery.push(card)
-      self.battler.card.consume.push(card)
+    self.information.card.cemetery.push(card)
+    self.information.card.consume.push(card)
 
-      this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
-    }
+    this.InstanceAction.updateCards(this.InstanceRoleSelf.information.card.hand)
 
     Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
 
@@ -850,29 +805,29 @@ class Page {
 
       if (current.type === 'cost-mp') {
         if (current.target === 'self') {
-          self.battler.MP = self.battler.MP + current.value
+          self.information.master.MP = self.information.master.MP + current.value
         }
       }
 
       if (current.type === 'hit') {
         if (current.target === 'opposite') {
-          opposite.battler.HP = opposite.battler.HP + current.value
+          opposite.information.master.HP = opposite.information.master.HP + current.value
         }
       }
 
       if (current.type === 'buff') {
         if (current.target === 'self') {
-          self.battler.buff.push(...new Array(current.number).fill(current.value))
+          self.information.master.buff.push(...new Array(current.number).fill(current.value))
         }
         if (current.target === 'opposite') {
-          opposite.battler.buff.push(...new Array(current.number).fill(current.value))
+          opposite.information.master.buff.push(...new Array(current.number).fill(current.value))
         }
       }
 
       if (current.type === 'cost-buff') {
         const count = 0
         if (current.target === 'self') {
-          self.battler.buff = self.battler.buff.filter(i => {
+          self.information.master.buff = self.information.master.buff.filter(i => {
             if (count === current.number) return true
             if (i === current) return true
             count = count + 1
@@ -880,7 +835,7 @@ class Page {
           })
         }
         if (current.target === 'opposite') {
-          opposite.battler.buff = opposite.battler.buff.filter(i => {
+          opposite.information.master.buff = opposite.information.master.buff.filter(i => {
             if (count === current.number) return true
             if (i === current) return true
             count = count + 1
@@ -891,48 +846,48 @@ class Page {
 
       if (current.type === 'cure-hp') {
         if (current.target === 'self') {
-          self.battler.HP = self.battler.HP + current.value
+          self.information.master.HP = self.information.master.HP + current.value
         }
       }
 
       if (current.type === 'cure-mp') {
         if (current.target === 'self') {
-          self.battler.MP = self.battler.MP + current.value
+          self.information.master.MP = self.information.master.MP + current.value
         }
       }
 
       if (current.type === 'pump-store-positive') {
-        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+        if (current.target === 'self') {
           new Array(current.value).fill().forEach(i => {
-            const card = this.InstanceBattlerSelf.battler.card.store.shift()
+            const card = this.InstanceRoleSelf.information.card.store.shift()
             if (!card) return
-            this.pumpCard(card, this.InstanceBattlerSelf)
+            this.pumpCard(card, this.InstanceRoleSelf)
           })
         }
       }
 
       if (current.type === 'pump-store-point') {
-        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+        if (current.target === 'self') {
           current.value.forEach(i => {
-            this.pumpCard(i, this.InstanceBattlerSelf)
-            this.InstanceBattlerSelf.battler.card.store = this.InstanceBattlerSelf.battler.card.store.filter(i_ => i_ !== i)
+            this.pumpCard(i, this.InstanceRoleSelf)
+            this.InstanceRoleSelf.information.card.store = this.InstanceRoleSelf.information.card.store.filter(i_ => i_ !== i)
           })
         }
       }
 
       if (current.type === 'pump-cemetery-positive') {
-        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+        if (current.target === 'self') {
           new Array(current.value).fill().forEach(i => {
-            this.pumpCard(this.InstanceBattlerSelf.battler.card.cemetery.shift(), this.InstanceBattlerSelf)
+            this.pumpCard(this.InstanceRoleSelf.information.card.cemetery.shift(), this.InstanceRoleSelf)
           })
         }
       }
 
       if (current.type === 'pump-cemetery-point') {
-        if (current.target === 'self' && Battler === this.InstanceBattlerSelf) {
+        if (current.target === 'self') {
           current.value.forEach(i => {
-            this.pumpCard(i, this.InstanceBattlerSelf)
-            this.InstanceBattlerSelf.battler.card.cemetery = this.InstanceBattlerSelf.battler.card.cemetery.filter(i_ => i_ !== i)
+            this.pumpCard(i, this.InstanceRoleSelf)
+            this.InstanceRoleSelf.information.card.cemetery = this.InstanceRoleSelf.information.card.cemetery.filter(i_ => i_ !== i)
           })
         }
       }
@@ -947,39 +902,39 @@ class Page {
     this.env.round = this.env.round + 1
 
     new Array(1).fill().forEach(i => {
-      const card = this.InstanceBattlerSelf.battler.card.store.shift()
+      const card = this.InstanceRoleSelf.information.card.store.shift()
       if (!card) return
-      this.pumpCard(card, this.InstanceBattlerSelf)
+      this.pumpCard(card, this.InstanceRoleSelf)
     })
 
-    this.InstanceAction.updateCards(this.InstanceBattlerSelf.battler.card.hand)
+    this.InstanceAction.updateCards(this.InstanceRoleSelf.information.card.hand)
   }
 
   oppositeAI = async () => {
-    const result = this.InstanceBattlerOpposite.battler.AI(this.InstanceBattlerOpposite.battler, this.InstanceBattlerSelf.battler, this.env)
+    const result = this.InstanceRoleOpposite.information.AI(this.InstanceRoleOpposite.information, this.InstanceRoleSelf.information, this.env)
 
     while (result.length) {
-      await this.useCard(result.shift(), this.InstanceBattlerOpposite)
+      await this.useCard(result.shift(), this.InstanceRoleOpposite)
       if (result.length) await wait(1000)
     }
   }
 
   overBattle = () => {
-    if (this.InstanceBattlerOpposite.battler.HP <= 0) {
+    if (this.InstanceRoleOpposite.information.master.HP <= 0) {
       this.over = 'win'
 
       this.InstanceOver.reward = Imitation.state.battle.reward()
 
-      const library = Imitation.state.info.cardLibrary
+      const library = Imitation.state.info.library.card
 
       this.InstanceOver.reward.forEach(i => {
         const findInLibrary = library.find(i_ => i_.key === i.key)
 
         if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + 1
+          findInLibrary.number = findInLibrary.number + i.number
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: i.level, number: 1 })
+          library.push({ key: i.key, level: i.level, number: i.number })
         }
       })
 
@@ -988,7 +943,7 @@ class Page {
       this.InstanceOver.over = this.over
       return
     }
-    if (this.InstanceBattlerSelf.battler.HP <= 0) {
+    if (this.InstanceRoleSelf.information.master.HP <= 0) {
       this.over = 'lose'
 
       this.InstanceOver.over = this.over
@@ -1009,8 +964,8 @@ class Page {
 
     if (!this.modal && !this.over) {
       this.drawButtonHome()
-      this.drawBattlerSelf()
-      this.drawBattlerOpposite()
+      this.drawRoleSelf()
+      this.drawRoleOpposite()
       this.drawAction()
     }
   }

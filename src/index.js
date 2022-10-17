@@ -12,7 +12,7 @@ import { Message } from './ui-message'
 import { Sound } from './utils-sound'
 import { SaveImage } from './utils-saveImage'
 
-import { originCard, originBoss, originExplore } from './source'
+import { originMaster, originCard, originBoss, originExplore } from './source'
 
 const ctx = canvas.getContext('2d')
 
@@ -65,7 +65,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'home',
+        current: 'store',
         next: '',
         map: {
           'save-image': SaveImage,
@@ -99,12 +99,27 @@ class Main {
     }
 
     const responseHTTP = {
-      cardLibrary: originCard.map(i => ({ key: i.key, level: 1, number: 10 })),
+      library: {
+        master: originMaster.map(i => ({ key: i.key, level: 1 })),
+        card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
+      },
       team: [
-        originCard.map(i => ({ key: i.key, level: 1, number: 3 })),
-        [],
-        [],
-        []
+        {
+          master: [{ key: 1, level: 1 }],
+          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+        },
+        {
+          master: [{ key: 1, level: 1 }],
+          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+        },
+        {
+          master: [{ key: 1, level: 1 }],
+          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+        },
+        {
+          master: [{ key: 1, level: 1 }],
+          card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+        },
       ],
       teamIndex: 0
     }

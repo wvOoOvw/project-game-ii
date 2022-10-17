@@ -1,6 +1,9 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 
-import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/music_1c31bcc267a545ef971109512053f3e50.jpeg'
+import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
+import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/music_b6f0b1c512ad42fab204d79b85d07c140.jpeg'
+import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
+import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
 import J_music_88c8411d068c455099456851ec84f65c0 from '../media/music_88c8411d068c455099456851ec84f65c0.jpeg'
 import J_music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/music_2fec7f9242b44b64a914f7cc19d25abe0.jpeg'
@@ -12,11 +15,50 @@ import J_music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/music_8abd849fe0
 import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
 import J_music_072c59684f6c401dad40cadf0d0dd6290 from '../media/music_072c59684f6c401dad40cadf0d0dd6290.jpeg'
 
-import J_music_56280e428411459c823ce172d97da20c0 from '../media/music_56280e428411459c823ce172d97da20c0.jpeg'
-import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
-import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/music_b6f0b1c512ad42fab204d79b85d07c140.jpeg'
-import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
-import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
+
+var originMaster = [
+  {
+    key: 1,
+    name: '艾露恩',
+    image: J_music_a7e9436348e6456eb47f32a75f7392370,
+    HP: 1000,
+    MP: 200,
+    skill: [
+      {
+        name: '庇护',
+        description: l => `使用卡牌时, 回复 ${l * 15} MP`,
+        function: (card, result, self, target, env) => {
+          result.push({ type: 'cure-mp', target: 'self', value: self.master.level * 15 })
+        }
+      }
+    ],
+  },
+  {
+    key: 2,
+    name: '火焰领主',
+    image: J_music_b6f0b1c512ad42fab204d79b85d07c140,
+    HP: 1000,
+    MP: 200,
+    skill: [
+      {
+        name: '欲火',
+        description: l => `使用火系卡牌时, 额外造成 ${l * 15} 伤害`,
+        function: (card, result, self, target, env) => {
+          if (card.race === '火') {
+            result.push({ type: 'hit', target: 'opposite', value: -self.master.level * 15 })
+          }
+        }
+      }
+    ],
+  },
+]
+
+originMaster = originMaster.map(i => {
+  i.imageDOM = new Image()
+  i.imageDOM.src = i.image
+
+  return i
+})
 
 var originCard = [
   {
@@ -62,7 +104,7 @@ var originCard = [
 
       return [
         { type: 'cost-mp', target: 'self', value: -100 },
-        { type: 'hit', target: 'opposite', value: -opposite.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 50 },
+        { type: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 50 },
       ]
     }
   },
@@ -129,66 +171,26 @@ originCard = originCard.map(i => {
   return i
 })
 
-var originBoss = [
-  {
-    key: 1,
-    name: '梦境守卫',
-    image: J_music_8abd849fe01a4fb68dceacc6018190fc0,
-    HP: 1000,
-    MP: 1000,
-    card: [
-      { ...originCard.find(i => i.key === 1), level: 3 },
-      { ...originCard.find(i => i.key === 2), level: 3 },
-    ],
-    AI: (self, opposite, round) => {
-      return arrayRandom(self.card, 2)
-    },
-  },
-
-  {
-    key: 2,
-    name: '梦魇',
-    image: J_music_8abd849fe01a4fb68dceacc6018190fc0,
-    HP: 1500,
-    MP: 1000,
-    card: [
-      { ...originCard.find(i => i.key === 1), level: 8 },
-      { ...originCard.find(i => i.key === 2), level: 8 },
-    ],
-    AI: (self, opposite, round) => {
-      return arrayRandom(self.card, 2)
-    },
-  }
-]
-
-originBoss = originBoss.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
-
-  return i
-})
-
 var originExplore = [
   {
     name: '梦境 I',
     image: J_music_47a83799595b4a5b97145a6e594620310,
-    boss: { ...originBoss.find(i => i.key === 1) },
+    boss: {
+      master: { key: 2, level: 2 },
+      card: [
+        { key: 1, level: 3, number: 10 },
+        { key: 2, level: 3, number: 10 },
+        { key: 3, level: 3, number: 10 },
+      ]
+    },
     reward: () => {
       return [
-        { ...originCard.find(i => i.key === 1), level: 1 },
-        { ...originCard.find(i => i.key === 2), level: 1 },
+        { key: 1, level: 1, number: 1 },
+        { key: 2, level: 1, number: 1 },
       ]
-    }
-  },
-  {
-    name: '梦境 II',
-    image: J_music_072c59684f6c401dad40cadf0d0dd6290,
-    boss: { ...originBoss.find(i => i.key === 2) },
-    reward: () => {
-      return [
-        { ...originCard.find(i => i.key === 1), level: 1 },
-        { ...originCard.find(i => i.key === 2), level: 1 },
-      ]
+    },
+    AI: (self, opposite, env) => {
+      return arrayRandom(self.card.hand, 1)
     }
   },
 ]
@@ -200,4 +202,4 @@ originExplore = originExplore.map(i => {
   return i
 })
 
-export { originCard, originBoss, originExplore }
+export { originMaster, originCard, originExplore }
