@@ -64,7 +64,7 @@ class Message {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = 'bold 12px monospace'
+    ctx.font = '900 12px monospace'
     ctx.fillStyle = this.backgroundColor
 
     drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 12 })

@@ -62,7 +62,7 @@ class Page {
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.font = 'bold 12px monospace'
+    ctx.font = '900 12px monospace'
 
     this.exploreMap.forEach((i, index) => {
       const x = 12

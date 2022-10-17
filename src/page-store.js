@@ -87,7 +87,7 @@ class CardInList {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px monospace`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -143,7 +143,7 @@ class CardInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px monospace`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -232,7 +232,7 @@ class MasterInList {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `bold ${height * 0.1}px monospace`
+    ctx.font = `900 ${height * 0.1}px monospace`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText([master.name, levelText(master.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -294,7 +294,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px monospace`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(master.name, x + width / 2, y + width * 0.12)

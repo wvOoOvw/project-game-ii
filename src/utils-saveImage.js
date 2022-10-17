@@ -53,7 +53,7 @@ class SaveImage {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px monospace`
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 

@@ -60,7 +60,7 @@ class role {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `bold 12px monospace`
+    ctx.font = `900 12px monospace`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), radiusPaneOption.x + radiusPaneOption.width / 2, radiusPaneOption.y + radiusPaneOption.height / 2)
@@ -116,7 +116,7 @@ class role {
 
     ctx.fillText(`MP: ${information.master.MP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
-    ctx.font = `bold 8px monospace`
+    ctx.font = `900 8px monospace`
 
     information.master.buff
       .reduce((t, i) => {
@@ -263,7 +263,7 @@ class CardInAction {
     if (this.mouseDownPositionTime === 1) {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `bold ${width * 0.075}px monospace`
+      ctx.font = `900 ${width * 0.075}px monospace`
       ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -297,7 +297,7 @@ class CardInAction {
 
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `bold ${width * 0.075}px monospace`
+      ctx.font = `900 ${width * 0.075}px monospace`
       ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -482,7 +482,7 @@ class CardInModal {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `bold ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px monospace`
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
