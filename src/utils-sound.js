@@ -1,11 +1,11 @@
-import S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt from '../media/_storages_386a-audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt.mp3'
-import S_5c88acd3ccdc817369 from '../media/5c88acd3ccdc817369.mp3'
+// import S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt from '../media/_storages_386a-audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt.mp3'
+// import S_5c88acd3ccdc817369 from '../media/5c88acd3ccdc817369.mp3'
 
 class Sound {
   constructor() {
     this.map = {
-      JOJO_HBY: S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt,
-      hit: S_5c88acd3ccdc817369,
+      // JOJO_HBY: S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt,
+      // hit: S_5c88acd3ccdc817369,
     }
 
     this.audioQueue = new Array(8).fill().map(i => new Audio())

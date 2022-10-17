@@ -21,7 +21,7 @@ class Button {
   render() {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${this.font}px monospace`
+    ctx.font = `900 ${this.font}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`
 
     drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius })

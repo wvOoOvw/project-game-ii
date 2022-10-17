@@ -1,5 +1,6 @@
 import './adapter-web'
 import './adapter-dpr'
+import './adapter-font-family'
 import './data-imitation'
 
 import PageTransition from './page-transition'
@@ -25,8 +26,6 @@ class Main {
 
     this.instanceMessage = new Message()
     this.instanceSound = new Sound()
-
-    // this.instanceSound.play('JOJO_HBY', true)
 
     this.ImitationInit()
     this.loopStart()

@@ -44,8 +44,8 @@ class role {
     drawImage(information.master.imageDOM, { x: x, y: y, width: width, height: height })
 
     const radiusPaneOption = {
-      width: height * 0.5,
-      height: height * 0.5,
+      width: height * 0.6,
+      height: height * 0.6,
     }
 
     radiusPaneOption.x = x + (height - radiusPaneOption.height) / 8
@@ -60,7 +60,7 @@ class role {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 12px monospace`
+    ctx.font = `900 12px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), radiusPaneOption.x + radiusPaneOption.width / 2, radiusPaneOption.y + radiusPaneOption.height / 2)
@@ -92,7 +92,7 @@ class role {
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`HP: ${information.master.HP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
+    ctx.fillText(`HP ${information.master.HP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
     ctx.save()
 
@@ -114,9 +114,9 @@ class role {
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`MP: ${information.master.MP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
+    ctx.fillText(`MP ${information.master.MP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
-    ctx.font = `900 8px monospace`
+    ctx.font = `900 8px ${window.fontFamily}`
 
     information.master.buff
       .reduce((t, i) => {
@@ -263,7 +263,7 @@ class CardInAction {
     if (this.mouseDownPositionTime === 1) {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.075}px monospace`
+      ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
       ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -297,7 +297,7 @@ class CardInAction {
 
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.075}px monospace`
+      ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
       ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -482,7 +482,7 @@ class CardInModal {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
-    ctx.font = `900 ${width * 0.075}px monospace`
+    ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
@@ -668,7 +668,7 @@ class Page {
   }
 
   instanceRoleSelf() {
-    const height = (windowHeight * 0.5) / 2
+    const height = windowHeight * 0.25
 
     this.InstanceRoleSelf = new role({
       x: 12,
@@ -680,7 +680,7 @@ class Page {
   }
 
   instanceRoleOpposite() {
-    const height = (windowHeight * 0.5) / 2
+    const height = windowHeight * 0.25
 
     this.InstanceRoleOpposite = new role({
       x: 12,
@@ -693,10 +693,7 @@ class Page {
 
   instanceAction() {
     var width = windowWidth - 24
-    var height = windowHeight * 0.5 - 96
-
-    if (width > windowHeight - 160) width = windowHeight - 160
-    if (height > width / 2 + 60) height = width / 2 + 60
+    var height = Math.min(windowHeight * 0.5 - 96, windowWidth * 0.35 + 96)
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
