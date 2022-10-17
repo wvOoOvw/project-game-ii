@@ -72,40 +72,21 @@ class role {
       radius: height * 0.075
     }
 
-    ctx.save()
 
     HMLineOption.y = radiusPaneOption.y + radiusPaneOption.height / 2 - HMLineOption.height - HMLineOption.height * 0.2
 
     drawRadius(HMLineOption)
 
-    ctx.clip()
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-    ctx.fill()
-
-    drawRect(HMLineOption)
-
     ctx.fillStyle = 'rgba(185, 0, 0, 1)'
     ctx.fill()
-
-    ctx.restore()
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
     ctx.fillText(`HP ${information.master.HP}`, HMLineOption.x + HMLineOption.width / 2, HMLineOption.y + HMLineOption.height / 2)
 
-    ctx.save()
-
     HMLineOption.y = radiusPaneOption.y + radiusPaneOption.height / 2 + HMLineOption.height * 0.2
 
     drawRadius(HMLineOption)
-
-    ctx.clip()
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
-    ctx.fill()
-
-    drawRect(HMLineOption)
 
     ctx.fillStyle = 'rgba(0, 0, 185, 1)'
     ctx.fill()
