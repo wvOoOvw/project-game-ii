@@ -628,8 +628,6 @@ class Page {
     this.InstanceModal
     this.InstanceOver
 
-    console.log(Imitation.state.battle.self)
-
     this.instanceRoleSelf()
     this.instanceRoleOpposite()
     this.instanceAction()
@@ -759,14 +757,14 @@ class Page {
 
     var result = card.function(card, self.information, opposite.information, this.env)
 
-    self.information.master.skill.forEach(skill => {
-      skill.function(card, result, self.information, opposite.information, this.env)
-    })
-
     if (!result) {
       Imitation.state.function.message('无法使用', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
+
+    self.information.master.skill.forEach(skill => {
+      skill.function(card, result, self.information, opposite.information, this.env)
+    })
 
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
 
@@ -802,21 +800,23 @@ class Page {
       }
 
       if (current.type === 'cost-buff') {
-        const count = 0
+        let count = 0
         if (current.target === 'self') {
           self.information.master.buff = self.information.master.buff.filter(i => {
-            if (count === current.number) return true
-            if (i === current) return true
-            count = count + 1
-            return false
+            if (i === current.value && count !== current.number) {
+              count = count + 1
+              return false
+            }
+            return true
           })
         }
         if (current.target === 'opposite') {
           opposite.information.master.buff = opposite.information.master.buff.filter(i => {
-            if (count === current.number) return true
-            if (i === current) return true
-            count = count + 1
-            return false
+            if (i === current.value && count !== current.number) {
+              count = count + 1
+              return false
+            }
+            return true
           })
         }
       }

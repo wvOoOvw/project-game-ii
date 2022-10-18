@@ -14,11 +14,11 @@ const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class Page {
   constructor() {
-    
+
   }
 
   drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, text: '探索' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, font: 14, text: '探索' }
 
     new Button(option).render()
 
@@ -31,7 +31,7 @@ class Page {
   }
 
   drawButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, text: '仓库' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, font: 14, text: '仓库' }
 
     new Button(option).render()
 

@@ -149,6 +149,7 @@ var originCard = [
     description: l => `消耗 20 MP, 造成 ${l * 30 + 120} 伤害, 并消耗目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
       if (self.MP < 20) return
+      if (!opposite.master.buff.find(i => i === '燃')) return
 
       return [
         { type: 'cost-mp', target: 'self', value: -20 },

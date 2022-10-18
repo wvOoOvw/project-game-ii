@@ -729,7 +729,6 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
-
   drawBackground() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
