@@ -90,7 +90,8 @@ class Main {
         }
       }
     }
-
+    
+    localStorage.removeItem('info')
     const info = localStorage.getItem('info')
 
     if (info) {
@@ -101,24 +102,24 @@ class Main {
       const responseHTTP = {
         library: {
           master: originMaster.map(i => ({ key: i.key, level: 1 })),
-          card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
+          card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
         },
         team: [
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+            card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
           },
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+            card: []
           },
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+            card: []
           },
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: 3 }))
+            card: []
           },
         ],
         teamIndex: 0
