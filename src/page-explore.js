@@ -28,7 +28,7 @@ class Page {
 
     if (row === 0) return 0
 
-    const real = 160 * row
+    const real = 80 * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -66,9 +66,9 @@ class Page {
 
     this.explore.forEach((i, index) => {
       const x = 12
-      const y = 60 + index * 172 + safeTop - offsetY
+      const y = 60 + index * 92 + safeTop - offsetY
       const width = windowWidth - 24
-      const height = 160
+      const height = 80
 
       if (!ifScreenCover({ x, y, width, height }, this.InstanceScroll.option)) return
 
@@ -90,6 +90,23 @@ class Page {
 
       addEventListener('touchstart', event, { x, y, width, height })
     })
+  }
+
+  drawButtonHome() {
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: '返回' }
+
+    new Button(option).render()
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'home'
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  drawBackground() {
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   enter(explore) {
@@ -124,25 +141,13 @@ class Page {
       reward: parseCard(explore.reward())
     }
 
+    Imitation.state.battle.self.master.HP = Imitation.state.battle.self.master.HP(Imitation.state.battle.self.master.level)
+    Imitation.state.battle.self.master.MP = Imitation.state.battle.self.master.MP(Imitation.state.battle.self.master.level)
+    Imitation.state.battle.opposite.master.HP = Imitation.state.battle.opposite.master.HP(Imitation.state.battle.opposite.master.level)
+    Imitation.state.battle.opposite.master.MP = Imitation.state.battle.opposite.master.MP(Imitation.state.battle.opposite.master.level)
+
     Imitation.state.page.current = 'transition'
     Imitation.state.page.next = 'battle-pve'
-  }
-
-  drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, text: '返回' }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
-  drawBackground() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   render() {

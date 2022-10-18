@@ -21,8 +21,8 @@ var originMaster = [
     key: 1,
     name: '艾露恩',
     image: J_music_a7e9436348e6456eb47f32a75f7392370,
-    HP: 1000,
-    MP: 200,
+    HP: l => 900 + l * 100,
+    MP: l => 190 + (l - 1) * 10,
     skill: [
       {
         name: '庇护 I',
@@ -44,8 +44,8 @@ var originMaster = [
     key: 2,
     name: '火焰领主',
     image: J_music_b6f0b1c512ad42fab204d79b85d07c140,
-    HP: 1000,
-    MP: 200,
+    HP: l => 900 + l * 100,
+    MP: l => 190 + l * 10,
     skill: [
       {
         name: '欲火',

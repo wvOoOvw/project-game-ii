@@ -60,8 +60,8 @@ class role {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 12px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.font = `900 12px ${window.fontFamily}`
 
     ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), radiusPaneOption.x + radiusPaneOption.width / 2, radiusPaneOption.y + radiusPaneOption.height / 2)
 
@@ -71,7 +71,6 @@ class role {
       x: radiusPaneOption.width + radiusPaneOption.x + (radiusPaneOption.x - x),
       radius: height * 0.075
     }
-
 
     HMLineOption.y = radiusPaneOption.y + radiusPaneOption.height / 2 - HMLineOption.height - HMLineOption.height * 0.2
 
@@ -90,8 +89,6 @@ class role {
 
     ctx.fillStyle = 'rgba(0, 0, 185, 1)'
     ctx.fill()
-
-    ctx.restore()
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
