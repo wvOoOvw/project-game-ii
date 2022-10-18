@@ -141,11 +141,6 @@ class Page {
       reward: parseCard(explore.reward())
     }
 
-    Imitation.state.battle.self.master.HP = Imitation.state.battle.self.master.HP(Imitation.state.battle.self.master.level)
-    Imitation.state.battle.self.master.MP = Imitation.state.battle.self.master.MP(Imitation.state.battle.self.master.level)
-    Imitation.state.battle.opposite.master.HP = Imitation.state.battle.opposite.master.HP(Imitation.state.battle.opposite.master.level)
-    Imitation.state.battle.opposite.master.MP = Imitation.state.battle.opposite.master.MP(Imitation.state.battle.opposite.master.level)
-
     Imitation.state.page.current = 'transition'
     Imitation.state.page.next = 'battle-pve'
   }
