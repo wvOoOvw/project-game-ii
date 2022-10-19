@@ -3,7 +3,7 @@ import { drawImage } from './utils-canvas'
 
 import { Button } from './ui-button'
 
-import J_music_56280e428411459c823ce172d97da20c0 from '../media/music_56280e428411459c823ce172d97da20c0.jpeg'
+import J_music_56280e428411459c823ce172d97da20c0 from '../media/background/music_56280e428411459c823ce172d97da20c0.jpeg'
 
 const ctx = canvas.getContext('2d')
 
@@ -18,26 +18,40 @@ class Page {
   }
 
   drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
 
     new Button(option).render()
 
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'explore'
+      Imitation.state.function.animation('red-hit', [100, 100])
     }
 
     addEventListener('touchstart', event, option)
   }
 
   drawButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '仓库' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6 + 60, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '编队' }
 
     new Button(option).render()
 
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'store'
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  drawButtonShop() {
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6 + 120, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '商店' }
+
+    new Button(option).render()
+
+    const event = () => {
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'shop'
     }
 
     addEventListener('touchstart', event, option)
@@ -51,6 +65,7 @@ class Page {
     this.drawBackground()
     this.drawButtonExplore()
     this.drawButtonStore()
+    this.drawButtonShop()
   }
 }
 

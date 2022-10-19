@@ -11,6 +11,7 @@ import PageStore from './page-store'
 
 import { Message } from './ui-message'
 import { Sound } from './utils-sound'
+import { Animation } from './utils-animation'
 import { SaveImage } from './utils-saveImage'
 
 import { originMaster, originCard, originBoss, originExplore } from './source'
@@ -26,6 +27,7 @@ class Main {
 
     this.instanceMessage = new Message()
     this.instanceSound = new Sound()
+    this.instanceAnimation = new Animation()
 
     this.ImitationInit()
     this.loopStart()
@@ -46,6 +48,7 @@ class Main {
 
     this.instance.render()
     this.instanceMessage.render()
+    this.instanceAnimation.render()
   }
 
   loopStart() {
@@ -85,12 +88,13 @@ class Main {
         loopEnd: this.loopEnd,
         message: (m, b, t) => this.instanceMessage.send(m, b, t),
         sound: (k) => this.instanceSound.play(k),
+        animation: (k, option) => this.instanceAnimation.play(k, option),
         saveInfo: () => {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         }
       }
     }
-    
+
     localStorage.removeItem('info')
     const info = localStorage.getItem('info')
 
@@ -122,9 +126,12 @@ class Main {
             card: []
           },
         ],
-        teamIndex: 0
+        teamIndex: 0,
+
+        gold_1: 1000,
+        gold_2: 1000
       }
-  
+
       Imitation.state.info = responseHTTP
       Imitation.state.function.saveInfo()
     }

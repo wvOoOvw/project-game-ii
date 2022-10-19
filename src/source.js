@@ -1,19 +1,19 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 
-import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
-import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/music_b6f0b1c512ad42fab204d79b85d07c140.jpeg'
-import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
-import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
-import J_music_88c8411d068c455099456851ec84f65c0 from '../media/music_88c8411d068c455099456851ec84f65c0.jpeg'
-import J_music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/music_2fec7f9242b44b64a914f7cc19d25abe0.jpeg'
-import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/music_4d7f219082ba4d86b1543c982d1156560.jpeg'
-import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
-import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/music_98a7a38ce58546a7841d18c96e41e3760.jpeg'
+import J_music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/card/music_2fec7f9242b44b64a914f7cc19d25abe0.jpeg'
+import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/card/music_4d7f219082ba4d86b1543c982d1156560.jpeg'
+import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/card/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
+import J_music_88c8411d068c455099456851ec84f65c0 from '../media/card/music_88c8411d068c455099456851ec84f65c0.jpeg'
+import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/card/music_98a7a38ce58546a7841d18c96e41e3760.jpeg'
+import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/card/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
+import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/card/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
-import J_music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/music_8abd849fe01a4fb68dceacc6018190fc0.jpeg'
-import J_music_47a83799595b4a5b97145a6e594620310 from '../media/music_47a83799595b4a5b97145a6e594620310.jpeg'
-import J_music_072c59684f6c401dad40cadf0d0dd6290 from '../media/music_072c59684f6c401dad40cadf0d0dd6290.jpeg'
+import J_music_47a83799595b4a5b97145a6e594620310 from '../media/explore/music_47a83799595b4a5b97145a6e594620310.jpeg'
+
+import J_music_1107cbd537144759999fbd7dc0fdb6650 from '../media/master/music_1107cbd537144759999fbd7dc0fdb6650.jpg'
+import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/master/music_b6f0b1c512ad42fab204d79b85d07c140.jpeg'
+import J_music_b40316005b55465b80ae4eecad8447960 from '../media/master/music_b40316005b55465b80ae4eecad8447960.jpeg'
 
 
 var originMaster = [
@@ -107,7 +107,7 @@ var originCard = [
     image: J_music_4d7f219082ba4d86b1543c982d1156560,
     description: l => `消耗 100 MP, 造成目标'燃'层数 * ${l * 5 + 20} 伤害`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 100) return
+      if (self.MP < 100) return 'MP 不足'
 
       return [
         { type: 'cost-mp', target: 'self', value: -100 },
@@ -148,8 +148,8 @@ var originCard = [
     image: J_music_98a7a38ce58546a7841d18c96e41e3760,
     description: l => `消耗 20 MP, 造成 ${l * 30 + 120} 伤害, 并消耗目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 20) return
-      if (!opposite.master.buff.find(i => i === '燃')) return
+      if (self.MP < 20) return 'MP 不足'
+      if (!opposite.master.buff.find(i => i === '燃')) return `目标'燃'印记不足`
 
       return [
         { type: 'cost-mp', target: 'self', value: -20 },

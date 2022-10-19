@@ -4,11 +4,15 @@ import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 import { Button } from './ui-button'
 import { Scroll } from './ui-scroll'
 
+import J_music_b40316005b55465b80ae4eecad8447960 from '../media/music_b40316005b55465b80ae4eecad8447960.jpeg'
 import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpeg'
+import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
 
 const ctx = canvas.getContext('2d')
 
 const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
+const ImageOpposite = createImage(J_music_6e9e96c75cf04411baa154b1d6a3c7360)
+const ImageSelf = createImage(J_music_b40316005b55465b80ae4eecad8447960)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
