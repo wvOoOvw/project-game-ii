@@ -18,7 +18,7 @@ class Page {
   }
 
   drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, font: 14, text: '探索' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
 
     new Button(option).render()
 
@@ -31,7 +31,7 @@ class Page {
   }
 
   drawButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, font: 14, text: '仓库' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '仓库' }
 
     new Button(option).render()
 

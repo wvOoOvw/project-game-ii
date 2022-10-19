@@ -8,9 +8,9 @@ class Button {
     this.y = props.y
     this.width = props.width
     this.height = props.height
-    this.radius = props.radius || 8
-    this.font = props.font || 14
-    this.opacity = props.opacity || 1
+    this.radius = props.radius
+    this.font = props.font
+    this.fillStyle = props.fillStyle
     this.text = props.text
   }
 
@@ -19,18 +19,22 @@ class Button {
   }
 
   render() {
+    ctx.save()
+
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${this.font}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`
+    ctx.font = this.font
+    ctx.fillStyle = this.fillStyle[0]
 
     drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: this.radius })
 
     ctx.fill()
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillStyle = this.fillStyle[1]
 
     ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2)
+
+    ctx.restore()
   }
 }
 
