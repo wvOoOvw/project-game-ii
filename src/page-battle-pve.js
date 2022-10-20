@@ -771,6 +771,13 @@ class Page {
 
     Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
 
+    if (role === this.InstanceRoleSelf) {
+      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleOpposite.x + this.InstanceRoleOpposite.width / 2 - img.width / 2, this.InstanceRoleOpposite.y + this.InstanceRoleOpposite.height / 2 - img.height / 2])
+    }
+    if (role === this.InstanceRoleOpposite) {
+      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleSelf.x + this.InstanceRoleSelf.width / 2 - img.width / 2, this.InstanceRoleSelf.y + this.InstanceRoleSelf.height / 2 - img.height / 2])
+    }
+
     while (result.length) {
       const current = result.shift()
 

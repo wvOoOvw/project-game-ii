@@ -8,6 +8,7 @@ import PageHome from './page-home'
 import PageExplore from './page-explore'
 import PageBattlePve from './page-battle-pve'
 import PageStore from './page-store'
+import PageShop from './page-shop'
 
 import { Message } from './ui-message'
 import { Sound } from './utils-sound'
@@ -76,6 +77,7 @@ class Main {
           'explore': PageExplore,
           'battle-pve': PageBattlePve,
           'store': PageStore,
+          'shop': PageShop
         },
       },
       removeEventListener: [],

@@ -25,7 +25,6 @@ class Page {
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'explore'
-      Imitation.state.function.animation('red-hit', [100, 100])
     }
 
     addEventListener('touchstart', event, option)
