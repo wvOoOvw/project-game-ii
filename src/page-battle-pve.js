@@ -30,6 +30,8 @@ class CardInOpposite {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const x = this.x + this.offsetX
     const y = this.y + this.offsetY
     const width = this.width
@@ -37,11 +39,13 @@ class CardInOpposite {
 
     ctx.save()
 
+    ctx.globalAlpha = this.novaTime
+
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
     ctx.clip()
 
-    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(ImageBackground, { x: x, y: y, width: width, height: height })
 
     ctx.restore()
   }
@@ -62,12 +66,13 @@ class CardInSelf {
     this.card = props.card
     this.touchStart = props.touchStart
     this.touchEnd = props.touchEnd
-
-    this.ifTouchEndTime = 0
+    this.useAble = props.useAble
 
     this.mouseDownPosition = null
 
+    this.ifTouchEndTime = 0
     this.mouseDownPositionTime = 0
+    this.useAbleTime = 0
   }
 
   get ifTouchEnd() {
@@ -120,6 +125,14 @@ class CardInSelf {
       this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
     }
 
+    if (this.useAble && this.useAbleTime < 1) {
+      this.useAbleTime = numberFix(this.useAbleTime + 0.05)
+    }
+
+    if (!this.useAble && this.useAbleTime > 0) {
+      this.useAbleTime = numberFix(this.useAbleTime - 0.05)
+    }
+
     const card = this.card
 
     const diff = {
@@ -136,16 +149,24 @@ class CardInSelf {
 
     ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 0.5 + 0.5)
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    if (this.ifTouchEndTime > 0) {
+      ctx.shadowBlur = width * 0.25 * this.ifTouchEndTime
+      ctx.shadowColor = 'rgba(0, 0, 0, 1)'
+      ctx.fill()
+      ctx.shadowBlur = 0
+      ctx.shadowColor = '#000000'
+    }
 
     ctx.clip()
 
     drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    const width_ = height * this.ifTouchEndTime
-    const height_ = height * this.ifTouchEndTime
+    const width_ = height * this.mouseDownPositionTime
+    const height_ = height * this.mouseDownPositionTime
     const x_ = x + (width - width_) / 2
     const y_ = y + (height - height_) / 2
     const radius_ = width_ / 2
@@ -159,7 +180,7 @@ class CardInSelf {
     if (this.mouseDownPositionTime === 1) {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
       ctx.fillStyle = `rgba(0, 0, 0, 1)`
 
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -171,7 +192,10 @@ class CardInSelf {
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
       ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+      ctx.textAlign = 'start'
+      ctx.textBaseline = 'top'
+
+      drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
     }
 
     if (this.mouseDownPositionTime === 0) {
@@ -201,6 +225,8 @@ class CardInSelf {
 
     ctx.restore()
 
+    if (!this.useAble) return
+
     addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
     addEventListenerPure('touchmove', this.eventMove.bind(this))
     addEventListenerPure('touchend', this.eventUp.bind(this))
@@ -222,21 +248,11 @@ class Role {
     this.InstanceCards = []
     this.touchCard
 
-    this.activeTime = 0
+    this.show = 'card'
   }
 
   get option() {
     return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  animation() {
-    if (this.env.current === this && this.activeTime < 1) {
-      this.activeTime = numberFix(this.activeTime + 0.05)
-    }
-
-    if (this.env.current !== this && this.activeTime > 0) {
-      this.activeTime = numberFix(this.activeTime - 0.05)
-    }
   }
 
   drawBackground() {
@@ -253,7 +269,7 @@ class Role {
     ctx.restore()
   }
 
-  drawName() {
+  drawTitle() {
     const { x, y, width, height, information } = this
 
     const option = {
@@ -264,20 +280,11 @@ class Role {
     option.x = x + width / 2 - option.width / 2
     option.y = y + 12
     option.radius = option.height / 4
+    option.text = [information.master.name, levelText(information.master.level)].join(' ')
+    option.font = `900 10px ${window.fontFamily}`
+    option.fillStyle = [`rgba(255, 255, 255, 0.75)`, 'rgba(0, 0, 0, 1)']
 
-    drawRadius(option)
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 10px ${window.fontFamily}`
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), option.x + option.width / 2, option.y + option.height / 2)
+    new Button(option).render()
   }
 
   drawHM() {
@@ -326,25 +333,28 @@ class Role {
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.font = `900 8px ${window.fontFamily}`
 
-    information.master.buff
+    const renderList = information.master.buff
       .reduce((t, i) => {
         const find = t.find(i_ => i_.name === i)
         if (find) find.number = find.number + 1
         if (!find) t.push({ name: i, number: 1 })
         return t
       }, [])
+
+    renderList
       .forEach((i, index) => {
         const option = {
-          width: (this.width - 24) / 3,
+          width: 48,
           height: 24,
         }
 
-        const columnIndex = index % 3
-        const rowIndex = parseInt(index / 3)
+        const maxIndex = renderList.length
+        const centerIndex = maxIndex / 2 - 0.5
+        const diff = index - centerIndex
 
         option.radius = option.height / 4
-        option.x = x + 6 + columnIndex * (option.width + 6)
-        option.y = (y + 60) + rowIndex * (option.height + 6)
+        option.x = x + (width - option.width) / 2 + diff * (option.width + 4)
+        option.y = y + height + 6
 
         drawRadius(option)
 
@@ -380,11 +390,13 @@ class Role {
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
       option.touchEnd = () => this.useCard(i, this)
+      option.useAble = this.env.current === this
 
       const find = this.InstanceCards.find(i_ => i_.card === i)
 
       if (find) {
         find.x = option.x
+        find.useAble = option.useAble
       }
 
       if (!find) {
@@ -398,12 +410,11 @@ class Role {
   }
 
   render() {
-    this.animation()
     this.drawBackground()
-    this.drawName()
+    this.drawTitle()
     this.drawHM()
-    this.drawBuff()
     this.drawCard()
+    this.drawBuff()
   }
 }
 
@@ -430,13 +441,13 @@ class Action {
   }
 
   drawEnv() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 66, width: this.width - 24, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
 
     new Button(option).render()
   }
 
   drawButtonOverRound() {
-    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + 36, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '结束回合' }
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
 
     new Button(option).render()
 
@@ -450,7 +461,7 @@ class Action {
   }
 
   drawButtonStore() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 + 36, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 40, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
 
     new Button(option).render()
 
@@ -464,7 +475,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 + 36, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 - 40, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
 
     new Button(option).render()
 
@@ -745,8 +756,8 @@ class Page {
 
   instanceRoleSelf() {
     const option = {
-      width: windowWidth * 0.75 > windowHeight * 0.3 ? windowHeight * 0.3 : windowWidth * 0.75,
-      height: windowWidth * 0.75 > windowHeight * 0.3 ? windowHeight * 0.3 : windowWidth * 0.75,
+      width: Math.min(windowWidth * 0.75, windowHeight * 0.3),
+      height: Math.min(windowWidth * 0.75, windowHeight * 0.3),
       type: 'self',
       information: Imitation.state.battle.self,
       env: this.env,
@@ -754,7 +765,7 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = windowHeight - option.height - 12
+    option.y = windowHeight - option.height - 48
 
     this.InstanceRoleSelf = new Role(option)
   }
@@ -762,8 +773,8 @@ class Page {
   instanceRoleOpposite() {
     const option = {
       y: 60 + safeTop,
-      width: windowWidth * 0.75 > windowHeight * 0.3 ? windowHeight * 0.3 : windowWidth * 0.75,
-      height: windowWidth * 0.75 > windowHeight * 0.3 ? windowHeight * 0.3 : windowWidth * 0.75,
+      width: Math.min(windowWidth * 0.75, windowHeight * 0.3),
+      height: Math.min(windowWidth * 0.75, windowHeight * 0.3),
       type: 'opposite',
       information: Imitation.state.battle.opposite,
       env: this.env,
@@ -777,12 +788,12 @@ class Page {
   }
 
   instanceAction() {
-    var width = windowWidth - 24
-    var height = windowHeight * 0.4 - 84 - safeTop
+    const width = windowWidth - 24
+    const height = Math.min(windowHeight * 0.4 - safeTop - 160, 120)
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
-      y: (windowHeight - height) / 2 + 24,
+      y: (windowHeight - (windowHeight * 0.6 + 120 + 60) - height) / 2 + windowHeight * 0.3 + 60 + 48,
       width: width,
       height: height,
       env: this.env,
@@ -988,8 +999,6 @@ class Page {
   }
 
   roundStart = async () => {
-    this.env.round = this.env.round + 1
-
     new Array(1).fill().forEach(i => {
       const card = this.env.current.information.card.store.shift()
       if (!card) return
@@ -997,7 +1006,7 @@ class Page {
     })
 
     if (this.env.current === this.InstanceRoleSelf) {
-      // this.InstanceAction.updateCards(this.env.current.information.card.hand)
+      this.env.round = this.env.round + 1
     }
 
     if (this.env.current === this.InstanceRoleOpposite) {

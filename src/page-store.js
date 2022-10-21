@@ -87,7 +87,7 @@ class CardInList {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -143,7 +143,7 @@ class CardInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
@@ -157,7 +157,10 @@ class CardInPreview {
     ctx.fillText('Lv ' + card.level, x + width * 0.08, y + width * 0.30)
     ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.42)
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.54, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+
+    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
 
     ctx.restore()
   }
@@ -294,7 +297,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(master.name, x + width / 2, y + width * 0.12)
@@ -305,7 +308,10 @@ class MasterInPreview {
     ctx.fillText('HP ' + master.HP, x + width * 0.08, y + width * 0.42)
     ctx.fillText('MP ' + master.MP, x + width * 0.08, y + width * 0.54)
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.66, width: width - width * 0.25, fontHeight: width * 0.12, text: master.skill[this.skillIndex].description(master.level) })
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+
+    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: master.skill[this.skillIndex].description(master.level) })
 
     ctx.restore()
   }
