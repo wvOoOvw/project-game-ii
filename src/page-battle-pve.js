@@ -769,7 +769,7 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = windowHeight - option.height - 48
+    option.y = windowHeight - option.height - 12
 
     this.InstanceRoleSelf = new Role(option)
   }
@@ -793,11 +793,11 @@ class Page {
 
   instanceAction() {
     const width = windowWidth - 24
-    const height = 100
+    const height = 120
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
-      y: (safeTop + 60 + windowHeight * 0.3 + 48) + (windowHeight - (safeTop + 60 + windowHeight * 0.6 + 114) - 100) / 2,
+      y: (safeTop + 48 + this.InstanceRoleOpposite.height) + (windowHeight - (safeTop + 48 + this.InstanceRoleOpposite.height + this.InstanceRoleSelf.height) - 120) / 2,
       width: width,
       height: height,
       env: this.env,
