@@ -369,7 +369,7 @@ class Role {
   }
 
   drawCard() {
-    const width = this.width * 1.75 > windowWidth - 24 ? windowWidth - 24 : this.width * 1.75
+    const width = Math.min(this.width * 1.75, windowWidth - 24)
     const height = this.height
     const x = this.x - (width - this.width) / 2
     const y = this.y
