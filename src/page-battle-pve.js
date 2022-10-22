@@ -149,7 +149,8 @@ class CardInSelf {
 
     ctx.save()
 
-    ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 0.5 + 0.5)
+    ctx.globalAlpha = this.novaTime
+    // ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 0.5 + 0.5)
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
@@ -158,7 +159,6 @@ class CardInSelf {
       ctx.shadowColor = 'rgba(0, 0, 0, 1)'
       ctx.fill()
       ctx.shadowBlur = 0
-      ctx.shadowColor = '#000000'
     }
 
     ctx.clip()
@@ -270,54 +270,58 @@ class Role {
   }
 
   drawTitle() {
+    ctx.save()
+
     const { x, y, width, height, information } = this
 
     const option = {
-      width: width * 0.8,
-      height: 24,
+      width: width * 0.4,
+      height: width * 0.12,
     }
 
     option.x = x + width / 2 - option.width / 2
-    option.y = y + 12
+    option.y = y + width * 0.02
     option.radius = option.height / 4
     option.text = [information.master.name, levelText(information.master.level)].join(' ')
-    option.font = `900 10px ${window.fontFamily}`
-    option.fillStyle = [`rgba(255, 255, 255, 0.75)`, 'rgba(0, 0, 0, 1)']
+    option.font = `900 ${width * 0.04}px ${window.fontFamily}`
+    option.fillStyle = [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)']
 
     new Button(option).render()
+
+    ctx.restore()
   }
 
   drawHM() {
     const { x, y, width, height, information } = this
 
     const option = {
-      width: width * 0.7 > windowWidth / 2 - 12 ? windowWidth / 2 - 12 : width * 0.7,
-      height: 24,
+      width: Math.min(width * 0.7, windowWidth / 2 - 24),
+      height: width * 0.12,
     }
 
-    option.y = y + height - option.height - 12
+    option.y = y + height - option.height - width * 0.02
     option.radius = option.height / 2
 
-    option.x = x + width / 2 - option.width - 6
+    option.x = x + width / 2 - option.width - width * 0.02
 
     drawRadius(option)
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 10px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.04}px ${window.fontFamily}`
 
-    ctx.fillStyle = `rgba(185, 0, 0, 0.75)`
+    ctx.fillStyle = `rgba(185, 0, 0, 1)`
     ctx.fill()
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
     ctx.fillText(`HP ${information.master.HP}`, option.x + option.width / 2, option.y + option.height / 2)
 
-    option.x = x + width / 2 + 6
+    option.x = x + width / 2 + width * 0.02
 
     drawRadius(option)
 
-    ctx.fillStyle = `rgba(0, 0, 185, 0.75)`
+    ctx.fillStyle = `rgba(0, 0, 185, 1)`
     ctx.fill()
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
@@ -331,21 +335,22 @@ class Role {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.font = `900 8px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.03}px ${window.fontFamily}`
 
-    const renderList = information.master.buff
+    var renderList = information.master.buff
       .reduce((t, i) => {
         const find = t.find(i_ => i_.name === i)
         if (find) find.number = find.number + 1
         if (!find) t.push({ name: i, number: 1 })
         return t
-      }, [])
+      }, [{ name: 'BUFF' }])
 
     renderList
       .forEach((i, index) => {
         const option = {
-          width: 48,
-          height: 24,
+          width: width * 0.16,
+          height: width * 0.08,
+          y: y + width * 0.15
         }
 
         const maxIndex = renderList.length
@@ -353,26 +358,25 @@ class Role {
         const diff = index - centerIndex
 
         option.radius = option.height / 4
-        option.x = x + (width - option.width) / 2 + diff * (option.width + 4)
-        option.y = y + height + 6
+        option.x = x + (width - option.width) / 2 + diff * (option.width + width * 0.02)
 
         drawRadius(option)
 
-        ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+        ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
 
         ctx.fill()
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-        ctx.fillText(`${i.name} X${i.number}`, option.x + option.width / 2, option.y + option.height / 2)
+        ctx.fillText(i.number ? `${i.name} X${i.number}` : i.name, option.x + option.width / 2, option.y + option.height / 2)
       })
   }
 
   drawCard() {
-    const width = Math.min(this.width * 1.75, windowWidth - 24)
+    const width = Math.min(this.width * 2, windowWidth - 24)
     const height = this.height
     const x = this.x - (width - this.width) / 2
-    const y = this.y
+    const y = this.y + width * 0.02
 
     this.InstanceCards = this.InstanceCards.filter(i => this.information.card.hand.find(i_ => i_ === i.card))
 
@@ -447,7 +451,7 @@ class Action {
   }
 
   drawButtonOverRound() {
-    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
 
     new Button(option).render()
 
@@ -789,11 +793,11 @@ class Page {
 
   instanceAction() {
     const width = windowWidth - 24
-    const height = Math.min(windowHeight * 0.4 - safeTop - 160, 120)
+    const height = 100
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
-      y: (windowHeight - (windowHeight * 0.6 + 120 + 60) - height) / 2 + windowHeight * 0.3 + 60 + 48,
+      y: (safeTop + 60 + windowHeight * 0.3 + 48) + (windowHeight - (safeTop + 60 + windowHeight * 0.6 + 114) - 100) / 2,
       width: width,
       height: height,
       env: this.env,
