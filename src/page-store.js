@@ -728,6 +728,7 @@ class Page {
     const close = (e) => {
       if (closeCover.some(i => ifTouchCover(e, i))) return
       this.preview = null
+      this.InstanceMasterPreview.skillIndex = 0
       this.InstanceMasterPreview.novaTime = 0
       this.InstanceCardPreview.novaTime = 0
     }

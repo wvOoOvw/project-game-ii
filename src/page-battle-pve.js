@@ -21,9 +21,6 @@ class CardInOpposite {
     this.width = props.width
     this.height = props.height
 
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-
     this.novaTime = 0
 
     this.card = props.card
@@ -32,8 +29,8 @@ class CardInOpposite {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const x = this.x + this.offsetX
-    const y = this.y + this.offsetY
+    const x = this.x
+    const y = this.y
     const width = this.width
     const height = this.height
 
@@ -855,16 +852,16 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+    const option_ = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
-    new Button(option).render()
+    new Button(option_).render()
 
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'home'
     }
 
-    addEventListener('touchstart', event, option)
+    addEventListener('touchstart', event, option_)
   }
 
   pumpCard = (card, role) => {
@@ -874,7 +871,6 @@ class Page {
     if (role.information.card.hand.length < 4) {
       role.information.card.hand.push(card)
     }
-    // this.InstanceAction.updateCards(this.InstanceRoleSelf.information.card.hand)
   }
 
   useCard = async (card, role) => {
@@ -895,8 +891,6 @@ class Page {
 
     self.information.card.cemetery.push(card)
     self.information.card.consume.push(card)
-
-    // this.InstanceAction.updateCards(this.InstanceRoleSelf.information.card.hand)
 
     Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
 
