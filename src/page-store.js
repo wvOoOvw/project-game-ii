@@ -500,7 +500,9 @@ class Page {
     const _drawTeamButton = () => {
       new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
 
-        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, ${index === Imitation.state.info.teamIndex ? 1 : 0.5})`, 'rgba(0, 0, 0, 1)'], text: `队伍 ${index + 1}` }
+        const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: `队伍 ${index + 1}` }
+
+        option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -524,7 +526,9 @@ class Page {
       const array = [['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']]
 
       new Array(...array).forEach((i, index) => {
-        const option_ = { x: 24 + index * 72, y: option.y + option.height - 42, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, ${i[0] === this.type ? 1 : 0.5})`, 'rgba(0, 0, 0, 1)'], text: i[1] }
+        const option_ = { x: 24 + index * 72, y: option.y + option.height - 42, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+
+        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -546,7 +550,9 @@ class Page {
     const _drawSort = () => {
       const array = [['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']]
       new Array(...array).forEach((i, index) => {
-        const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, ${i[0] === this.sort ? 1 : 0.5})`, 'rgba(0, 0, 0, 1)'], text: i[1] }
+        const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+
+        option_.fillStyle = i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -618,7 +624,9 @@ class Page {
         this.InstanceMasterPreview.render()
 
         this.preview.skill.forEach((i, index) => {
-          const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, ${index === this.InstanceMasterPreview.skillIndex ? 1 : 0.5})`, 'rgba(0, 0, 0, 1)'], text: i.name }
+          const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+
+          option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
           const maxIndex = this.preview.skill.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -680,7 +688,9 @@ class Page {
       this.InstanceMasterPreview.render()
 
       this.preview.skill.forEach((i, index) => {
-        const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, ${index === this.InstanceMasterPreview.skillIndex ? 1 : 0.5})`, 'rgba(0, 0, 0, 1)'], text: i.name }
+        const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+
+        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5

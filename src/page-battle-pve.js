@@ -373,7 +373,7 @@ class Role {
   }
 
   drawCard() {
-    const width = Math.min(this.width * 2, windowWidth - 24)
+    const width = Math.min(this.width * 1.75, windowWidth - 24)
     const height = this.height
     const x = this.x - (width - this.width) / 2
     const y = this.y + width * 0.02
@@ -417,8 +417,8 @@ class Role {
     this.drawBackground()
     this.drawTitle()
     this.drawHM()
-    this.drawCard()
     this.drawBuff()
+    this.drawCard()
   }
 }
 
@@ -759,9 +759,11 @@ class Page {
   }
 
   instanceRoleSelf() {
+    const boxHeight = (windowHeight - (safeTop + 60) - 120) / 2
+
     const option = {
-      width: Math.min(windowWidth * 0.75, windowHeight * 0.3),
-      height: Math.min(windowWidth * 0.75, windowHeight * 0.3),
+      width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
+      height: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
       type: 'self',
       information: Imitation.state.battle.self,
       env: this.env,
@@ -769,16 +771,17 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = windowHeight - option.height - 12
+    option.y = (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2 + 120 + (boxHeight - option.height) / 2
 
     this.InstanceRoleSelf = new Role(option)
   }
 
   instanceRoleOpposite() {
+    const boxHeight = (windowHeight - (safeTop + 60) - 120) / 2
+
     const option = {
-      y: 60 + safeTop,
-      width: Math.min(windowWidth * 0.75, windowHeight * 0.3),
-      height: Math.min(windowWidth * 0.75, windowHeight * 0.3),
+      width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
+      height: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
       type: 'opposite',
       information: Imitation.state.battle.opposite,
       env: this.env,
@@ -786,7 +789,7 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = 60 + safeTop
+    option.y = (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2 - option.height - (boxHeight - option.height) / 2
 
     this.InstanceRoleOpposite = new Role(option)
   }
@@ -797,7 +800,7 @@ class Page {
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
-      y: (safeTop + 48 + this.InstanceRoleOpposite.height) + (windowHeight - (safeTop + 48 + this.InstanceRoleOpposite.height + this.InstanceRoleSelf.height) - 120) / 2,
+      y: (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2,
       width: width,
       height: height,
       env: this.env,
