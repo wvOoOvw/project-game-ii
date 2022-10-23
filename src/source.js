@@ -78,8 +78,8 @@ var originCard = [
     description: l => `造成 ${l * 20 + 80} 伤害, 并附加给目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
-        { type: 'hit', target: 'opposite', value: -(card.level * 20 + 80) },
-        { type: 'buff', target: 'opposite', value: '燃', number: 1 }
+        { effect: 'hit', target: 'opposite', value: -(card.level * 20 + 80) },
+        { effect: 'buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
   },
@@ -93,8 +93,8 @@ var originCard = [
     description: l => `造成 ${l * 10 + 40} 伤害, 并附加给目标 2 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
-        { type: 'hit', target: 'opposite', value: -(card.level * 10 + 40) },
-        { type: 'buff', target: 'opposite', value: '燃', number: 2 }
+        { effect: 'hit', target: 'opposite', value: -(card.level * 10 + 40) },
+        { effect: 'buff', target: 'opposite', value: '燃', number: 2 }
       ]
     }
   },
@@ -107,11 +107,11 @@ var originCard = [
     image: J_music_4d7f219082ba4d86b1543c982d1156560,
     description: l => `消耗 100 MP, 造成目标'燃'层数 * ${l * 5 + 20} 伤害`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 100) return 'MP 不足'
+      if (self.MP < 100) return [{ error: 'MP 不足' }]
 
       return [
-        { type: 'cost-mp', target: 'self', value: -100 },
-        { type: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 5 + 20 },
+        { effect: 'cost-mp', target: 'self', value: -100 },
+        { effect: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 5 + 20 },
       ]
     }
   },
@@ -125,16 +125,16 @@ var originCard = [
     description: l => `从牌库以及墓地抽取 1 张除自身外的火系卡牌, 回复 ${l * 5 + 20} MP`,
     function: (card, self, opposite, round) => {
       const rt = [
-        { type: 'cure-mp', target: 'self', value: card.level * 5 + 20 },
+        { effect: 'cure-mp', target: 'self', value: card.level * 5 + 20 },
       ]
 
       const cardInStore = self.card.store.find(i => i.race === '火' && i.key !== card.key)
 
-      if (cardInStore) rt.push({ type: 'pump-store-point', target: 'self', value: [cardInStore] })
+      if (cardInStore) rt.push({ effect: 'pump-store-point', target: 'self', value: [cardInStore] })
 
       const cardInCemetery = self.card.cemetery.find(i => i.race === '火' && i.key !== card.key)
 
-      if (cardInCemetery) rt.push({ type: 'pump-cemetery-point', target: 'self', value: [cardInCemetery] })
+      if (cardInCemetery) rt.push({ effect: 'pump-cemetery-point', target: 'self', value: [cardInCemetery] })
 
       return rt
     }
@@ -148,46 +148,16 @@ var originCard = [
     image: J_music_98a7a38ce58546a7841d18c96e41e3760,
     description: l => `消耗 20 MP, 造成 ${l * 30 + 120} 伤害, 并消耗目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 20) return 'MP 不足'
-      if (!opposite.master.buff.find(i => i === '燃')) return `目标'燃'印记不足`
+      if (self.MP < 20) return [{ error: 'MP 不足' }]
+      if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标'燃'印记不足` }]
 
       return [
-        { type: 'cost-mp', target: 'self', value: -20 },
-        { type: 'hit', target: 'opposite', value: -(card.level * 30 + 120) },
-        { type: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
+        { effect: 'cost-mp', target: 'self', value: -20 },
+        { effect: 'hit', target: 'opposite', value: -(card.level * 30 + 120) },
+        { effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
   },
-  // {
-  //   key: 4,
-  //   name: '堕天',
-  //   type: '进攻卡',
-  //   race: '暗',
-  //   limit: 3,
-  //   image: J_music_98a7a38ce58546a7841d18c96e41e3760,
-  //   description: l => `消耗50MP，造成 ${l * 30 + 300} 伤害`,
-  //   function: (card, self, opposite, round) => {
-  //     return [
-  //       { type: 'cost-mp', target: 'self', value: -50 },
-  //       { type: 'hit', target: 'opposite', value: -(card.level * 30 + 300) }
-  //     ]
-  //   }
-  // },
-  // {
-  //   key: 5,
-  //   name: '坠地',
-  //   type: '进攻卡',
-  //   race: '暗',
-  //   limit: 3,
-  //   image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
-  //   description: l => `消耗50MP，造成 ${l * 50 + 200} 伤害`,
-  //   function: (card, self, opposite, round) => {
-  //     return [
-  //       { type: 'cost-mp', target: 'self', value: -50 },
-  //       { type: 'hit', target: 'opposite', value: -(card.level * 50 + 200) }
-  //     ]
-  //   }
-  // },
 ]
 
 originCard = originCard.map(i => {

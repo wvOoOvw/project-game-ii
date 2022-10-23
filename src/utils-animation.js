@@ -24,6 +24,8 @@ class Animation {
   }
 
   play(key, option) {
+    if (!this.map[key]) return
+    
     this.animationQueue.push({
       index: 0,
       imgs: this.map[key],

@@ -147,16 +147,9 @@ class CardInSelf {
     ctx.save()
 
     ctx.globalAlpha = this.novaTime
-    // ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 0.5 + 0.5)
+    ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 1)
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
-
-    if (this.ifTouchEndTime > 0) {
-      ctx.shadowBlur = width * 0.25 * this.ifTouchEndTime
-      ctx.shadowColor = 'rgba(0, 0, 0, 1)'
-      ctx.fill()
-      ctx.shadowBlur = 0
-    }
 
     ctx.clip()
 
@@ -170,7 +163,7 @@ class CardInSelf {
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.5 + this.ifTouchEndTime * 0.35})`
 
     ctx.fill()
 
@@ -878,9 +871,19 @@ class Page {
 
     var result = card.function(card, self.information, opposite.information, this.env)
 
-    if (typeof result === 'string') {
-      Imitation.state.function.message(result, 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    if (result.find(i => i.error)) {
+      Imitation.state.function.message(result.find(i => i.error).error, 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
+    }
+
+    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(50, 255 ,50, 1)', 'rgba(255, 255, 255, 1)')
+
+    // TODO
+    if (role === this.InstanceRoleSelf) {
+      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleOpposite.x + this.InstanceRoleOpposite.width / 2 - img.width / 2, this.InstanceRoleOpposite.y + this.InstanceRoleOpposite.height / 2 - img.height / 2])
+    }
+    if (role === this.InstanceRoleOpposite) {
+      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleSelf.x + this.InstanceRoleSelf.width / 2 - img.width / 2, this.InstanceRoleSelf.y + this.InstanceRoleSelf.height / 2 - img.height / 2])
     }
 
     self.information.master.skill.forEach(skill => {
@@ -892,31 +895,22 @@ class Page {
     self.information.card.cemetery.push(card)
     self.information.card.consume.push(card)
 
-    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
-
-    if (role === this.InstanceRoleSelf) {
-      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleOpposite.x + this.InstanceRoleOpposite.width / 2 - img.width / 2, this.InstanceRoleOpposite.y + this.InstanceRoleOpposite.height / 2 - img.height / 2])
-    }
-    if (role === this.InstanceRoleOpposite) {
-      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleSelf.x + this.InstanceRoleSelf.width / 2 - img.width / 2, this.InstanceRoleSelf.y + this.InstanceRoleSelf.height / 2 - img.height / 2])
-    }
-
     while (result.length) {
       const current = result.shift()
 
-      if (current.type === 'cost-mp') {
+      if (current.effect === 'cost-mp') {
         if (current.target === 'self') {
           self.information.master.MP = self.information.master.MP + current.value
         }
       }
 
-      if (current.type === 'hit') {
+      if (current.effect === 'hit') {
         if (current.target === 'opposite') {
           opposite.information.master.HP = opposite.information.master.HP + current.value
         }
       }
 
-      if (current.type === 'buff') {
+      if (current.effect === 'buff') {
         if (current.target === 'self') {
           self.information.master.buff.push(...new Array(current.number).fill(current.value))
         }
@@ -925,7 +919,7 @@ class Page {
         }
       }
 
-      if (current.type === 'cost-buff') {
+      if (current.effect === 'cost-buff') {
         let count = 0
         if (current.target === 'self') {
           self.information.master.buff = self.information.master.buff.filter(i => {
@@ -947,19 +941,19 @@ class Page {
         }
       }
 
-      if (current.type === 'cure-hp') {
+      if (current.effect === 'cure-hp') {
         if (current.target === 'self') {
           self.information.master.HP = self.information.master.HP + current.value
         }
       }
 
-      if (current.type === 'cure-mp') {
+      if (current.effect === 'cure-mp') {
         if (current.target === 'self') {
           self.information.master.MP = self.information.master.MP + current.value
         }
       }
 
-      if (current.type === 'pump-store-positive') {
+      if (current.effect === 'pump-store-positive') {
         if (current.target === 'self') {
           new Array(current.value).fill().forEach(i => {
             const card = this.InstanceRoleSelf.information.card.store.shift()
@@ -969,7 +963,7 @@ class Page {
         }
       }
 
-      if (current.type === 'pump-store-point') {
+      if (current.effect === 'pump-store-point') {
         if (current.target === 'self') {
           current.value.forEach(i => {
             this.pumpCard(i, this.InstanceRoleSelf)
@@ -978,7 +972,7 @@ class Page {
         }
       }
 
-      if (current.type === 'pump-cemetery-positive') {
+      if (current.effect === 'pump-cemetery-positive') {
         if (current.target === 'self') {
           new Array(current.value).fill().forEach(i => {
             this.pumpCard(this.InstanceRoleSelf.information.card.cemetery.shift(), this.InstanceRoleSelf)
@@ -986,7 +980,7 @@ class Page {
         }
       }
 
-      if (current.type === 'pump-cemetery-point') {
+      if (current.effect === 'pump-cemetery-point') {
         if (current.target === 'self') {
           current.value.forEach(i => {
             this.pumpCard(i, this.InstanceRoleSelf)
