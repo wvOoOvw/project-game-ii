@@ -793,7 +793,7 @@ class Page {
     }
 
     this.init()
-    Imitation.state.function.message('合成成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('合成成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
 
@@ -829,7 +829,7 @@ class Page {
 
     this.init()
 
-    Imitation.state.function.message('装载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
 
@@ -846,7 +846,7 @@ class Page {
     }
 
     this.init()
-    Imitation.state.function.message('卸载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
 
@@ -854,7 +854,7 @@ class Page {
     Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key = master.key
 
     this.init()
-    Imitation.state.function.message('装载成功', 'rgba(125, 125, 125, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
 

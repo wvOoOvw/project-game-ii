@@ -876,14 +876,20 @@ class Page {
       return
     }
 
-    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(50, 255 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
-    // TODO
-    if (role === this.InstanceRoleSelf) {
-      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleOpposite.x + this.InstanceRoleOpposite.width / 2 - img.width / 2, this.InstanceRoleOpposite.y + this.InstanceRoleOpposite.height / 2 - img.height / 2])
-    }
-    if (role === this.InstanceRoleOpposite) {
-      Imitation.state.function.animation('red-hit', (img) => [this.InstanceRoleSelf.x + this.InstanceRoleSelf.width / 2 - img.width / 2, this.InstanceRoleSelf.y + this.InstanceRoleSelf.height / 2 - img.height / 2])
+    if (result.find(i => i.animation)) {
+      const animations = result.filter(i => i.animation)
+
+      while (animations.length) {
+        const current = animations.shift()
+        if (current.target === 'self') {
+          Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
+        }
+        if (current.target === 'opposite') {
+          Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
+        }
+      }
     }
 
     self.information.master.skill.forEach(skill => {

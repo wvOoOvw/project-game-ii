@@ -19,10 +19,10 @@ class Message {
     this.show = false
 
     this.opacity = 0
-    this.width = windowWidth - 24
-    this.height = 36
+    this.width = Math.min(windowWidth - 24, 180)
+    this.height = 32
     this.x = (windowWidth - this.width) / 2
-    this.y = windowHeight - 48
+    this.y = -32
   }
 
   send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
@@ -48,12 +48,12 @@ class Message {
       this.opacity = numberFix(this.opacity - 0.05)
     }
 
-    if (this.show && this.y > windowHeight - 48) {
-      this.y = numberFix(this.y - 4)
+    if (this.show && this.y < 12) {
+      this.y = numberFix(this.y + 4)
     }
 
-    if (!this.show && this.y < windowHeight) {
-      this.y = numberFix(this.y + 4)
+    if (!this.show && this.y > -32) {
+      this.y = numberFix(this.y - 4)
     }
 
     if (!this.show && this.opacity === 0) return
@@ -64,10 +64,10 @@ class Message {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 12px ${window.fontFamily}`
+    ctx.font = `900 10px ${window.fontFamily}`
     ctx.fillStyle = this.backgroundColor
 
-    drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 12 })
+    drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 8 })
 
     ctx.fill()
 

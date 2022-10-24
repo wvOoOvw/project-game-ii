@@ -78,6 +78,7 @@ var originCard = [
     description: l => `造成 ${l * 20 + 80} 伤害, 并附加给目标 1 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
+        { animation: 'red-hit', target: 'opposite' },
         { effect: 'hit', target: 'opposite', value: -(card.level * 20 + 80) },
         { effect: 'buff', target: 'opposite', value: '燃', number: 1 }
       ]
@@ -93,6 +94,7 @@ var originCard = [
     description: l => `造成 ${l * 10 + 40} 伤害, 并附加给目标 2 层'燃'`,
     function: (card, self, opposite, round) => {
       return [
+        { animation: 'red-hit', target: 'opposite' },
         { effect: 'hit', target: 'opposite', value: -(card.level * 10 + 40) },
         { effect: 'buff', target: 'opposite', value: '燃', number: 2 }
       ]
@@ -110,6 +112,7 @@ var originCard = [
       if (self.MP < 100) return [{ error: 'MP 不足' }]
 
       return [
+        { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: -100 },
         { effect: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 5 + 20 },
       ]
@@ -125,6 +128,7 @@ var originCard = [
     description: l => `从牌库以及墓地抽取 1 张除自身外的火系卡牌, 回复 ${l * 5 + 20} MP`,
     function: (card, self, opposite, round) => {
       const rt = [
+        { animation: 'red-hit', target: 'self' },
         { effect: 'cure-mp', target: 'self', value: card.level * 5 + 20 },
       ]
 
@@ -152,6 +156,7 @@ var originCard = [
       if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标'燃'印记不足` }]
 
       return [
+        { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: -20 },
         { effect: 'hit', target: 'opposite', value: -(card.level * 30 + 120) },
         { effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
