@@ -435,13 +435,13 @@ class Action {
   }
 
   drawEnv() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
 
     new Button(option).render()
   }
 
   drawButtonOverRound() {
-    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 + 12, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
 
     new Button(option).render()
 
@@ -455,7 +455,7 @@ class Action {
   }
 
   drawButtonStore() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 40, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
 
     new Button(option).render()
 
@@ -469,7 +469,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 - 40, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
 
     new Button(option).render()
 
@@ -749,7 +749,7 @@ class Page {
   }
 
   instanceRoleSelf() {
-    const boxHeight = (windowHeight - (safeTop + 60) - 120) / 2
+    const boxHeight = (windowHeight - 180 - safeTop) / 2
 
     const option = {
       width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
@@ -761,13 +761,13 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2 + 120 + (boxHeight - option.height) / 2
+    option.y = (safeTop + 60) + (windowHeight - 180 - safeTop) / 2 + 120 + (boxHeight - option.height) / 2
 
     this.InstanceRoleSelf = new Role(option)
   }
 
   instanceRoleOpposite() {
-    const boxHeight = (windowHeight - (safeTop + 60) - 120) / 2
+    const boxHeight = (windowHeight - 180 - safeTop) / 2
 
     const option = {
       width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.3),
@@ -779,7 +779,7 @@ class Page {
     }
 
     option.x = (windowWidth - option.width) / 2
-    option.y = (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2 - option.height - (boxHeight - option.height) / 2
+    option.y = (safeTop + 60) + (windowHeight - 180 - safeTop) / 2 - option.height - (boxHeight - option.height) / 2
 
     this.InstanceRoleOpposite = new Role(option)
   }
@@ -790,7 +790,7 @@ class Page {
 
     this.InstanceAction = new Action({
       x: (windowWidth - width) / 2,
-      y: (safeTop + 60) + (windowHeight - (safeTop + 60) - 120) / 2,
+      y: (safeTop + 60) + (windowHeight - 180 - safeTop) / 2,
       width: width,
       height: height,
       env: this.env,

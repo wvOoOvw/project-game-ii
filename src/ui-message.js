@@ -22,7 +22,7 @@ class Message {
     this.width = Math.min(windowWidth - 24, 180)
     this.height = 32
     this.x = (windowWidth - this.width) / 2
-    this.y = -32
+    this.y = windowHeight
   }
 
   send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
@@ -48,12 +48,12 @@ class Message {
       this.opacity = numberFix(this.opacity - 0.05)
     }
 
-    if (this.show && this.y < 12) {
-      this.y = numberFix(this.y + 4)
+    if (this.show && this.y > windowHeight - 44) {
+      this.y = numberFix(this.y - 4)
     }
 
-    if (!this.show && this.y > -32) {
-      this.y = numberFix(this.y - 4)
+    if (!this.show && this.y < windowHeight) {
+      this.y = numberFix(this.y + 4)
     }
 
     if (!this.show && this.opacity === 0) return

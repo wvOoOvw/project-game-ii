@@ -334,8 +334,6 @@ class Page {
     this.InstanceCardPreview
 
     this.init()
-    this.instanceCardPreview()
-    this.instanceMasterPreview()
   }
 
   get bannerHeight() {
@@ -385,7 +383,6 @@ class Page {
       this.card = this.card.sort((a, b) => {
         const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
         const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-
         return b_ - a_
       })
     }
@@ -399,6 +396,8 @@ class Page {
     this.instanceScroll()
     this.instanceMaster()
     this.instanceCard()
+    this.instanceCardPreview()
+    this.instanceMasterPreview()
   }
 
   instanceScroll() {
