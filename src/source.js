@@ -205,9 +205,10 @@ originExplore = originExplore.map(i => {
 
 var originShop = [
   {
-    type: 'money_1',
     name: '基础礼盒 I',
     description: '五张等级一小火把 五张等级一大火把',
+    type: 'money_1',
+    belong: 'alltime',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
@@ -218,9 +219,10 @@ var originShop = [
     },
   },
   {
-    type: 'money_2',
     name: '基础礼盒 II',
     description: '五张等级一小火把 五张等级一大火把',
+    type: 'money_2',
+    belong: 'week_3',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
@@ -231,9 +233,10 @@ var originShop = [
     },
   },
   {
-    type: 'money_3',
     name: '基础礼盒 III',
     description: '五张等级一小火把 五张等级一大火把',
+    type: 'money_3',
+    belong: 'week_2',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {

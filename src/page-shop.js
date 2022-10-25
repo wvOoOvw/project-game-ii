@@ -84,7 +84,7 @@ class ShopInList {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2 - height * 0.07)
-    ctx.fillText(`$${shop.cost}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
+    ctx.fillText(`¥${shop.cost}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
 
     drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_, width: width - width_ - (height - height_) * 2, height: height_, radius: height * 0.1 })
     ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
@@ -109,7 +109,7 @@ class ShopInPreview {
     this.width = props.width
     this.height = props.height
 
-    this.card = props.card
+    this.shop = props.shop
 
     this.novaTime = 0
   }
@@ -121,7 +121,7 @@ class ShopInPreview {
     const y = this.y
     const width = this.width
     const height = this.height
-    const card = this.card
+    const shop = this.shop
 
     ctx.save()
 
@@ -129,7 +129,7 @@ class ShopInPreview {
 
     ctx.clip()
 
-    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(this.shop.imageDOM, { x: x, y: y, width: width, height: height })
 
     const width_ = height * this.novaTime
     const height_ = height * this.novaTime
@@ -148,21 +148,12 @@ class ShopInPreview {
     ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-    ctx.textAlign = 'end'
-
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.08, y + width * 0.30)
-
-    ctx.textAlign = 'start'
-
-    ctx.fillText('Lv ' + card.level, x + width * 0.08, y + width * 0.30)
-    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.42)
+    ctx.fillText(shop.name, x + width / 2, y + width * 0.12)
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: shop.description })
 
     ctx.restore()
   }
@@ -173,6 +164,7 @@ class Page {
     this.preview = null
 
     this.type = 'money_1'
+    this.belong = 'alltime'
 
     this.shop = Imitation.state.shop
 
@@ -184,7 +176,7 @@ class Page {
   }
 
   get bannerHeight() {
-    return 54
+    return 96
   }
 
   get shopHeight() {
@@ -200,7 +192,7 @@ class Page {
   }
 
   init() {
-    this.shop = Imitation.state.shop.filter(i => i.type === this.type)
+    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.belong === this.belong)
 
     this.instanceScroll()
     this.instanceShop()
@@ -236,14 +228,14 @@ class Page {
   instanceShopPreview() {
     const option = {
       width: windowWidth * 0.7,
-      card: this.preview,
+      shop: this.preview,
     }
 
     option.height = option.width * 1.35
     option.x = windowWidth * 0.15
     option.y = (windowHeight - option.width * 1.5) / 2 - 60
 
-    this.InstanceCardPreview = new ShopInPreview(option)
+    this.InstanceShopPreview = new ShopInPreview(option)
   }
 
   drawScroll() {
@@ -271,7 +263,7 @@ class Page {
 
     ctx.clip()
 
-    const _drawTeamButton = () => {
+    const _drawTypeButton = () => {
       const array = [['money_1', '金币礼盒'], ['money_2', '钻石礼盒'], ['money_3', '碎片礼盒']]
 
       array.forEach((i, index) => {
@@ -294,7 +286,32 @@ class Page {
       })
     }
 
-    _drawTeamButton()
+    _drawTypeButton()
+
+    const _drawBelongButton = () => {
+      const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
+
+      array.forEach((i, index) => {
+        const option_ = { x: 24 + index * 84, y: 54 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+
+        option_.fillStyle = i[0] === this.belong ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+
+        new Button(option_).render()
+
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+
+          this.belong = i[0]
+          this.init()
+        }
+
+        addEventListener('touchstart', event, option_)
+      })
+    }
+
+    _drawBelongButton()
 
     ctx.restore()
   }
@@ -311,7 +328,25 @@ class Page {
   drawPreview() {
     var closeCover = []
 
-    const buttonY = this.InstanceMasterPreview.y + this.InstanceMasterPreview.height
+    const buttonY = this.InstanceShopPreview.y + this.InstanceShopPreview.height
+
+    this.InstanceShopPreview.shop = this.preview
+
+    this.InstanceShopPreview.render()
+
+    const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '购买' }
+
+    new Button(option).render()
+
+    const buy = () => {
+      this.buy(this.preview)
+      this.preview = null
+      this.InstanceShopPreview.novaTime = 0
+    }
+
+    addEventListener('touchstart', buy, option)
+
+    closeCover.push(option)
 
     const close = (e) => {
       if (closeCover.some(i => ifTouchCover(e, i))) return
@@ -339,11 +374,21 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
+  buy(shop) {
+
+  }
+
   render() {
     this.drawBackground()
 
-    this.drawButtonHome()
-    this.drawScroll()
+    if (this.preview) {
+      this.drawPreview()
+    }
+
+    if (!this.preview) {
+      this.drawButtonHome()
+      this.drawScroll()
+    }
   }
 }
 
