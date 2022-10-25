@@ -175,8 +175,6 @@ class CardInSelf {
 
       ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-      if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
       ctx.textAlign = 'start'
 
       ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
@@ -185,7 +183,7 @@ class CardInSelf {
       ctx.textAlign = 'start'
       ctx.textBaseline = 'top'
 
-      drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
+      drawText({ x: x + width * 0.08, y: y + width * 0.72, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
     }
 
     if (this.mouseDownPositionTime === 0) {
@@ -196,8 +194,6 @@ class CardInSelf {
       const radius_ = width * 0.08
 
       const text = [card.name, levelText(card.level)]
-
-      if (card.number) text.push('x' + card.number)
 
       drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 

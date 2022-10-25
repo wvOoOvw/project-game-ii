@@ -15,7 +15,7 @@ import { Sound } from './utils-sound'
 import { Animation } from './utils-animation'
 import { SaveImage } from './utils-saveImage'
 
-import { originMaster, originCard, originBoss, originExplore } from './source'
+import { originMaster, originCard, originBoss, originExplore, originShop } from './source'
 
 const ctx = canvas.getContext('2d')
 
@@ -68,7 +68,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'explore',
+        current: 'home',
         next: '',
         map: {
           'save-image': SaveImage,
@@ -84,6 +84,7 @@ class Main {
       info: null,
       battle: null,
       explore: originExplore,
+      shop: originShop,
       function: {
         render: this.render,
         loopStart: this.loopStart,
@@ -130,8 +131,9 @@ class Main {
         ],
         teamIndex: 0,
 
-        gold_1: 1000,
-        gold_2: 1000
+        money_1: 1000,
+        money_2: 1000,
+        money_3: 1000,
       }
 
       Imitation.state.info = responseHTTP

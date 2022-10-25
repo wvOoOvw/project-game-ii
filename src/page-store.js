@@ -154,13 +154,13 @@ class CardInPreview {
 
     ctx.textAlign = 'start'
 
-    ctx.fillText('Lv ' + card.level, x + width * 0.08, y + width * 0.30)
-    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.42)
+    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
+    ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.72, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
 
     ctx.restore()
   }
@@ -311,7 +311,7 @@ class MasterInPreview {
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: master.skill[this.skillIndex].description(master.level) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.72, width: width - width * 0.25, fontHeight: width * 0.105, text: master.skill[this.skillIndex].description(master.level) })
 
     ctx.restore()
   }
@@ -337,7 +337,7 @@ class Page {
   }
 
   get bannerHeight() {
-    return 160
+    return 138
   }
 
   get masterHeight() {
@@ -521,31 +521,6 @@ class Page {
 
     _drawTeamButton()
 
-    const _drawTypeButton = () => {
-      const array = [['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']]
-
-      new Array(...array).forEach((i, index) => {
-        const option_ = { x: 24 + index * 72, y: option.y + option.height - 42, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
-
-        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-        new Button(option_).render()
-
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-          this.type = i[0]
-          this.init()
-        }
-
-        addEventListener('touchstart', event, option_)
-      })
-    }
-
-    _drawTypeButton()
-
     const _drawSort = () => {
       const array = [['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']]
       new Array(...array).forEach((i, index) => {
@@ -569,6 +544,32 @@ class Page {
     }
 
     _drawSort()
+
+
+    const _drawTypeButton = () => {
+      const array = [['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']]
+
+      new Array(...array).forEach((i, index) => {
+        const option_ = { x: 24 + index * 72, y: 96 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+
+        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+
+        new Button(option_).render()
+
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+
+          this.type = i[0]
+          this.init()
+        }
+
+        addEventListener('touchstart', event, option_)
+      })
+    }
+
+    _drawTypeButton()
 
     ctx.restore()
   }

@@ -17,6 +17,22 @@ class Page {
 
   }
 
+  drawMoney() {
+    const list = [`金币 ${Imitation.state.info.money_1}`, `钻石 ${Imitation.state.info.money_2}`, `碎片 ${Imitation.state.info.money_3}`]
+
+    list.forEach((i, index) => {
+      const maxIndex = list.length
+      const centerIndex = maxIndex / 2 - 0.5
+      const diff = index - centerIndex
+
+      const option = { y: 12, width: 84, height: 32, radius: 4, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: i }
+
+      option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
+
+      new Button(option).render()
+    })
+  }
+
   drawButtonExplore() {
     const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
 
@@ -62,6 +78,7 @@ class Page {
 
   render() {
     this.drawBackground()
+    this.drawMoney()
     this.drawButtonExplore()
     this.drawButtonStore()
     this.drawButtonShop()

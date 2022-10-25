@@ -96,7 +96,7 @@ const drawText = (option) => {
   })
   row.push(temp)
   row.forEach((i, index) => {
-    ctx.fillText(i, x, y + (index + 1) * fontHeight)
+    ctx.fillText(i, x, y + index * fontHeight)
   })
 }
 
