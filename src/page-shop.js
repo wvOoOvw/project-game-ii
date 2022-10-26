@@ -163,10 +163,10 @@ class Page {
   constructor() {
     this.preview = null
 
-    this.type = 'money_1'
-    this.belong = 'alltime'
+    this.costby = 'money_1'
+    this.type = 'alltime'
 
-    this.shop = Imitation.state.shop
+    this.shop
 
     this.InstanceScroll
     this.InstanceShop
@@ -192,7 +192,7 @@ class Page {
   }
 
   init() {
-    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.belong === this.belong)
+    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.costby === this.costby)
 
     this.instanceScroll()
     this.instanceShop()
@@ -263,11 +263,36 @@ class Page {
 
     ctx.clip()
 
-    const _drawTypeButton = () => {
+    const _drawCostbyButton = () => {
       const array = [['money_1', '金币礼盒'], ['money_2', '钻石礼盒'], ['money_3', '碎片礼盒']]
 
       array.forEach((i, index) => {
         const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+
+        option_.fillStyle = i[0] === this.costby ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+
+        new Button(option_).render()
+
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+
+          this.costby = i[0]
+          this.init()
+        }
+
+        addEventListener('touchstart', event, option_)
+      })
+    }
+
+    _drawCostbyButton()
+
+    const _drawTypeButton = () => {
+      const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
+
+      array.forEach((i, index) => {
+        const option_ = { x: 24 + index * 84, y: 54 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
         option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
@@ -287,31 +312,6 @@ class Page {
     }
 
     _drawTypeButton()
-
-    const _drawBelongButton = () => {
-      const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
-
-      array.forEach((i, index) => {
-        const option_ = { x: 24 + index * 84, y: 54 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
-
-        option_.fillStyle = i[0] === this.belong ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-        new Button(option_).render()
-
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-          this.belong = i[0]
-          this.init()
-        }
-
-        addEventListener('touchstart', event, option_)
-      })
-    }
-
-    _drawBelongButton()
 
     ctx.restore()
   }

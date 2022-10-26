@@ -175,6 +175,8 @@ originCard = originCard.map(i => {
 var originExplore = [
   {
     name: '梦境 I',
+    description: '梦境守卫',
+    type: 'alltime',
     image: J_music_47a83799595b4a5b97145a6e594620310,
     boss: {
       master: { key: 2, level: 2 },
@@ -207,8 +209,8 @@ var originShop = [
   {
     name: '基础礼盒 I',
     description: '五张等级一小火把 五张等级一大火把',
-    type: 'money_1',
-    belong: 'alltime',
+    type: 'alltime',
+    costby: 'money_1',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
@@ -221,8 +223,8 @@ var originShop = [
   {
     name: '基础礼盒 II',
     description: '五张等级一小火把 五张等级一大火把',
-    type: 'money_2',
-    belong: 'week_3',
+    type: 'week_3',
+    costby: 'money_2',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
@@ -235,8 +237,8 @@ var originShop = [
   {
     name: '基础礼盒 III',
     description: '五张等级一小火把 五张等级一大火把',
-    type: 'money_3',
-    belong: 'week_2',
+    type: 'week_2',
+    costby: 'money_3',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {

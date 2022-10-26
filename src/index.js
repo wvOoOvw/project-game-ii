@@ -68,7 +68,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'shop',
+        current: 'home',
         next: '',
         map: {
           'save-image': SaveImage,
