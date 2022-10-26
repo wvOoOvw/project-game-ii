@@ -1,4 +1,4 @@
-import { originMaster, originCard, originBoss, originExplore } from './source'
+import { originMoney, originMaster, originCard, originBoss, originExplore } from './source'
 
 const parseCard = (array, numberFlat) => {
   const result = array.reduce((t, i) => {
@@ -35,7 +35,21 @@ const parseMaster = (array) => {
   return result
 }
 
-export { parseCard, parseMaster }
+const parseMoney = (array) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originMoney.find(i_ => i.key === i_.key)
+
+    result_.push({ ...origin, ...i })
+
+    return result_
+  }, [])
+
+  return result
+}
+
+export { parseCard, parseMaster, parseMoney }
 
 const levelText = (level) => {
   if (level === 1) return 'I'
@@ -56,13 +70,7 @@ const levelText = (level) => {
   if (level === 16) return 'XVI'
 }
 
-const moneyText = (money) => {
-  if (money === 'money_1') return '金币'
-  if (money === 'money_2') return '钻石'
-  if (money === 'money_3') return '碎片'
-}
-
-export { levelText, moneyText }
+export { levelText }
 
 const wait = async (time) => await new Promise((resolve) => setTimeout(() => resolve(), time))
 

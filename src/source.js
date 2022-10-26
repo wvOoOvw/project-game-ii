@@ -6,7 +6,6 @@ import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/card/music_4d7f2
 import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/card/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
 import J_music_88c8411d068c455099456851ec84f65c0 from '../media/card/music_88c8411d068c455099456851ec84f65c0.jpeg'
 import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/card/music_98a7a38ce58546a7841d18c96e41e3760.jpeg'
-import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/card/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
 import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/card/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
 import J_music_47a83799595b4a5b97145a6e594620310 from '../media/explore/music_47a83799595b4a5b97145a6e594620310.jpeg'
@@ -15,12 +14,40 @@ import J_music_1107cbd537144759999fbd7dc0fdb6650 from '../media/master/music_110
 import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/master/music_b6f0b1c512ad42fab204d79b85d07c140.jpeg'
 import J_music_b40316005b55465b80ae4eecad8447960 from '../media/master/music_b40316005b55465b80ae4eecad8447960.jpeg'
 
+import J_music_16193381303a4584989ac395336fd4880 from '../media/money/music_16193381303a4584989ac395336fd4880.jpeg'
+import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/money/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
+import J_music_a2835cfbbeea40d6971fd36c0a44870d0 from '../media/money/music_a2835cfbbeea40d6971fd36c0a44870d0.jpeg'
+
+var originMoney = [
+  {
+    key: 1,
+    name: '金币',
+    image: J_music_16193381303a4584989ac395336fd4880,
+  },
+  {
+    key: 2,
+    name: '钻石',
+    image: J_music_a7e9436348e6456eb47f32a75f7392370,
+  },
+  {
+    key: 3,
+    name: '碎片',
+    image: J_music_a2835cfbbeea40d6971fd36c0a44870d0,
+  },
+]
+
+originMoney = originMoney.map(i => {
+  i.imageDOM = new Image()
+  i.imageDOM.src = i.image
+
+  return i
+})
 
 var originMaster = [
   {
     key: 1,
     name: '艾露恩',
-    image: J_music_a7e9436348e6456eb47f32a75f7392370,
+    image: J_music_1107cbd537144759999fbd7dc0fdb6650,
     HP: l => 900 + l * 100,
     MP: l => 190 + l * 10,
     skill: [
@@ -187,7 +214,7 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { money: 'money_1', number: Math.random() * 100 },
+        { money: true, key: 1, number: 1000 },
       ]
     },
     AI: (self, opposite, env) => {
@@ -209,8 +236,8 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { key: 1, level: 1, number: 1 },
-        { key: 2, level: 1, number: 1 },
+        { card: true, key: 1, level: 1, number: Math.floor(Math.random() * 3) },
+        { card: true, key: 2, level: 1, number: Math.floor(Math.random() * 3) },
       ]
     },
     AI: (self, opposite, env) => {
@@ -231,14 +258,16 @@ var originShop = [
     name: '火系基础礼盒 I',
     description: '小火把I (x2 - x5) & 大火把I (x2 - x5)',
     type: 'alltime',
-    costby: 'money_1',
-    cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
+    money: {
+      key: 1,
+      number: 1000
+    },
     reward: () => {
       return [
-        { key: 1, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { key: 2, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { key: 4, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 1, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 2, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 4, level: 1, number: Math.floor(Math.random() * 4 + 2) },
       ]
     },
   },
@@ -246,13 +275,16 @@ var originShop = [
     name: '火系基础礼盒 II',
     description: '点燃I (x2 - x5) & 引燃I (x2 - x5)',
     type: 'alltime',
-    costby: 'money_2',
-    cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
+    money: {
+      key: 2,
+      number: 1000
+    },
     reward: () => {
       return [
-        { key: 3, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { key: 5, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 3, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 5, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { master: true, key: 2, number: Math.floor(Math.random() * 50 + 50) },
       ]
     },
   },
@@ -265,4 +297,6 @@ originShop = originShop.map(i => {
   return i
 })
 
-export { originMaster, originCard, originExplore, originShop }
+originShop = [...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop]
+
+export { originMoney, originMaster, originCard, originExplore, originShop }

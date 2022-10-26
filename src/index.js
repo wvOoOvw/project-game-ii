@@ -108,13 +108,13 @@ class Main {
     if (!info) {
       const responseHTTP = {
         library: {
-          master: originMaster.map(i => ({ key: i.key, level: 1 })),
+          master: originMaster.map(i => ({ key: i.key, level: 1, exp: 0 })),
           card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
         },
         team: [
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
+            card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
           },
           {
             master: [{ key: 1 }],
@@ -130,10 +130,11 @@ class Main {
           },
         ],
         teamIndex: 0,
-
-        money_1: 1000,
-        money_2: 1000,
-        money_3: 1000,
+        money: [
+          { key: 1, number: 1000 },
+          { key: 2, number: 1000 },
+          { key: 3, number: 1000 },
+        ]
       }
 
       Imitation.state.info = responseHTTP

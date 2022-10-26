@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, levelText, numberFix } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, levelText, numberFix } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
@@ -84,7 +84,7 @@ class ShopInList {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2 - height * 0.07)
-    ctx.fillText(`¥${shop.cost}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
+    ctx.fillText(`¥${shop.money.number}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
 
     drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_ + (height - height_) / 2, width: width - width_ - (height - height_) * 1.5, height: height_ - (height - height_), radius: height * 0.1 })
     ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
@@ -149,6 +149,7 @@ class ShopInPreview {
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(shop.name, x + width / 2, y + width * 0.12)
+    ctx.fillText(`¥${shop.money.number}`, x + width / 2, y + width * 0.24)
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
@@ -165,7 +166,6 @@ class ItemInReward {
     this.y = props.y
     this.width = props.width
     this.height = props.height
-
     this.reward = props.reward
   }
 
@@ -176,7 +176,7 @@ class ItemInReward {
     const height = this.height
     const reward = this.reward
 
-    if (reward.key && reward.level && reward.number) {
+    if (reward.card) {
       const card = parseCard([reward])[0]
 
       ctx.save()
@@ -210,7 +210,7 @@ class ItemInReward {
 
       ctx.restore()
     }
-    if (reward.key && reward.exp) {
+    if (reward.master) {
       const master = parseMaster([reward])[0]
 
       ctx.save()
@@ -227,7 +227,7 @@ class ItemInReward {
       const y_ = y + height - height_ - (x_ - x)
       const radius_ = height_ / 4
 
-      const text = [master.name, levelText(master.level)]
+      const text = [master.name, master.number]
 
       drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
@@ -257,11 +257,11 @@ class Reward {
   }
 
   get rewardHeight() {
-    const row = Math.ceil(this.reward.length / 4)
+    const row = Math.ceil(this.parseReward(this.reward).length / 3)
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 60) / 4 * 1.35) * row
+    const real = ((windowWidth - 72) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -272,8 +272,6 @@ class Reward {
     const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
-
-    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
   }
 
   drawButtonHome() {
@@ -288,7 +286,22 @@ class Reward {
     addEventListener('touchstart', event, option)
   }
 
+  parseReward(reward) {
+    const r = []
+    reward.forEach(i => {
+      if (i.card) {
+        r.push(...new Array(i.number).fill({ ...i, number: 1 }))
+      }
+      if (!i.card) {
+        r.push(i)
+      }
+    })
+    return r
+  }
+
   render() {
+    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
+
     this.drawButtonHome()
 
     drawRadius({ ...this.InstanceScroll.option, radius: 8 })
@@ -296,7 +309,7 @@ class Reward {
     ctx.fill()
 
     const event = (scroll) => {
-      this.reward.forEach((reward, index) => {
+      this.parseReward(this.reward).forEach((reward, index) => {
         const option = {
           width: (windowWidth - 72) / 3,
           reward: reward,
@@ -321,7 +334,7 @@ class Page {
     this.preview = null
     this.reward = null
 
-    this.costby = 'money_1'
+    this.money = 1
     this.type = 'alltime'
 
     this.shop
@@ -339,7 +352,7 @@ class Page {
   }
 
   get shopHeight() {
-    const row = Math.ceil(this.shop.length / 4)
+    const row = this.shop.length
 
     if (row === 0) return -12
 
@@ -351,7 +364,7 @@ class Page {
   }
 
   init() {
-    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.costby === this.costby)
+    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.money.key === this.money)
 
     this.instanceScroll()
     this.instanceShop()
@@ -360,11 +373,11 @@ class Page {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 120 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
 
-    this.InstanceScroll.scrollY = this.bannerHeight - this.InstanceScroll.height + 24
+    this.InstanceScroll.scrollY = this.bannerHeight + this.shopHeight - this.InstanceScroll.height + 24
   }
 
   instanceShop() {
@@ -430,13 +443,13 @@ class Page {
 
     ctx.clip()
 
-    const _drawCostbyButton = () => {
-      const array = [['money_1', '金币礼盒'], ['money_2', '钻石礼盒'], ['money_3', '碎片礼盒']]
+    const _drawMoneyButton = () => {
+      const array = parseMoney(Imitation.state.info.money)
 
       array.forEach((i, index) => {
-        const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+        const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
 
-        option_.fillStyle = i[0] === this.costby ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -445,7 +458,7 @@ class Page {
         const event = (e) => {
           if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.costby = i[0]
+          this.money = i.key
           this.init()
         }
 
@@ -453,7 +466,7 @@ class Page {
       })
     }
 
-    _drawCostbyButton()
+    _drawMoneyButton()
 
     const _drawTypeButton = () => {
       const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
@@ -546,18 +559,38 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
+  drawInfo() {
+    const array = parseMoney(Imitation.state.info.money)
+
+    array.forEach((i, index) => {
+      const maxIndex = array.length
+      const centerIndex = maxIndex / 2 - 0.5
+      const diff = index - centerIndex
+
+      const option = { y: windowHeight - 48, width: 84, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ${i.number}` }
+
+      option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
+
+      new Button(option).render()
+    })
+  }
+
   buy(shop) {
-    if (Imitation.state.info[shop.costby] < shop.costby) {
+    const findInMoney = Imitation.state.info.money.find(i => i.key === shop.money.key)
+
+    if (findInMoney.number < shop.money.number) {
       Imitation.state.function.message('货币不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    const library = Imitation.state.info.library.card
+    findInMoney.number = findInMoney.number - shop.money.number
+
+    const library = Imitation.state.info.library
     const reward = shop.reward()
 
     reward.forEach(i => {
-      if (i.key && i.level && i.number) {
-        const findInLibrary = library.find(i_ => i_.key === i.key && i_.level === i.level)
+      if (i.card) {
+        const findInLibrary = library.card.find(i_ => i_.key === i.key && i_.level === i.level)
         if (findInLibrary) {
           findInLibrary.number = findInLibrary.number + i.number
         }
@@ -565,15 +598,25 @@ class Page {
           library.push({ key: i.key, level: i.level, number: i.number })
         }
       }
-      if (i.key && i.exp) {
+      if (i.master) {
+        const findInLibrary = library.master.find(i_ => i_.key === i.key)
+        if (findInLibrary) {
+          findInLibrary.exp = findInLibrary.exp + i.number / Math.pow(2, (findInLibrary.level - 1))
 
+          if (findInLibrary.exp > 100) {
+            findInLibrary.level = findInLibrary.level + 1
+            findInLibrary.exp = (findInLibrary.exp - 100) * 0.5
+          }
+        }
+        if (!findInLibrary) {
+          library.push({ key: i.key, level: 1, exp: i.number })
+        }
       }
     })
 
     this.init()
     this.reward = reward
     this.InstanceReward.reward = this.reward
-    Imitation.state.info[shop.costby] = Imitation.state.info[shop.costby] - shop.costby
     Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
@@ -584,10 +627,12 @@ class Page {
     if (!this.preview && !this.reward) {
       this.drawButtonHome()
       this.drawScroll()
+      this.drawInfo()
     }
 
     if (this.preview) {
       this.drawPreview()
+      this.drawInfo()
     }
 
     if (this.reward) {

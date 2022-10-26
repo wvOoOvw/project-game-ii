@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, arrayRandom, numberFix, levelText, moneyText, wait } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -530,32 +530,32 @@ class CardInModal {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: 8 })
 
     ctx.clip()
 
-    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    const width_ = width * 0.75
+    const height_ = width * 0.2
+    const x_ = x + width / 2 - width_ / 2
+    const y_ = y + height - height_ - (x_ - x)
+    const radius_ = height_ / 4
+
+    const text = [card.name, levelText(card.level)]
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
 
     ctx.fill()
 
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
-
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
-
-    ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
-
-    ctx.textAlign = 'start'
-
-    ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-
-    drawText({ x: x + width * 0.08, y: y + width * 0.48, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
 
     ctx.restore()
   }
@@ -573,23 +573,19 @@ class Modal {
   }
 
   get cardHeight() {
-    const row = Math.ceil(this.cards.length / 4)
+    const row = Math.ceil(this.cards.length / 3)
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 60) / 4 * 1.35) * row
+    const real = ((windowWidth - 72) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
     return real + margin
   }
 
-  updateScrollY() {
-    this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height + 12
-  }
-
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
 
     drawRadius(scrollOption)
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -598,39 +594,8 @@ class Modal {
     this.InstanceScroll = new Scroll(scrollOption)
   }
 
-  drawScroll() {
-    const event = (scroll) => {
-      const offsetY = scroll[1]
-      this.drawCard(offsetY)
-    }
-
-    this.InstanceScroll.render(event)
-  }
-
-  drawCard(offsetY) {
-    this.InstanceCard = this.cards.map((card, index) => {
-      const option = {
-        width: (windowWidth - 60) / 4,
-        card: card,
-      }
-
-      option.height = option.width * 1.35
-      option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 60 + parseInt(index / 4) * (option.height + 12) + safeTop
-
-      return new CardInModal(option)
-    })
-
-    this.InstanceCard.forEach((i) => {
-      if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
-
-      i.offsetY = 0 - offsetY
-      i.render()
-    })
-  }
-
   drawButtonBack() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+    const option = { x: 12, y: windowHeight - 78, width: windowWidth - 24, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
     new Button(option).render()
 
@@ -642,8 +607,32 @@ class Modal {
   }
 
   render() {
+    this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height + 24
+
     this.drawButtonBack()
-    this.drawScroll()
+
+    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fill()
+
+    const event = (scroll) => {
+      this.cards.forEach((card, index) => {
+        const option = {
+          width: (windowWidth - 72) / 3,
+          card: card,
+        }
+
+        option.height = option.width * 1.35
+        option.x = 24 + parseInt(index % 3) * (option.width + 12)
+        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+
+        if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+        new CardInModal(option).render()
+      })
+    }
+
+    this.InstanceScroll.render(event)
   }
 }
 
@@ -664,14 +653,16 @@ class ItemInReward {
     const height = this.height
     const reward = this.reward
 
-    if (reward.money && reward.number) {
+    if (reward.money) {
+      const money = parseMoney([reward.money])[0]
+
       ctx.save()
 
       drawRadius({ x, y, width, height, radius: 8 })
 
       ctx.clip()
 
-      drawImage(ImageBackground, { x: x, y: y, width: width, height: height })
+      drawImage(money.imageDOM, { x: x, y: y, width: width, height: height })
 
       const width_ = width * 0.75
       const height_ = width * 0.2
@@ -679,7 +670,7 @@ class ItemInReward {
       const y_ = y + height - height_ - (x_ - x)
       const radius_ = height_ / 4
 
-      const text = [moneyText(reward.money), reward.number]
+      const text = [money.name, money.number]
 
       drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
@@ -696,7 +687,7 @@ class ItemInReward {
 
       ctx.restore()
     }
-    if (reward.key && reward.level && reward.number) {
+    if (reward.card) {
       const card = parseCard([reward])[0]
 
       ctx.save()
@@ -730,7 +721,7 @@ class ItemInReward {
 
       ctx.restore()
     }
-    if (reward.key && reward.exp) {
+    if (reward.master) {
       const master = parseMaster([reward])[0]
 
       ctx.save()
@@ -747,7 +738,7 @@ class ItemInReward {
       const y_ = y + height - height_ - (x_ - x)
       const radius_ = height_ / 4
 
-      const text = [master.name, levelText(master.level)]
+      const text = [master.name, master.number]
 
       drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
@@ -777,11 +768,11 @@ class Reward {
   }
 
   get rewardHeight() {
-    const row = Math.ceil(this.reward.length / 4)
+    const row = Math.ceil(this.parseReward(this.reward).length / 3)
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 60) / 4 * 1.35) * row
+    const real = ((windowWidth - 72) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -792,8 +783,6 @@ class Reward {
     const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
-
-    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
   }
 
   drawButtonOver() {
@@ -815,7 +804,22 @@ class Reward {
     addEventListener('touchstart', event, option)
   }
 
+  parseReward(reward) {
+    const r = []
+    reward.forEach(i => {
+      if (i.card) {
+        r.push(...new Array(i.number).fill({ ...i, number: 1 }))
+      }
+      if (!i.card) {
+        r.push(i)
+      }
+    })
+    return r
+  }
+
   render() {
+    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
+
     this.drawButtonOver()
     this.drawButtonHome()
 
@@ -824,7 +828,7 @@ class Reward {
     ctx.fill()
 
     const event = (scroll) => {
-      this.reward.forEach((reward, index) => {
+      this.parseReward(this.reward).forEach((reward, index) => {
         const option = {
           width: (windowWidth - 72) / 3,
           reward: reward,
@@ -931,12 +935,10 @@ class Page {
       watchStore: () => {
         this.modal = true
         this.InstanceModal.cards = this.InstanceRoleSelf.information.card.store
-        this.InstanceModal.updateScrollY()
       },
       watchCemetery: () => {
         this.modal = true
         this.InstanceModal.cards = this.InstanceRoleSelf.information.card.cemetery
-        this.InstanceModal.updateScrollY()
       }
     })
   }
@@ -1180,10 +1182,11 @@ class Page {
       const library = Imitation.state.info.library.card
 
       this.InstanceReward.reward.forEach(i => {
-        if (i.money && i.number) {
-          Imitation.state.info[i.money] = Imitation.state.info[i.money] + i.number
+        if (i.money) {
+          const findInMoney = Imitation.state.info.money.find(i => i.key === i.key)
+          findInMoney.number = findInMoney.number + i.number
         }
-        if (i.key && i.level && i.number) {
+        if (i.card) {
           const findInLibrary = library.find(i_ => i_.key === i.key)
           if (findInLibrary) {
             findInLibrary.number = findInLibrary.number + i.number
@@ -1192,8 +1195,19 @@ class Page {
             library.push({ key: i.key, level: i.level, number: i.number })
           }
         }
-        if (i.key && i.exp) {
+        if (i.master) {
+          const findInLibrary = library.master.find(i_ => i_.key === i.key)
+          if (findInLibrary) {
+            findInLibrary.exp = findInLibrary.exp + i.number / Math.pow(2, (findInLibrary.level - 1))
 
+            if (findInLibrary.exp > 100) {
+              findInLibrary.level = findInLibrary.level + 1
+              findInLibrary.exp = (findInLibrary.exp - 100) * 0.5
+            }
+          }
+          if (!findInLibrary) {
+            library.push({ key: i.key, level: 1, exp: i.number })
+          }
         }
       })
 

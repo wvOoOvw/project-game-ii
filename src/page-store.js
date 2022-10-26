@@ -301,17 +301,18 @@ class MasterInPreview {
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(master.name, x + width / 2, y + width * 0.12)
+    ctx.fillText(`${master.exp}%`, x + width / 2, y + width * 0.24)
 
     ctx.textAlign = 'start'
 
-    ctx.fillText('Lv ' + master.level, x + width * 0.08, y + width * 0.30)
-    ctx.fillText('HP ' + master.HP, x + width * 0.08, y + width * 0.42)
-    ctx.fillText('MP ' + master.MP, x + width * 0.08, y + width * 0.54)
+    ctx.fillText('Lv ' + master.level, x + width * 0.08, y + width * 0.42)
+    ctx.fillText('HP ' + master.HP, x + width * 0.08, y + width * 0.54)
+    ctx.fillText('MP ' + master.MP, x + width * 0.08, y + width * 0.66)
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.72, width: width - width * 0.25, fontHeight: width * 0.105, text: master.skill[this.skillIndex].description(master.level) })
+    drawText({ x: x + width * 0.08, y: y + width * 0.84, width: width - width * 0.25, fontHeight: width * 0.105, text: master.skill[this.skillIndex].description(master.level) })
 
     ctx.restore()
   }
