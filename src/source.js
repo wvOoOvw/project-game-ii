@@ -228,44 +228,31 @@ originExplore = originExplore.map(i => {
 
 var originShop = [
   {
-    name: '基础礼盒 I',
-    description: '五张等级一小火把 五张等级一大火把',
+    name: '火系基础礼盒 I',
+    description: '小火把I (x2 - x5) & 大火把I (x2 - x5)',
     type: 'alltime',
     costby: 'money_1',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
       return [
-        { key: 1, level: 1, number: 5 },
-        { key: 2, level: 1, number: 5 },
+        { key: 1, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { key: 2, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { key: 4, level: 1, number: Math.floor(Math.random() * 4 + 2) },
       ]
     },
   },
   {
-    name: '基础礼盒 II',
-    description: '五张等级一小火把 五张等级一大火把',
-    type: 'week_3',
+    name: '火系基础礼盒 II',
+    description: '点燃I (x2 - x5) & 引燃I (x2 - x5)',
+    type: 'alltime',
     costby: 'money_2',
     cost: 1000,
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     reward: () => {
       return [
-        { key: 1, level: 1, number: 5 },
-        { key: 2, level: 1, number: 5 },
-      ]
-    },
-  },
-  {
-    name: '基础礼盒 III',
-    description: '五张等级一小火把 五张等级一大火把',
-    type: 'week_2',
-    costby: 'money_3',
-    cost: 1000,
-    image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
-    reward: () => {
-      return [
-        { key: 1, level: 1, number: 5 },
-        { key: 2, level: 1, number: 5 },
+        { key: 3, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { key: 5, level: 1, number: Math.floor(Math.random() * 4 + 2) },
       ]
     },
   },

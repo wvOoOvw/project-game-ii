@@ -53,9 +53,16 @@ const levelText = (level) => {
   if (level === 13) return 'XIII'
   if (level === 14) return 'XIV'
   if (level === 15) return 'XV'
+  if (level === 16) return 'XVI'
 }
 
-export { levelText }
+const moneyText = (money) => {
+  if (money === 'money_1') return '金币'
+  if (money === 'money_2') return '钻石'
+  if (money === 'money_3') return '碎片'
+}
+
+export { levelText, moneyText }
 
 const wait = async (time) => await new Promise((resolve) => setTimeout(() => resolve(), time))
 

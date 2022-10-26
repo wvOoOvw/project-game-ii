@@ -34,7 +34,7 @@ class Page {
   }
 
   drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 240, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
 
     new Button(option).render()
 
@@ -47,7 +47,7 @@ class Page {
   }
 
   drawButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6 + 60, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '编队' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 180, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '编队' }
 
     new Button(option).render()
 
@@ -60,7 +60,7 @@ class Page {
   }
 
   drawButtonShop() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.6 + 120, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '商店' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 120, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '商店' }
 
     new Button(option).render()
 

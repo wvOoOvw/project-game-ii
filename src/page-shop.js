@@ -86,13 +86,13 @@ class ShopInList {
     ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2 - height * 0.07)
     ctx.fillText(`¥${shop.cost}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
 
-    drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_, width: width - width_ - (height - height_) * 2, height: height_, radius: height * 0.1 })
+    drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_ + (height - height_) / 2, width: width - width_ - (height - height_) * 1.5, height: height_ - (height - height_), radius: height * 0.1 })
     ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
     ctx.fill()
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    drawText({ x: x_ + width_ + (height - height_), y: y_ + (height - height_) / 2, width: width - width_ - (height - height_) * 3, fontHeight: height * 0.15, text: shop.description })
+    drawText({ x: x_ + width_ + (height - height_), y: y_ + (height - height_), width: width - width_ - (height - height_) * 3, fontHeight: height * 0.15, text: shop.description })
 
     ctx.restore()
 
@@ -159,9 +159,167 @@ class ShopInPreview {
   }
 }
 
+class ItemInReward {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.reward = props.reward
+  }
+
+  render() {
+    const x = this.x
+    const y = this.y
+    const width = this.width
+    const height = this.height
+    const reward = this.reward
+
+    if (reward.key && reward.level && reward.number) {
+      const card = parseCard([reward])[0]
+
+      ctx.save()
+
+      drawRadius({ x, y, width, height, radius: 8 })
+
+      ctx.clip()
+
+      drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+      const width_ = width * 0.75
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = height_ / 4
+
+      const text = [card.name, levelText(card.level)]
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+
+      ctx.restore()
+    }
+    if (reward.key && reward.exp) {
+      const master = parseMaster([reward])[0]
+
+      ctx.save()
+
+      drawRadius({ x, y, width, height, radius: 8 })
+
+      ctx.clip()
+
+      drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
+
+      const width_ = width * 0.75
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = height_ / 4
+
+      const text = [master.name, levelText(master.level)]
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+
+      ctx.restore()
+    }
+  }
+}
+
+class Reward {
+  constructor(props) {
+    this.reward = props.reward
+    this.back = props.back
+
+    this.InstanceScroll
+    this.instanceScroll()
+  }
+
+  get rewardHeight() {
+    const row = Math.ceil(this.reward.length / 4)
+
+    if (row === 0) return 0
+
+    const real = ((windowWidth - 60) / 4 * 1.35) * row
+
+    const margin = row ? 12 * (row - 1) : 0
+
+    return real + margin
+  }
+
+  instanceScroll() {
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
+
+    this.InstanceScroll = new Scroll(scrollOption)
+
+    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
+  }
+
+  drawButtonHome() {
+    const option = { x: 12, y: windowHeight - 78, width: windowWidth - 24, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+
+    new Button(option).render()
+
+    const event = () => {
+      this.back()
+    }
+
+    addEventListener('touchstart', event, option)
+  }
+
+  render() {
+    this.drawButtonHome()
+
+    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fill()
+
+    const event = (scroll) => {
+      this.reward.forEach((reward, index) => {
+        const option = {
+          width: (windowWidth - 72) / 3,
+          reward: reward,
+        }
+
+        option.height = option.width * 1.35
+        option.x = 24 + parseInt(index % 3) * (option.width + 12)
+        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+
+        if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+        new ItemInReward(option).render()
+      })
+    }
+
+    this.InstanceScroll.render(event)
+  }
+}
+
 class Page {
   constructor() {
     this.preview = null
+    this.reward = null
 
     this.costby = 'money_1'
     this.type = 'alltime'
@@ -171,6 +329,7 @@ class Page {
     this.InstanceScroll
     this.InstanceShop
     this.InstanceShopPreview
+    this.InstanceReward
 
     this.init()
   }
@@ -197,6 +356,7 @@ class Page {
     this.instanceScroll()
     this.instanceShop()
     this.instanceShopPreview()
+    this.instanceReward()
   }
 
   instanceScroll() {
@@ -236,6 +396,13 @@ class Page {
     option.y = (windowHeight - option.width * 1.5) / 2 - 60
 
     this.InstanceShopPreview = new ShopInPreview(option)
+  }
+
+  instanceReward() {
+    this.InstanceReward = new Reward({
+      reward: [],
+      back: () => this.reward = null
+    })
   }
 
   drawScroll() {
@@ -357,6 +524,11 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
+  drawReward() {
+    this.InstanceReward.render()
+  }
+
+
   drawBackground() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
@@ -384,16 +556,23 @@ class Page {
     const reward = shop.reward()
 
     reward.forEach(i => {
-      const findInLibrary = library.find(i_ => i_.key === i.key && i_.level === i.level)
-      if (findInLibrary) {
-        findInLibrary.number = findInLibrary.number + i.number
+      if (i.key && i.level && i.number) {
+        const findInLibrary = library.find(i_ => i_.key === i.key && i_.level === i.level)
+        if (findInLibrary) {
+          findInLibrary.number = findInLibrary.number + i.number
+        }
+        if (!findInLibrary) {
+          library.push({ key: i.key, level: i.level, number: i.number })
+        }
       }
-      if (!findInLibrary) {
-        library.push({ key: i.key, level: i.level, number: i.number })
+      if (i.key && i.exp) {
+
       }
     })
 
     this.init()
+    this.reward = reward
+    this.InstanceReward.reward = this.reward
     Imitation.state.info[shop.costby] = Imitation.state.info[shop.costby] - shop.costby
     Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
@@ -402,13 +581,17 @@ class Page {
   render() {
     this.drawBackground()
 
+    if (!this.preview && !this.reward) {
+      this.drawButtonHome()
+      this.drawScroll()
+    }
+
     if (this.preview) {
       this.drawPreview()
     }
 
-    if (!this.preview) {
-      this.drawButtonHome()
-      this.drawScroll()
+    if (this.reward) {
+      this.drawReward()
     }
   }
 }

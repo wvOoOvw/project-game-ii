@@ -1,4 +1,4 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, arrayRandom, numberFix, levelText, moneyText, wait } from './utils-common'
 import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
@@ -647,14 +647,163 @@ class Modal {
   }
 }
 
-class Over {
-  constructor() {
-    this.over
-    this.reward
+class ItemInReward {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.reward = props.reward
   }
 
-  drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
+  render() {
+    const x = this.x
+    const y = this.y
+    const width = this.width
+    const height = this.height
+    const reward = this.reward
+
+    if (reward.money && reward.number) {
+      ctx.save()
+
+      drawRadius({ x, y, width, height, radius: 8 })
+
+      ctx.clip()
+
+      drawImage(ImageBackground, { x: x, y: y, width: width, height: height })
+
+      const width_ = width * 0.75
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = height_ / 4
+
+      const text = [moneyText(reward.money), reward.number]
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+
+      ctx.restore()
+    }
+    if (reward.key && reward.level && reward.number) {
+      const card = parseCard([reward])[0]
+
+      ctx.save()
+
+      drawRadius({ x, y, width, height, radius: 8 })
+
+      ctx.clip()
+
+      drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+      const width_ = width * 0.75
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = height_ / 4
+
+      const text = [card.name, levelText(card.level)]
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+
+      ctx.restore()
+    }
+    if (reward.key && reward.exp) {
+      const master = parseMaster([reward])[0]
+
+      ctx.save()
+
+      drawRadius({ x, y, width, height, radius: 8 })
+
+      ctx.clip()
+
+      drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
+
+      const width_ = width * 0.75
+      const height_ = width * 0.2
+      const x_ = x + width / 2 - width_ / 2
+      const y_ = y + height - height_ - (x_ - x)
+      const radius_ = height_ / 4
+
+      const text = [master.name, levelText(master.level)]
+
+      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
+
+      ctx.fill()
+
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+
+      ctx.restore()
+    }
+  }
+}
+
+class Reward {
+  constructor(props) {
+    this.over = props.voer
+    this.reward = props.reward
+
+    this.InstanceScroll
+    this.instanceScroll()
+  }
+
+  get rewardHeight() {
+    const row = Math.ceil(this.reward.length / 4)
+
+    if (row === 0) return 0
+
+    const real = ((windowWidth - 60) / 4 * 1.35) * row
+
+    const margin = row ? 12 * (row - 1) : 0
+
+    return real + margin
+  }
+
+  instanceScroll() {
+    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
+
+    this.InstanceScroll = new Scroll(scrollOption)
+
+    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
+  }
+
+  drawButtonOver() {
+    const option = { x: 12, y: windowHeight - 78, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: this.over ? '战斗胜利' : '战斗失败' }
+
+    new Button(option).render()
+  }
+
+  drawButtonHome() {
+    const option = { x: 96, y: windowHeight - 78, width: windowWidth - 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
     new Button(option).render()
 
@@ -666,22 +815,32 @@ class Over {
     addEventListener('touchstart', event, option)
   }
 
-  drawButtonHome() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7 + 60, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '首页' }
+  render() {
+    this.drawButtonOver()
+    this.drawButtonHome()
 
-    new Button(option).render()
+    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fill()
 
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
+    const event = (scroll) => {
+      this.reward.forEach((reward, index) => {
+        const option = {
+          width: (windowWidth - 72) / 3,
+          reward: reward,
+        }
+
+        option.height = option.width * 1.35
+        option.x = 24 + parseInt(index % 3) * (option.width + 12)
+        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+
+        if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+        new ItemInReward(option).render()
+      })
     }
 
-    addEventListener('touchstart', event, option)
-  }
-
-  render() {
-    this.drawButtonExplore()
-    this.drawButtonHome()
+    this.InstanceScroll.render(event)
   }
 }
 
@@ -699,13 +858,13 @@ class Page {
     this.InstanceRoleOpposite
     this.InstanceAction
     this.InstanceModal
-    this.InstanceOver
+    this.InstanceReward
 
     this.instanceRoleSelf()
     this.instanceRoleOpposite()
     this.instanceAction()
     this.instanceModal()
-    this.instanceOver()
+    this.instanceReward()
     this.initBattler()
   }
 
@@ -788,8 +947,10 @@ class Page {
     })
   }
 
-  instanceOver() {
-    this.InstanceOver = new Over({})
+  instanceReward() {
+    this.InstanceReward = new Reward({
+      reward: []
+    })
   }
 
   drawRoleSelf() {
@@ -809,7 +970,7 @@ class Page {
   }
 
   drawOver() {
-    this.InstanceOver.render()
+    this.InstanceReward.render()
   }
 
   drawBackground() {
@@ -1014,12 +1175,12 @@ class Page {
       this.over = 'win'
       Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
-      this.InstanceOver.reward = Imitation.state.battle.reward
+      this.InstanceReward.reward = Imitation.state.battle.reward
 
       const library = Imitation.state.info.library.card
 
-      this.InstanceOver.reward.forEach(i => {
-        if (i.money) {
+      this.InstanceReward.reward.forEach(i => {
+        if (i.money && i.number) {
           Imitation.state.info[i.money] = Imitation.state.info[i.money] + i.number
         }
         if (i.key && i.level && i.number) {
@@ -1038,14 +1199,14 @@ class Page {
 
       Imitation.state.function.saveInfo()
 
-      this.InstanceOver.over = this.over
+      this.InstanceReward.over = this.over
       return
     }
     if (this.InstanceRoleSelf.information.master.HP <= 0) {
       this.over = 'lose'
       Imitation.state.function.message('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
-      this.InstanceOver.over = this.over
+      this.InstanceReward.over = this.over
       return
     }
   }
