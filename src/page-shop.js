@@ -375,7 +375,28 @@ class Page {
   }
 
   buy(shop) {
+    if (Imitation.state.info[shop.costby] < shop.costby) {
+      Imitation.state.function.message('货币不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      return
+    }
 
+    const library = Imitation.state.info.library.card
+    const reward = shop.reward()
+
+    reward.forEach(i => {
+      const findInLibrary = library.find(i_ => i_.key === i.key && i_.level === i.level)
+      if (findInLibrary) {
+        findInLibrary.number = findInLibrary.number + i.number
+      }
+      if (!findInLibrary) {
+        library.push({ key: i.key, level: i.level, number: i.number })
+      }
+    })
+
+    this.init()
+    Imitation.state.info[shop.costby] = Imitation.state.info[shop.costby] - shop.costby
+    Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.saveInfo()
   }
 
   render() {

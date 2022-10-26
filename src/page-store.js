@@ -150,7 +150,7 @@ class CardInPreview {
 
     ctx.textAlign = 'end'
 
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.08, y + width * 0.30)
+    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.08, y + width * 0.36)
 
     ctx.textAlign = 'start'
 

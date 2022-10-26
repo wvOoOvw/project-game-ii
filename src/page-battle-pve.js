@@ -653,29 +653,6 @@ class Over {
     this.reward
   }
 
-  drawContent() {
-    if (this.over === 'win') {
-      new Button({ x: 12, y: 12 + safeTop, width: windowWidth - 24, height: 36, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '战斗胜利' }).render()
-
-      this.reward.forEach((card, index) => {
-        const option = {
-          width: (windowWidth - 60) / 4,
-          card: card,
-        }
-
-        option.height = option.width * 1.35
-        option.x = 12 + parseInt(index % 4) * (option.width + 12)
-        option.y = 60 + parseInt(index / 4) * (option.height + 12) + safeTop
-
-        new CardInModal(option).render()
-      })
-    }
-
-    if (this.over === 'lose') {
-      new Button({ x: 12, y: 12 + safeTop, width: windowWidth - 24, height: 36, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '战斗失败' }).render()
-    }
-  }
-
   drawButtonExplore() {
     const option = { x: windowWidth / 2 - 60, y: windowHeight * 0.7, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
 
@@ -703,7 +680,6 @@ class Over {
   }
 
   render() {
-    this.drawContent()
     this.drawButtonExplore()
     this.drawButtonHome()
   }
@@ -1036,19 +1012,27 @@ class Page {
   battlerOver = () => {
     if (this.InstanceRoleOpposite.information.master.HP <= 0) {
       this.over = 'win'
+      Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
       this.InstanceOver.reward = Imitation.state.battle.reward
 
       const library = Imitation.state.info.library.card
 
       this.InstanceOver.reward.forEach(i => {
-        const findInLibrary = library.find(i_ => i_.key === i.key)
-
-        if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + i.number
+        if (i.money) {
+          Imitation.state.info[i.money] = Imitation.state.info[i.money] + i.number
         }
-        if (!findInLibrary) {
-          library.push({ key: i.key, level: i.level, number: i.number })
+        if (i.key && i.level && i.number) {
+          const findInLibrary = library.find(i_ => i_.key === i.key)
+          if (findInLibrary) {
+            findInLibrary.number = findInLibrary.number + i.number
+          }
+          if (!findInLibrary) {
+            library.push({ key: i.key, level: i.level, number: i.number })
+          }
+        }
+        if (i.key && i.exp) {
+
         }
       })
 
@@ -1059,6 +1043,7 @@ class Page {
     }
     if (this.InstanceRoleSelf.information.master.HP <= 0) {
       this.over = 'lose'
+      Imitation.state.function.message('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
       this.InstanceOver.over = this.over
       return

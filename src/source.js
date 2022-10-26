@@ -114,7 +114,7 @@ var originCard = [
       return [
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: -100 },
-        { effect: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * card.level * 5 + 20 },
+        { effect: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 5 + 20) },
       ]
     }
   },
@@ -173,6 +173,27 @@ originCard = originCard.map(i => {
 })
 
 var originExplore = [
+  {
+    name: '故事 I',
+    description: '梦境守卫',
+    type: 'alltime',
+    image: J_music_47a83799595b4a5b97145a6e594620310,
+    boss: {
+      master: { key: 1, level: 1 },
+      card: [
+        { key: 1, level: 1, number: 10 },
+        { key: 2, level: 1, number: 10 },
+      ]
+    },
+    reward: () => {
+      return [
+        { money: 'money_1', number: Math.random() * 100 },
+      ]
+    },
+    AI: (self, opposite, env) => {
+      return arrayRandom(self.card.hand, 1)
+    }
+  },
   {
     name: '梦境 I',
     description: '梦境守卫',
