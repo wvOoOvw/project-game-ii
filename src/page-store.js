@@ -366,20 +366,19 @@ class Page {
   }
 
   init() {
+    this.master = []
+    this.card = []
+
     if (this.type === 'team') {
       this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])
-
       this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)
       this.card = this.card.sort((a, b) => {
         const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
         const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-
         return b_ - a_
       })
     }
     if (this.type === 'library-card') {
-      this.master = []
-
       this.card = parseCard(Imitation.state.info.library.card)
       this.card = this.card.sort((a, b) => {
         const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
@@ -387,11 +386,8 @@ class Page {
         return b_ - a_
       })
     }
-
     if (this.type === 'library-master') {
       this.master = parseMaster(Imitation.state.info.library.master)
-
-      this.card = []
     }
 
     this.instanceScroll()

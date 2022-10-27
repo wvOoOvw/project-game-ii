@@ -208,7 +208,7 @@ var originCard = [
     }
   },
   {
-    key: 6,
+    key: 7,
     name: '火焰聚能',
     type: '治疗卡',
     race: '火',
