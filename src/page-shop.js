@@ -160,182 +160,9 @@ class ShopInPreview {
   }
 }
 
-class ItemInReward {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-    this.reward = props.reward
-  }
-
-  render() {
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
-    const reward = this.reward
-
-    if (reward.card) {
-      const card = parseCard([reward])[0]
-
-      ctx.save()
-
-      drawRadius({ x, y, width, height, radius: 8 })
-
-      ctx.clip()
-
-      drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-      const width_ = width * 0.75
-      const height_ = width * 0.2
-      const x_ = x + width / 2 - width_ / 2
-      const y_ = y + height - height_ - (x_ - x)
-      const radius_ = height_ / 4
-
-      const text = [card.name, levelText(card.level)]
-
-      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-      ctx.fill()
-
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-
-      ctx.restore()
-    }
-    if (reward.master) {
-      const master = parseMaster([reward])[0]
-
-      ctx.save()
-
-      drawRadius({ x, y, width, height, radius: 8 })
-
-      ctx.clip()
-
-      drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
-
-      const width_ = width * 0.75
-      const height_ = width * 0.2
-      const x_ = x + width / 2 - width_ / 2
-      const y_ = y + height - height_ - (x_ - x)
-      const radius_ = height_ / 4
-
-      const text = [master.name, master.number]
-
-      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-      ctx.fill()
-
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-
-      ctx.restore()
-    }
-  }
-}
-
-class Reward {
-  constructor(props) {
-    this.reward = []
-    this.back = props.back
-
-    this.InstanceScroll
-    this.instanceScroll()
-  }
-
-  get rewardHeight() {
-    const row = Math.ceil(this.parseReward(this.reward).length / 3)
-
-    if (row === 0) return 0
-
-    const real = ((windowWidth - 48) / 3 * 1.35) * row
-
-    const margin = row ? 12 * (row - 1) : 0
-
-    return real + margin
-  }
-
-  instanceScroll() {
-    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
-
-    this.InstanceScroll = new Scroll(scrollOption)
-  }
-
-  drawTitle() {
-    const option = { x: 12, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: '购买成功' }
-
-    new Button(option).render()
-  }
-
-  drawBack() {
-    const option = { x: windowWidth - 120, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
-
-    new Button(option).render()
-
-    const event = () => {
-      this.back()
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
-  parseReward(reward) {
-    const r = []
-    reward.forEach(i => {
-      if (i.card) {
-        r.push(...new Array(i.number).fill({ ...i, number: 1 }))
-      }
-      if (!i.card) {
-        r.push(i)
-      }
-    })
-    return r
-  }
-
-  render() {
-    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height
-
-    this.drawTitle()
-    this.drawBack()
-
-    const event = (scroll) => {
-      this.parseReward(this.reward).forEach((reward, index) => {
-        const option = {
-          width: (windowWidth - 48) / 3,
-          reward: reward,
-        }
-
-        option.height = option.width * 1.35
-        option.x = 12 + parseInt(index % 3) * (option.width + 12)
-        option.y = 12 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
-
-        if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-        new ItemInReward(option).render()
-      })
-    }
-
-    this.InstanceScroll.render(event)
-  }
-}
-
 class Page {
   constructor() {
     this.preview = null
-    this.reward = null
 
     this.money = 1
     this.type = 'alltime'
@@ -345,7 +172,6 @@ class Page {
     this.InstanceScroll
     this.InstanceShop
     this.InstanceShopPreview
-    this.InstanceReward
 
     this.init()
   }
@@ -372,7 +198,6 @@ class Page {
     this.instanceScroll()
     this.instanceShop()
     this.instanceShopPreview()
-    this.instanceReward()
   }
 
   instanceScroll() {
@@ -412,12 +237,6 @@ class Page {
     option.y = (windowHeight - option.width * 1.5) / 2 - 60
 
     this.InstanceShopPreview = new ShopInPreview(option)
-  }
-
-  instanceReward() {
-    this.InstanceReward = new Reward({
-      back: () => this.reward = null
-    })
   }
 
   drawScroll() {
@@ -539,11 +358,6 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
-  drawReward() {
-    this.InstanceReward.render()
-  }
-
-
   drawBackground() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
@@ -616,17 +430,17 @@ class Page {
       }
     })
 
-    this.init()
-    this.reward = reward
-    this.InstanceReward.reward = this.reward
     Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
+    Imitation.state.reward = { value: reward, back: 'shop', title: '购买获得' }
+    Imitation.state.page.current = 'transition'
+    Imitation.state.page.next = 'reward'
   }
 
   render() {
     this.drawBackground()
 
-    if (!this.preview && !this.reward) {
+    if (!this.preview) {
       this.drawButtonHome()
       this.drawScroll()
       this.drawInfo()
@@ -635,10 +449,6 @@ class Page {
     if (this.preview) {
       this.drawPreview()
       this.drawInfo()
-    }
-
-    if (this.reward) {
-      this.drawReward()
     }
   }
 }

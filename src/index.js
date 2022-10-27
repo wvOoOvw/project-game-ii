@@ -9,6 +9,7 @@ import PageExplore from './page-explore'
 import PageBattlePve from './page-battle-pve'
 import PageStore from './page-store'
 import PageShop from './page-shop'
+import PageReward from './page-reward'
 
 import { Message } from './ui-message'
 import { Sound } from './utils-sound'
@@ -77,7 +78,8 @@ class Main {
           'explore': PageExplore,
           'battle-pve': PageBattlePve,
           'store': PageStore,
-          'shop': PageShop
+          'shop': PageShop,
+          'reward': PageReward,
         },
       },
       removeEventListener: [],
@@ -85,6 +87,10 @@ class Main {
       battle: null,
       explore: originExplore,
       shop: originShop,
+      reward: {
+        value: null,
+        back: null,
+      },
       function: {
         render: this.render,
         loopStart: this.loopStart,
