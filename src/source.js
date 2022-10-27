@@ -57,14 +57,14 @@ var originMaster = [
         name: '庇护 I',
         description: l => `使用卡牌时, 回复 ${l * 15} MP`,
         function: (card, result, self, target, env) => {
-          result.push({ type: 'cure-mp', target: 'self', value: self.master.level * 15 })
+          result.push({ effect: 'cure-mp', target: 'self', value: self.master.level * 15 })
         }
       },
       {
         name: '庇护 II',
         description: l => `使用卡牌时, 回复 ${l * 15} HP`,
         function: (card, result, self, target, env) => {
-          result.push({ type: 'cure-hp', target: 'self', value: self.master.level * 15 })
+          result.push({ effect: 'cure-hp', target: 'self', value: self.master.level * 15 })
         }
       },
     ],
@@ -81,7 +81,7 @@ var originMaster = [
         description: l => `使用火系卡牌时, 额外造成 ${l * 15} 伤害`,
         function: (card, result, self, target, env) => {
           if (card.race === '火') {
-            result.push({ type: 'hit', target: 'opposite', value: -self.master.level * 15 })
+            result.push({ effect: 'hit', target: 'opposite', value: -self.master.level * 15 })
           }
         }
       }
@@ -287,8 +287,8 @@ originExplore = originExplore.map(i => {
 
 var originShop = [
   {
-    name: '火系基础礼盒 I',
-    description: '小火把I (x2 - x5) & 大火把I (x2 - x5)',
+    name: '火系基础礼盒I',
+    description: '可能包含: 小火把(等级1)2-5张, 大火把(等级1)2-5张',
     type: 'alltime',
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     money: {
@@ -304,8 +304,8 @@ var originShop = [
     },
   },
   {
-    name: '火系基础礼盒 II',
-    description: '点燃I (x2 - x5) & 引燃I (x2 - x5)',
+    name: '火系基础礼盒II',
+    description: '可能包含: 点燃(等级1)2-5张, 引燃(等级1)2-5张, 火焰领主经验50-100',
     type: 'alltime',
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     money: {

@@ -27,22 +27,16 @@ class ShopInList {
     this.shop = props.shop
 
     this.touchEvent = props.touchEvent
-
-    this.touchDelayTime = props.touchDelayTime
-
     this.touchArea = props.touchArea
-
     this.touchTimeout
   }
 
   get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
   eventDown(e) {
-    if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
-
-    this.touchTimeout = true
+    if (!this.touchArea || ifTouchCover(e, this.touchArea)) this.touchTimeout = true
   }
 
   eventUp(e) {
@@ -54,11 +48,55 @@ class ShopInList {
     this.touchTimeout = false
   }
 
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.35
+    const height_ = width * 0.07
+    const x_ = x + width * 0.03
+    const y_ = y + width * 0.03
+    const radius_ = width * 0.02
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    const width_ = width * 0.35
+    const height_ = width * 0.07
+    const x_ = x + width - width_ - width * 0.03
+    const y_ = y + height - height_ - width * 0.03
+    const radius_ = width * 0.02
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText([shop.name, '¥' + shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
   render() {
-    const x = this.x + this.offsetX
-    const y = this.y + this.offsetY
-    const width = this.width
-    const height = this.height
+    const { x, y, width, height } = this.option
     const shop = this.shop
 
     ctx.save()
@@ -67,32 +105,10 @@ class ShopInList {
 
     ctx.clip()
 
-    drawImage(this.shop.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
 
-    const width_ = height * 0.85
-    const height_ = height * 0.85
-    const x_ = x + (height - height_) / 2
-    const y_ = y + (height - height_) / 2
-    const radius_ = width_ / 2
-
-    ctx.font = `900 ${height * 0.1}px ${window.fontFamily}`
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2 - height * 0.07)
-    ctx.fillText(`¥${shop.money.number}`, x_ + width_ / 2, y_ + height_ / 2 + height * 0.07)
-
-    drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_ + (height - height_) / 2, width: width - width_ - (height - height_) * 1.5, height: height_ - (height - height_), radius: height * 0.1 })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    drawText({ x: x_ + width_ + (height - height_), y: y_ + (height - height_), width: width - width_ - (height - height_) * 3, fontHeight: height * 0.15, text: shop.description })
+    this.drawTitle()
+    this.drawName()
 
     ctx.restore()
 
@@ -114,13 +130,109 @@ class ShopInPreview {
     this.novaTime = 0
   }
 
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawMoney() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('¥' + shop.money.number, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: shop.description })
+  }
+
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
+    const { x, y, width, height } = this.option
     const shop = this.shop
 
     ctx.save()
@@ -129,32 +241,12 @@ class ShopInPreview {
 
     ctx.clip()
 
-    drawImage(this.shop.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
 
-    const width_ = height * this.novaTime
-    const height_ = height * this.novaTime
-    const x_ = x + (width - width_) / 2
-    const y_ = y + (height - height_) / 2
-    const radius_ = width_ / 2
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(shop.name, x + width / 2, y + width * 0.12)
-    ctx.fillText(`¥${shop.money.number}`, x + width / 2, y + width * 0.24)
-
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-
-    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: shop.description })
+    this.drawTitle()
+    this.drawName()
+    this.drawMoney()
+    this.drawDescription()
 
     ctx.restore()
   }
@@ -182,14 +274,7 @@ class Page {
 
   get shopHeight() {
     const row = this.shop.length
-
-    if (row === 0) return -12
-
-    const real = ((windowWidth - 60) / 4 * 1.35) * row
-
-    const margin = row ? 12 * (row - 1) : 0
-
-    return real + margin
+    return row === 0 ? -12 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -201,11 +286,16 @@ class Page {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 120 - safeTop, radius: 12 }
+    const option = {
+      x: 12,
+      y: 60 + safeTop,
+      width: windowWidth - 24,
+      height: windowHeight - 72 - safeTop,
+      radius: 12,
+    }
+    option.scrollY = this.bannerHeight + this.shopHeight - option.height + 24
 
-    this.InstanceScroll = new Scroll(scrollOption)
-
-    this.InstanceScroll.scrollY = this.bannerHeight + this.shopHeight - this.InstanceScroll.height + 24
+    this.InstanceScroll = new Scroll(option)
   }
 
   instanceShop() {
@@ -217,7 +307,6 @@ class Page {
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = shop,
       }
-
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
       option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
@@ -264,10 +353,8 @@ class Page {
 
     ctx.clip()
 
-    const _drawMoneyButton = () => {
-      const array = parseMoney(Imitation.state.info.money)
-
-      array.forEach((i, index) => {
+    {
+      parseMoney(Imitation.state.info.money).forEach((i, index) => {
         const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
 
         option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
@@ -287,12 +374,8 @@ class Page {
       })
     }
 
-    _drawMoneyButton()
-
-    const _drawTypeButton = () => {
-      const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
-
-      array.forEach((i, index) => {
+    {
+      [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']].forEach((i, index) => {
         const option_ = { x: 24 + index * 84, y: 54 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
         option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
@@ -312,17 +395,13 @@ class Page {
       })
     }
 
-    _drawTypeButton()
-
     ctx.restore()
   }
 
   drawShop(offsetY) {
     this.InstanceShop.forEach((i) => {
-      if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
-
       i.offsetY = 0 - offsetY
-      i.render()
+      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
     })
   }
 
@@ -358,12 +437,17 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
-  drawBackground() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-  }
-
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+    const option = {
+      x: 12,
+      y: 12 + safeTop,
+      width: 72,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '返回'
+    }
 
     new Button(option).render()
 
@@ -383,7 +467,7 @@ class Page {
       const centerIndex = maxIndex / 2 - 0.5
       const diff = index - centerIndex
 
-      const option = { y: windowHeight - 48, width: 84, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ${i.number}` }
+      const option = { y: windowHeight - 48, width: 84, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: `${i.name} ${i.number}` }
 
       option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
 
@@ -438,7 +522,7 @@ class Page {
   }
 
   render() {
-    this.drawBackground()
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     if (!this.preview) {
       this.drawButtonHome()

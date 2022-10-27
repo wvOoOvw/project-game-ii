@@ -14,6 +14,476 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
+class CardInList {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = props.offsetX || 0
+    this.offsetY = props.offsetY || 0
+
+    this.card = props.card
+
+    this.touchEvent = props.touchEvent
+    this.touchArea = props.touchArea
+    this.touchTimeout
+  }
+
+  get option() {
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+  }
+
+  eventDown(e) {
+    if (!this.touchArea || ifTouchCover(e, this.touchArea)) this.touchTimeout = true
+  }
+
+  eventUp(e) {
+    if (this.touchTimeout === true) this.touchEvent()
+    this.touchTimeout = false
+  }
+
+  eventMove(e) {
+    this.touchTimeout = false
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  render() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: 8 })
+
+    ctx.clip()
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    this.drawTitle()
+    this.drawName()
+
+    ctx.restore()
+
+    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
+    addEventListenerPure('touchmove', this.eventMove.bind(this))
+    addEventListenerPure('touchend', this.eventUp.bind(this))
+  }
+}
+
+class CardInPreview {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.card = props.card
+
+    this.novaTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawRace() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawType() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.39
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: card.description(card.level) })
+  }
+
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    this.drawTitle()
+    this.drawName()
+    this.drawRace()
+    this.drawType()
+    this.drawDescription()
+
+    ctx.restore()
+  }
+}
+
+class Modal {
+  constructor(props) {
+    this.preview = null
+
+    this.card = []
+    this.title = ''
+    this.sort = 'name'
+
+    this.back = props.back
+
+    this.InstanceScroll
+    this.InstanceCardList
+    this.InstanceCardPreview
+
+    this.instanceScroll()
+    this.instanceCardPreview()
+  }
+
+  get bannerHeight() {
+    return 96
+  }
+
+  get cardHeight() {
+    const row = Math.ceil(this.card.length / 4)
+    return row === 0 ? 0 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+  }
+
+  init() {
+    this.card = this.card.sort((a, b) => {
+      const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+      const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+      return b_ - a_
+    })
+
+    this.instanceScroll()
+    this.instanceCardList()
+    this.instanceCardPreview()
+  }
+
+  instanceScroll() {
+    const option = {
+      x: 12,
+      y: 60 + safeTop,
+      width: windowWidth - 24,
+      height: windowHeight - 72 - safeTop,
+      radius: 12,
+    }
+
+    this.InstanceScroll = new Scroll(option)
+  }
+
+  instanceCardList() {
+    this.InstanceCardList = this.card.map((card, index) => {
+      const option = {
+        width: (windowWidth - 60) / 4,
+        card: card,
+        touchAble: true,
+        touchArea: this.InstanceScroll.option,
+        touchEvent: () => this.preview = card,
+      }
+      option.height = option.width * 1.35
+      option.x = 12 + parseInt(index % 4) * (option.width + 12)
+      option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
+
+      return new CardInList(option)
+    })
+  }
+
+  instanceCardPreview() {
+    const option = {}
+    option.width = windowWidth * 0.7
+    option.height = option.width * 1.35
+    option.x = windowWidth * 0.15
+    option.y = (windowHeight - option.width * 1.5) / 2 - 60
+
+    this.InstanceCardPreview = new CardInPreview(option)
+  }
+
+  drawScroll() {
+    const event = (scroll) => {
+      const offsetY = scroll[1]
+      this.drawBanner(offsetY)
+      this.drawCard(offsetY)
+    }
+
+    this.InstanceScroll.render(event)
+  }
+
+  drawBanner(offsetY) {
+    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
+
+    if (!ifScreenCover(option, this.InstanceScroll.option)) return
+
+    ctx.save()
+
+    drawRadius(option)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
+    ctx.fill()
+
+    ctx.clip()
+
+    {
+      const option_ = {
+        x: 24,
+        y: 12 + option.y,
+        width: windowWidth - 48,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'],
+        text: this.title
+      }
+
+      new Button(option_).render()
+    }
+
+    {
+      new Array(['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']).forEach((i, index) => {
+        const option_ = {
+          x: 24 + index * 72,
+          y: 54 + option.y,
+          width: 60,
+          height: 30,
+          radius: 8,
+          font: `900 10px ${window.fontFamily}`,
+          fillStyle: i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+          text: i[1]
+        }
+
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+
+        new Button(option_).render()
+
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+
+          this.sort = i[0]
+          this.init()
+        }
+
+        addEventListener('touchstart', event, option_)
+      })
+    }
+
+    ctx.restore()
+  }
+
+  drawCard(offsetY) {
+    this.InstanceCardList.forEach((i) => {
+      i.offsetY = 0 - offsetY
+      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+    })
+  }
+
+  drawPreview() {
+    this.InstanceCardPreview.card = this.preview
+    this.InstanceCardPreview.render()
+
+    const close = (e) => {
+      this.preview = null
+      this.InstanceCardPreview.novaTime = 0
+    }
+
+    addEventListenerPure('touchstart', close)
+  }
+
+  drawButtonHome() {
+    const option = {
+      x: 12,
+      y: 12 + safeTop,
+      width: 72,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '返回'
+    }
+
+    new Button(option).render()
+
+    addEventListener('touchstart', this.back, option)
+  }
+
+  render() {
+    this.InstanceScroll.scrollY = this.bannerHeight + this.cardHeight - this.InstanceScroll.height + 12
+
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+
+    if (this.preview) {
+      this.drawPreview()
+    }
+
+    if (!this.preview) {
+      this.drawButtonHome()
+      this.drawScroll()
+    }
+  }
+}
+
 class CardInOpposite {
   constructor(props) {
     this.x = props.x
@@ -58,15 +528,15 @@ class CardInSelf {
     this.offsetX = props.offsetX || 0
     this.offsetY = props.offsetY || 0
 
-    this.novaTime = 0
-
     this.card = props.card
+
     this.touchStart = props.touchStart
     this.touchEnd = props.touchEnd
     this.useAble = props.useAble
 
     this.mouseDownPosition = null
 
+    this.novaTime = 0
     this.ifTouchEndTime = 0
     this.mouseDownPositionTime = 0
     this.useAbleTime = 0
@@ -74,6 +544,10 @@ class CardInSelf {
 
   get ifTouchEnd() {
     return this.offsetY < 0 - this.height / 2
+  }
+
+  get option() {
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
   eventDown(e) {
@@ -103,21 +577,131 @@ class CardInSelf {
     this.offsetY = this.offsetY + changeY
   }
 
+  drawTitle() {
+    const { x, y, width, height } = this.option
+    const ifTouchEndTime = this.ifTouchEndTime
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const ifTouchEndTime = this.ifTouchEndTime
+    const card = this.card
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawRace() {
+    const { x, y, width, height } = this.option
+    const ifTouchEndTime = this.ifTouchEndTime
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawType() {
+    const { x, y, width, height } = this.option
+    const ifTouchEndTime = this.ifTouchEndTime
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.39
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const ifTouchEndTime = this.ifTouchEndTime
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: card.description(card.level) })
+  }
+
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
     if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
       this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
     }
-
     if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
-      this.mouseDownPositionTime = 0
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime - 0.05)
     }
 
     if (this.ifTouchEnd && this.ifTouchEndTime < 1) {
       this.ifTouchEndTime = numberFix(this.ifTouchEndTime + 0.05)
     }
-
     if (!this.ifTouchEnd && this.ifTouchEndTime > 0) {
       this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
     }
@@ -125,88 +709,36 @@ class CardInSelf {
     if (this.useAble && this.useAbleTime < 1) {
       this.useAbleTime = numberFix(this.useAbleTime + 0.05)
     }
-
     if (!this.useAble && this.useAbleTime > 0) {
       this.useAbleTime = numberFix(this.useAbleTime - 0.05)
     }
 
     const card = this.card
-
-    const diff = {
-      x: -this.width * 0.5,
-      y: -this.height * 0.5,
-      width: this.width,
-      height: this.height
-    }
-
-    const x = this.x + this.offsetX + diff.x * this.mouseDownPositionTime
-    const y = this.y + this.offsetY + diff.y * this.mouseDownPositionTime
-    const width = this.width + diff.width * this.mouseDownPositionTime
-    const height = this.height + diff.height * this.mouseDownPositionTime
+    const { x, y, width, height } = this.option
 
     ctx.save()
 
-    ctx.globalAlpha = this.novaTime
-    ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime * 1)
+    ctx.translate(x + width / 2, y + height / 2)
+    ctx.scale(1 + this.mouseDownPositionTime, 1 + this.mouseDownPositionTime)
+    ctx.translate(-(x + width / 2), -(y + height / 2))
+
+    ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime)
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
     ctx.clip()
 
-    drawImage(this.card.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    const width_ = height * this.mouseDownPositionTime
-    const height_ = height * this.mouseDownPositionTime
-    const x_ = x + (width - width_) / 2
-    const y_ = y + (height - height_) / 2
-    const radius_ = width_ / 2
+    this.drawTitle()
+    this.drawName()
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    if (this.mouseDownPositionTime !== 0) {
+      ctx.globalAlpha = this.mouseDownPositionTime
 
-    ctx.fillStyle = `rgba(255, 255, 255, ${0.5 + this.ifTouchEndTime * 0.35})`
-
-    ctx.fill()
-
-    if (this.mouseDownPositionTime === 1) {
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-      ctx.fillStyle = `rgba(0, 0, 0, 1)`
-
-      ctx.fillText(card.name, x + width / 2, y + width * 0.12)
-
-      ctx.textAlign = 'start'
-
-      ctx.fillText('Lv' + card.level, x + width * 0.08, y + width * 0.36)
-      ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
-
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-
-      drawText({ x: x + width * 0.08, y: y + width * 0.72, width: width - width * 0.25, fontHeight: width * 0.105, text: card.description(1) })
-    }
-
-    if (this.mouseDownPositionTime === 0) {
-      const width_ = width * 0.6
-      const height_ = width * 0.2
-      const x_ = x + width / 2 - width_ / 2
-      const y_ = y + height - height_ - (x_ - x)
-      const radius_ = width * 0.08
-
-      const text = [card.name, levelText(card.level)]
-
-      drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-      ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-      ctx.fill()
-
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 ${width * 0.075}px ${window.fontFamily}`
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-      ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+      this.drawRace()
+      this.drawType()
+      this.drawDescription()
     }
 
     ctx.restore()
@@ -504,147 +1036,9 @@ class Action {
   }
 }
 
-class CardInModal {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-
-    this.card = props.card
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  render() {
-    const x = this.x + this.offsetX
-    const y = this.y + this.offsetY
-    const width = this.width
-    const height = this.height
-    const card = this.card
-
-    ctx.save()
-
-    drawRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-    const width_ = width * 0.75
-    const height_ = width * 0.2
-    const x_ = x + width / 2 - width_ / 2
-    const y_ = y + height - height_ - (x_ - x)
-    const radius_ = height_ / 4
-
-    const text = [card.name, levelText(card.level)]
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-
-    ctx.restore()
-  }
-}
-
-class Modal {
-  constructor(props) {
-    this.cards = []
-    this.title = ''
-
-    this.back = props.back
-
-    this.InstanceScroll
-
-    this.instanceScroll()
-  }
-
-  get cardHeight() {
-    const row = Math.ceil(this.cards.length / 3)
-
-    if (row === 0) return 0
-
-    const real = ((windowWidth - 48) / 3 * 1.35) * row
-
-    const margin = row ? 12 * (row - 1) : 0
-
-    return real + margin
-  }
-
-  instanceScroll() {
-    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
-
-    drawRadius(scrollOption)
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.fill()
-
-    this.InstanceScroll = new Scroll(scrollOption)
-  }
-
-  drawTitle() {
-    const option = { x: 12, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: this.title }
-
-    new Button(option).render()
-  }
-
-  drawBack() {
-    const option = { x: windowWidth - 120, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
-
-    new Button(option).render()
-
-    const event = () => {
-      this.back()
-
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
-  render() {
-    this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height + 24
-
-    this.drawTitle()
-    this.drawBack()
-
-    const event = (scroll) => {
-      this.cards.forEach((card, index) => {
-        const option = {
-          width: (windowWidth - 48) / 3,
-          card: card,
-        }
-
-        option.height = option.width * 1.35
-        option.x = 12 + parseInt(index % 3) * (option.width + 12)
-        option.y = 12 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
-
-        if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-        new CardInModal(option).render()
-      })
-    }
-
-    this.InstanceScroll.render(event)
-  }
-}
-
 class Page {
   constructor() {
     this.modal = null
-    this.over = null
 
     this.env = {
       round: 0,
@@ -726,12 +1120,14 @@ class Page {
       watchStore: () => {
         this.modal = true
         this.InstanceModal.title = '牌库'
-        this.InstanceModal.cards = this.InstanceRoleSelf.information.card.store
+        this.InstanceModal.card = this.InstanceRoleSelf.information.card.store
+        this.InstanceModal.init()
       },
       watchCemetery: () => {
         this.modal = true
         this.InstanceModal.title = '墓地'
-        this.InstanceModal.cards = this.InstanceRoleSelf.information.card.cemetery
+        this.InstanceModal.card = this.InstanceRoleSelf.information.card.cemetery
+        this.InstanceModal.init()
       }
     })
   }

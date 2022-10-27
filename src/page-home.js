@@ -56,12 +56,9 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  drawBackground() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-  }
-
   render() {
-    this.drawBackground()
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+
     this.drawButtonExplore()
     this.drawButtonStore()
     this.drawButtonShop()

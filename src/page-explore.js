@@ -27,22 +27,16 @@ class ExploreInList {
     this.explore = props.explore
 
     this.touchEvent = props.touchEvent
-
-    this.touchDelayTime = props.touchDelayTime
-
     this.touchArea = props.touchArea
-
     this.touchTimeout
   }
 
   get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
   eventDown(e) {
-    if (this.touchArea && !ifTouchCover(e, this.touchArea)) return
-
-    this.touchTimeout = true
+    if (!this.touchArea || ifTouchCover(e, this.touchArea)) this.touchTimeout = true
   }
 
   eventUp(e) {
@@ -52,6 +46,53 @@ class ExploreInList {
 
   eventMove(e) {
     this.touchTimeout = false
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.35
+    const height_ = width * 0.07
+    const x_ = x + width * 0.03
+    const y_ = y + width * 0.03
+    const radius_ = width * 0.02
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    const width_ = width * 0.35
+    const height_ = width * 0.07
+    const x_ = x + width - width_ - width * 0.03
+    const y_ = y + height - height_ - width * 0.03
+    const radius_ = width * 0.02
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -69,29 +110,8 @@ class ExploreInList {
 
     drawImage(this.explore.imageDOM, { x: x, y: y, width: width, height: height })
 
-    const width_ = height * 0.85
-    const height_ = height * 0.85
-    const x_ = x + (height - height_) / 2
-    const y_ = y + (height - height_) / 2
-    const radius_ = width_ / 2
-
-    ctx.font = `900 ${height * 0.1}px ${window.fontFamily}`
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
-
-    drawRadius({ x: x_ + width_ + (height - height_) / 2, y: y_, width: width - width_ - (height - height_) * 2, height: height_, radius: height * 0.1 })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    drawText({ x: x_ + width_ + (height - height_), y: y_ + (height - height_) / 2, width: width - width_ - (height - height_) * 3, fontHeight: height * 0.15, text: explore.description })
+    this.drawTitle()
+    this.drawName()
 
     ctx.restore()
 
@@ -101,74 +121,14 @@ class ExploreInList {
   }
 }
 
-class ExploreInPreview {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.explore = props.explore
-
-    this.novaTime = 0
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
-    const explore = this.explore
-
-    ctx.save()
-
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
-
-    ctx.clip()
-
-    drawImage(this.explore.imageDOM, { x: x, y: y, width: width, height: height })
-
-    const width_ = height * this.novaTime
-    const height_ = height * this.novaTime
-    const x_ = x + (width - width_) / 2
-    const y_ = y + (height - height_) / 2
-    const radius_ = width_ / 2
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.5)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.07}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(explore.name, x + width / 2, y + width * 0.12)
-
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-
-    drawText({ x: x + width * 0.08, y: y + width * 0.6, width: width - width * 0.25, fontHeight: width * 0.105, text: explore.description })
-
-    ctx.restore()
-  }
-}
-
 class Page {
   constructor() {
-    this.preview = null
-
     this.type = 'alltime'
 
     this.explore
 
     this.InstanceScroll
     this.InstanceExplore
-    this.InstanceExplorePreview
 
     this.init()
   }
@@ -178,15 +138,8 @@ class Page {
   }
 
   get exploreHeight() {
-    const row = Math.ceil(this.explore.length / 4)
-
-    if (row === 0) return -12
-
-    const real = ((windowWidth - 60) / 4 * 1.35) * row
-
-    const margin = row ? 12 * (row - 1) : 0
-
-    return real + margin
+    const row = this.explore.length
+    return row === 0 ? -12 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -194,7 +147,6 @@ class Page {
 
     this.instanceScroll()
     this.instanceExplore()
-    this.instanceExplorePreview()
   }
 
   instanceScroll() {
@@ -223,19 +175,6 @@ class Page {
     })
   }
 
-  instanceExplorePreview() {
-    const option = {
-      width: windowWidth * 0.7,
-      explore: this.preview,
-    }
-
-    option.height = option.width * 1.35
-    option.x = windowWidth * 0.15
-    option.y = (windowHeight - option.width * 1.5) / 2 - 60
-
-    this.InstanceExplorePreview = new ExploreInPreview(option)
-  }
-
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
@@ -254,17 +193,13 @@ class Page {
     ctx.save()
 
     drawRadius(option)
-
     ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-
     ctx.fill()
 
     ctx.clip()
 
-    const _drawTypeButton = () => {
-      const array = [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']]
-
-      array.forEach((i, index) => {
+    {
+      new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
         const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
         option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
@@ -284,17 +219,13 @@ class Page {
       })
     }
 
-    _drawTypeButton()
-
     ctx.restore()
   }
 
   drawExplore(offsetY) {
     this.InstanceExplore.forEach((i) => {
-      if (!ifScreenCover({ ...i.option, y: i.y - offsetY }, this.InstanceScroll.option)) return
-
       i.offsetY = 0 - offsetY
-      i.render()
+      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
     })
   }
 
@@ -328,10 +259,6 @@ class Page {
     }
 
     addEventListenerPure('touchstart', close)
-  }
-
-  drawBackground() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
   }
 
   drawButtonHome() {
@@ -389,16 +316,10 @@ class Page {
   }
 
   render() {
-    this.drawBackground()
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
-    if (this.preview) {
-      this.drawPreview()
-    }
-
-    if (!this.preview) {
-      this.drawButtonHome()
-      this.drawScroll()
-    }
+    this.drawButtonHome()
+    this.drawScroll()
   }
 }
 
