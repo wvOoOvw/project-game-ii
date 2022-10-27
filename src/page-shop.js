@@ -249,7 +249,7 @@ class ItemInReward {
 
 class Reward {
   constructor(props) {
-    this.reward = props.reward
+    this.reward = []
     this.back = props.back
 
     this.InstanceScroll
@@ -261,7 +261,7 @@ class Reward {
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 72) / 3 * 1.35) * row
+    const real = ((windowWidth - 48) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -269,13 +269,19 @@ class Reward {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
   }
 
-  drawButtonHome() {
-    const option = { x: 12, y: windowHeight - 78, width: windowWidth - 24, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+  drawTitle() {
+    const option = { x: 12, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: '购买成功' }
+
+    new Button(option).render()
+  }
+
+  drawBack() {
+    const option = { x: windowWidth - 120, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
     new Button(option).render()
 
@@ -300,24 +306,21 @@ class Reward {
   }
 
   render() {
-    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
+    this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height
 
-    this.drawButtonHome()
-
-    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.fill()
+    this.drawTitle()
+    this.drawBack()
 
     const event = (scroll) => {
       this.parseReward(this.reward).forEach((reward, index) => {
         const option = {
-          width: (windowWidth - 72) / 3,
+          width: (windowWidth - 48) / 3,
           reward: reward,
         }
 
         option.height = option.width * 1.35
-        option.x = 24 + parseInt(index % 3) * (option.width + 12)
-        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+        option.x = 12 + parseInt(index % 3) * (option.width + 12)
+        option.y = 12 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
 
         if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -413,7 +416,6 @@ class Page {
 
   instanceReward() {
     this.InstanceReward = new Reward({
-      reward: [],
       back: () => this.reward = null
     })
   }

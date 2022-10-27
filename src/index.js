@@ -114,7 +114,7 @@ class Main {
         team: [
           {
             master: [{ key: 1 }],
-            card: originCard.map(i => ({ key: i.key, level: 1, number: 10 }))
+            card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
           },
           {
             master: [{ key: 1 }],

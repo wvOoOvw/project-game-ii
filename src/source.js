@@ -6,6 +6,8 @@ import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/card/music_4d7f2
 import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/card/music_6e9e96c75cf04411baa154b1d6a3c7360.jpeg'
 import J_music_88c8411d068c455099456851ec84f65c0 from '../media/card/music_88c8411d068c455099456851ec84f65c0.jpeg'
 import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/card/music_98a7a38ce58546a7841d18c96e41e3760.jpeg'
+import J_music_c753fd717be543eaa25f4a1aa9240d7d0 from '../media/card/music_c753fd717be543eaa25f4a1aa9240d7d0.jpeg'
+import J_music_c12894d6ce644a37a16069502d98c9b80 from '../media/card/music_c12894d6ce644a37a16069502d98c9b80.jpeg'
 import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/card/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
 import J_music_47a83799595b4a5b97145a6e594620310 from '../media/explore/music_47a83799595b4a5b97145a6e594620310.jpeg'
@@ -106,7 +108,7 @@ var originCard = [
     function: (card, self, opposite, round) => {
       return [
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'hit', target: 'opposite', value: -(card.level * 20 + 80) },
+        { effect: 'hit', target: 'opposite', value: card.level * 20 + 80 },
         { effect: 'buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
@@ -122,7 +124,7 @@ var originCard = [
     function: (card, self, opposite, round) => {
       return [
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'hit', target: 'opposite', value: -(card.level * 10 + 40) },
+        { effect: 'hit', target: 'opposite', value: card.level * 10 + 40 },
         { effect: 'buff', target: 'opposite', value: '燃', number: 2 }
       ]
     }
@@ -140,8 +142,8 @@ var originCard = [
 
       return [
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: -100 },
-        { effect: 'hit', target: 'opposite', value: -opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 5 + 20) },
+        { effect: 'cost-mp', target: 'self', value: 100 },
+        { effect: 'hit', target: 'opposite', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 5 + 20) },
       ]
     }
   },
@@ -184,9 +186,39 @@ var originCard = [
 
       return [
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: -20 },
-        { effect: 'hit', target: 'opposite', value: -(card.level * 30 + 120) },
+        { effect: 'cost-mp', target: 'self', value: 20 },
+        { effect: 'hit', target: 'opposite', value: card.level * 30 + 120 },
         { effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
+      ]
+    }
+  },
+  {
+    key: 6,
+    name: '火焰冲击',
+    type: '进攻卡',
+    race: '火',
+    limit: 3,
+    image: J_music_c753fd717be543eaa25f4a1aa9240d7d0,
+    description: l => `造成 ${l * 20 + 80} 伤害, 若目标拥有'燃'则伤害 * 1.5`,
+    function: (card, self, opposite, round) => {
+      return [
+        { animation: 'red-hit', target: 'opposite' },
+        { effect: 'hit', target: 'opposite', value: opposite.master.buff.find(i => i === '燃') ? (card.level * 20 + 80) * 1.5 : (card.level * 20 + 80) },
+      ]
+    }
+  },
+  {
+    key: 6,
+    name: '火焰聚能',
+    type: '治疗卡',
+    race: '火',
+    limit: 3,
+    image: J_music_c12894d6ce644a37a16069502d98c9b80,
+    description: l => `吸收对手的所有'燃', 每有一层回复自身 ${l * 20 + 30} HP`,
+    function: (card, self, opposite, round) => {
+      return [
+        { animation: 'red-hit', target: 'opposite' },
+        { effect: 'cure-hp', target: 'opposite', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 20 + 30) },
       ]
     }
   },
@@ -296,7 +328,5 @@ originShop = originShop.map(i => {
 
   return i
 })
-
-originShop = [...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop, ...originShop]
 
 export { originMoney, originMaster, originCard, originExplore, originShop }

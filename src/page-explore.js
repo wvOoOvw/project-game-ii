@@ -376,7 +376,12 @@ class Page {
         },
         AI: explore.AI
       },
-      reward: parseCard(explore.reward())
+      reward: explore.reward
+    }
+
+    if (Imitation.state.battle.self.card.team.length < 20 || Imitation.state.battle.self.card.team.length > 40) {
+      Imitation.state.function.message('卡组数量必须在20-40内', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      return
     }
 
     Imitation.state.page.current = 'transition'

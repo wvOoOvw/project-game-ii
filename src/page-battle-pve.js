@@ -564,6 +564,7 @@ class CardInModal {
 class Modal {
   constructor(props) {
     this.cards = []
+    this.title = ''
 
     this.back = props.back
 
@@ -577,7 +578,7 @@ class Modal {
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 72) / 3 * 1.35) * row
+    const real = ((windowWidth - 48) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -585,7 +586,7 @@ class Modal {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
 
     drawRadius(scrollOption)
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -594,13 +595,20 @@ class Modal {
     this.InstanceScroll = new Scroll(scrollOption)
   }
 
-  drawButtonBack() {
-    const option = { x: 12, y: windowHeight - 78, width: windowWidth - 24, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+  drawTitle() {
+    const option = { x: 12, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: this.title }
+
+    new Button(option).render()
+  }
+
+  drawBack() {
+    const option = { x: windowWidth - 120, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
     new Button(option).render()
 
     const event = () => {
       this.back()
+
     }
 
     addEventListener('touchstart', event, option)
@@ -609,22 +617,19 @@ class Modal {
   render() {
     this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height + 24
 
-    this.drawButtonBack()
-
-    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.fill()
+    this.drawTitle()
+    this.drawBack()
 
     const event = (scroll) => {
       this.cards.forEach((card, index) => {
         const option = {
-          width: (windowWidth - 72) / 3,
+          width: (windowWidth - 48) / 3,
           card: card,
         }
 
         option.height = option.width * 1.35
-        option.x = 24 + parseInt(index % 3) * (option.width + 12)
-        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+        option.x = 12 + parseInt(index % 3) * (option.width + 12)
+        option.y = 12 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
 
         if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -654,7 +659,7 @@ class ItemInReward {
     const reward = this.reward
 
     if (reward.money) {
-      const money = parseMoney([reward.money])[0]
+      const money = parseMoney([reward])[0]
 
       ctx.save()
 
@@ -760,8 +765,8 @@ class ItemInReward {
 
 class Reward {
   constructor(props) {
-    this.over = props.voer
-    this.reward = props.reward
+    this.over = ''
+    this.reward = []
 
     this.InstanceScroll
     this.instanceScroll()
@@ -772,7 +777,7 @@ class Reward {
 
     if (row === 0) return 0
 
-    const real = ((windowWidth - 72) / 3 * 1.35) * row
+    const real = ((windowWidth - 48) / 3 * 1.35) * row
 
     const margin = row ? 12 * (row - 1) : 0
 
@@ -780,19 +785,19 @@ class Reward {
   }
 
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 150 - safeTop, radius: 12 }
+    const scrollOption = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
 
     this.InstanceScroll = new Scroll(scrollOption)
   }
 
-  drawButtonOver() {
-    const option = { x: 12, y: windowHeight - 78, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: this.over ? '战斗胜利' : '战斗失败' }
+  drawTitle() {
+    const option = { x: 12, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: this.over ? '战斗胜利' : '战斗失败' }
 
     new Button(option).render()
   }
 
-  drawButtonHome() {
-    const option = { x: 96, y: windowHeight - 78, width: windowWidth - 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+  drawBack() {
+    const option = { x: windowWidth - 120, y: windowHeight - 48, width: 108, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
 
     new Button(option).render()
 
@@ -820,23 +825,19 @@ class Reward {
   render() {
     this.InstanceScroll.scrollY = this.rewardHeight - this.InstanceScroll.height + 24
 
-    this.drawButtonOver()
-    this.drawButtonHome()
-
-    drawRadius({ ...this.InstanceScroll.option, radius: 8 })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.fill()
+    this.drawTitle()
+    this.drawBack()
 
     const event = (scroll) => {
       this.parseReward(this.reward).forEach((reward, index) => {
         const option = {
-          width: (windowWidth - 72) / 3,
+          width: (windowWidth - 48) / 3,
           reward: reward,
         }
 
         option.height = option.width * 1.35
-        option.x = 24 + parseInt(index % 3) * (option.width + 12)
-        option.y = 72 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
+        option.x = 12 + parseInt(index % 3) * (option.width + 12)
+        option.y = 12 + parseInt(index / 3) * (option.height + 12) + safeTop - scroll[1]
 
         if (!ifScreenCover(option, this.InstanceScroll.option)) return
 
@@ -934,10 +935,12 @@ class Page {
       roundOver: this.roundOver,
       watchStore: () => {
         this.modal = true
+        this.InstanceModal.title = '牌库'
         this.InstanceModal.cards = this.InstanceRoleSelf.information.card.store
       },
       watchCemetery: () => {
         this.modal = true
+        this.InstanceModal.title = '墓地'
         this.InstanceModal.cards = this.InstanceRoleSelf.information.card.cemetery
       }
     })
@@ -950,9 +953,7 @@ class Page {
   }
 
   instanceReward() {
-    this.InstanceReward = new Reward({
-      reward: []
-    })
+    this.InstanceReward = new Reward()
   }
 
   drawRoleSelf() {
@@ -986,7 +987,7 @@ class Page {
 
     const event = () => {
       Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
+      Imitation.state.page.next = 'explore'
     }
 
     addEventListener('touchstart', event, option_)
@@ -1041,13 +1042,13 @@ class Page {
 
       if (current.effect === 'cost-mp') {
         if (current.target === 'self') {
-          self.information.master.MP = self.information.master.MP + current.value
+          self.information.master.MP = self.information.master.MP - current.value
         }
       }
 
       if (current.effect === 'hit') {
         if (current.target === 'opposite') {
-          opposite.information.master.HP = opposite.information.master.HP + current.value
+          opposite.information.master.HP = opposite.information.master.HP - current.value
         }
       }
 
@@ -1177,7 +1178,7 @@ class Page {
       this.over = 'win'
       Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
-      this.InstanceReward.reward = Imitation.state.battle.reward
+      this.InstanceReward.reward = Imitation.state.battle.reward()
 
       const library = Imitation.state.info.library.card
 
