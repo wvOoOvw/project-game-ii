@@ -217,8 +217,8 @@ var originCard = [
     description: l => `吸收对手的所有'燃', 每有一层回复自身 ${l * 20 + 30} HP`,
     function: (card, self, opposite, round) => {
       return [
-        { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cure-hp', target: 'opposite', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 20 + 30) },
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'cure-hp', target: 'self', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 20 + 30) },
       ]
     }
   },
