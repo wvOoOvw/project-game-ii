@@ -547,7 +547,19 @@ class CardInSelf {
   }
 
   get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+    const diff = {
+      x: -this.width * 0.5,
+      y: -this.height * 0.5,
+      width: this.width,
+      height: this.height
+    }
+
+    const x = this.x + this.offsetX + diff.x * this.mouseDownPositionTime
+    const y = this.y + this.offsetY + diff.y * this.mouseDownPositionTime
+    const width = this.width + diff.width * this.mouseDownPositionTime
+    const height = this.height + diff.height * this.mouseDownPositionTime
+
+    return { x, y, width, height }
   }
 
   eventDown(e) {
@@ -588,13 +600,13 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -614,13 +626,13 @@ class CardInSelf {
     if (card.number) text.push('x' + card.number)
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -636,12 +648,12 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -657,13 +669,13 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -679,13 +691,13 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, ${255 - ifTouchEndTime * 255}, 0.75)`
+    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, ${ifTouchEndTime * 255}, 1)`
+    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: card.description(card.level) })
   }
 
@@ -717,10 +729,6 @@ class CardInSelf {
     const { x, y, width, height } = this.option
 
     ctx.save()
-
-    ctx.translate(x + width / 2, y + height / 2)
-    ctx.scale(1 + this.mouseDownPositionTime, 1 + this.mouseDownPositionTime)
-    ctx.translate(-(x + width / 2), -(y + height / 2))
 
     ctx.globalAlpha = Math.min(this.novaTime, this.useAbleTime)
 
