@@ -77,27 +77,28 @@ const drawRect = (option) => {
   ctx.closePath()
 }
 
-const drawText = (option) => {
+const drawMultilineText = (option) => {
   const x = option.x
   const y = option.y
   const width = option.width
-  const fontHeight = option.fontHeight
+  const wrapSpace = option.wrapSpace
   const text = option.text
 
-  let test = text.split('')
-  let temp = ''
-  let row = []
-  test.forEach(i => {
-    if (ctx.measureText(temp).width > width) {
+  var temp = ''
+  var row = []
+
+  text.split('').forEach(i => {
+    if (ctx.measureText(temp + i).width > width) {
       row.push(temp)
       temp = ''
     }
     temp = temp + i
   })
   row.push(temp)
+
   row.forEach((i, index) => {
-    ctx.fillText(i, x, y + index * fontHeight)
+    ctx.fillText(i, x, y + index * wrapSpace)
   })
 }
 
-export { drawImage, drawRect, drawRadius, drawText }
+export { drawImage, drawRect, drawRadius, drawMultilineText }

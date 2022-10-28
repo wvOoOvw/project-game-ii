@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Button } from './ui-button'
 import { Scroll } from './ui-scroll'
@@ -258,7 +258,7 @@ class CardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: card.description(card.level) })
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
   render() {
@@ -698,7 +698,7 @@ class CardInSelf {
     ctx.textBaseline = 'top'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
-    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: card.description(card.level) })
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
   render() {
@@ -971,13 +971,13 @@ class Action {
   }
 
   drawEnv() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
 
     new Button(option).render()
   }
 
   drawButtonOverRound() {
-    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
 
     new Button(option).render()
 
@@ -991,7 +991,7 @@ class Action {
   }
 
   drawButtonStore() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
 
     new Button(option).render()
 
@@ -1005,7 +1005,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
 
     new Button(option).render()
 
@@ -1198,7 +1198,7 @@ class Page {
       return
     }
 
-    Imitation.state.function.message(card.name + ' ' + levelText(card.level), 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.message([card.name, levelText(card.level)].join(' '), 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
     if (result.find(i => i.animation)) {
       const animations = result.filter(i => i.animation)
@@ -1382,15 +1382,13 @@ class Page {
           if (i.master) {
             const findInLibrary = library.master.find(i_ => i_.key === i.key)
             if (findInLibrary) {
-              findInLibrary.exp = findInLibrary.exp + i.number / Math.pow(2, (findInLibrary.level - 1))
-
-              if (findInLibrary.exp > 100) {
-                findInLibrary.level = findInLibrary.level + 1
-                findInLibrary.exp = (findInLibrary.exp - 100) * 0.5
-              }
+              findInLibrary.number = findInLibrary.number + i.number
             }
             if (!findInLibrary) {
-              library.push({ key: i.key, level: 1, exp: i.number })
+              library.push({ key: i.key, level: 1, number: i.number })
+            }
+            if (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level)) {
+              findInLibrary.level = findInLibrary.level + 1
             }
           }
         })

@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, levelText, numberFix } from './utils-common'
-import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 

@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, levelText, numberFix } from './utils-common'
-import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
@@ -226,7 +226,7 @@ class ShopInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    drawText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.12, fontHeight: width * 0.075, text: shop.description })
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: shop.description })
   }
 
   render() {
@@ -501,15 +501,13 @@ class Page {
       if (i.master) {
         const findInLibrary = library.master.find(i_ => i_.key === i.key)
         if (findInLibrary) {
-          findInLibrary.exp = findInLibrary.exp + i.number / Math.pow(2, (findInLibrary.level - 1))
-
-          if (findInLibrary.exp > 100) {
-            findInLibrary.level = findInLibrary.level + 1
-            findInLibrary.exp = (findInLibrary.exp - 100) * 0.5
-          }
+          findInLibrary.number = findInLibrary.number + i.number
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: 1, exp: i.number })
+          library.push({ key: i.key, level: 1, number: i.number })
+        }
+        if (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level)) {
+          findInLibrary.level = findInLibrary.level + 1
         }
       }
     })

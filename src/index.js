@@ -6,7 +6,7 @@ import './data-imitation'
 import PageTransition from './page-transition'
 import PageHome from './page-home'
 import PageExplore from './page-explore'
-import PageBattlePve from './page-battle-pve'
+import PagePve from './page-pve'
 import PageStore from './page-store'
 import PageShop from './page-shop'
 import PageReward from './page-reward'
@@ -14,9 +14,10 @@ import PageReward from './page-reward'
 import { Message } from './ui-message'
 import { Sound } from './utils-sound'
 import { Animation } from './utils-animation'
-import { SaveImage } from './utils-saveImage'
 
-import { originMaster, originCard, originBoss, originExplore, originShop } from './source'
+import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, numberFix } from './utils-common'
+
+import { originMoney, originMaster, originCard, originExplore, originShop } from './source'
 
 const ctx = canvas.getContext('2d')
 
@@ -72,11 +73,10 @@ class Main {
         current: 'home',
         next: '',
         map: {
-          'save-image': SaveImage,
           'transition': PageTransition,
           'home': PageHome,
           'explore': PageExplore,
-          'battle-pve': PageBattlePve,
+          'pve': PagePve,
           'store': PageStore,
           'shop': PageShop,
           'reward': PageReward,
@@ -95,9 +95,9 @@ class Main {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
-        message: (m, b, t) => this.instanceMessage.send(m, b, t),
-        sound: (k) => this.instanceSound.play(k),
-        animation: (k, option) => this.instanceAnimation.play(k, option),
+        message: (...props) => this.instanceMessage.send(...props),
+        sound: (...props) => this.instanceSound.play(...props),
+        animation: (...props) => this.instanceAnimation.play(...props),
         saveInfo: () => {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         }
@@ -114,7 +114,7 @@ class Main {
     if (!info) {
       const responseHTTP = {
         library: {
-          master: originMaster.map(i => ({ key: i.key, level: 1, exp: 0 })),
+          master: originMaster.map(i => ({ key: i.key, level: 1, number: 0 })),
           card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
         },
         team: [
@@ -146,6 +146,40 @@ class Main {
       Imitation.state.info = responseHTTP
       Imitation.state.function.saveInfo()
     }
+
+    if (Imitation.state.page.current === 'pve') {
+      Imitation.state.battle = {
+        self: {
+          master: {
+            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])[0],
+            buff: []
+          },
+          card: {
+            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true),
+            store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)),
+            hand: [],
+            cemetery: [],
+            consume: []
+          },
+        },
+        opposite: {
+          master: {
+            ...parseMaster([originExplore[0].boss.master])[0],
+            buff: []
+          },
+          card: {
+            team: parseCard(originExplore[0].boss.card, true),
+            store: setArrayRandom(parseCard(originExplore[0].boss.card, true)),
+            hand: [],
+            cemetery: [],
+            consume: []
+          },
+          AI: originExplore[0].AI
+        },
+        reward: originExplore[0].reward
+      }
+    }
+
   }
 }
 

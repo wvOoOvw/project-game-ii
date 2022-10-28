@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, numberFix } from './utils-common'
-import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
@@ -312,7 +312,7 @@ class Page {
     }
 
     Imitation.state.page.current = 'transition'
-    Imitation.state.page.next = 'battle-pve'
+    Imitation.state.page.next = 'pve'
   }
 
   render() {

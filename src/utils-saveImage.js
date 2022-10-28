@@ -1,5 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard } from './utils-common'
-import { drawText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { originCard, originBoss, originExplore } from './source'
 
@@ -58,13 +58,13 @@ class SaveImage {
 
     ctx.fillText(card.name, x + width / 2, y + width * 0.12)
 
-    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.12, y + width * 0.12)
+    if (card.number) ctx.fillText('X' + card.number, x + width - width * 0.1, y + width * 0.12)
 
     ctx.textAlign = 'start'
 
     ctx.fillText(`${card.race} · ${card.type}`, x + width * 0.08, y + width * 0.48)
 
-    drawText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, fontHeight: width * 0.12, text: card.description(1) })
+    drawMultilineText({ x: x + width * 0.08, y: y + width * 0.60, width: width - width * 0.25, wrapSpace: width * 0.12, text: card.description(1) })
 
     if (this.stop) return
 
