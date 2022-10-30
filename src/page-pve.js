@@ -1167,16 +1167,25 @@ class Page {
   }
 
   drawButtonHome() {
-    const option_ = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+    const option = {
+      x: 12,
+      y: 12 + safeTop,
+      width: 72,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '返回'
+    }
 
-    new Button(option_).render()
+    new Button(option).render()
 
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'explore'
     }
 
-    addEventListener('touchstart', event, option_)
+    addEventListener('touchstart', event, option)
   }
 
   pumpCard = (card, role) => {

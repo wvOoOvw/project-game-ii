@@ -714,90 +714,84 @@ class Page {
 
     ctx.clip()
 
-    {
-      new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
-        const option_ = {
-          x: 24 + index * 72,
-          y: 12 + option.y,
-          width: 60,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          fillStyle: index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: `队伍 ${index + 1}`
-        }
+    new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
+      const option_ = {
+        x: 24 + index * 72,
+        y: 12 + option.y,
+        width: 60,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        fillStyle: index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: `队伍 ${index + 1}`
+      }
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          Imitation.state.info.teamIndex = index
-          this.type = 'team'
-          this.init()
-        }
+        Imitation.state.info.teamIndex = index
+        this.type = 'team'
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
-    {
-      new Array(['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']).forEach((i, index) => {
-        const option_ = {
-          x: 24 + index * 72,
-          y: 54 + option.y,
-          width: 60,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          fillStyle: i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: i[1]
-        }
+    new Array(['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']).forEach((i, index) => {
+      const option_ = {
+        x: 24 + index * 72,
+        y: 54 + option.y,
+        width: 60,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        fillStyle: i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: i[1]
+      }
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.sort = i[0]
-          this.init()
-        }
+        this.sort = i[0]
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
-    {
-      new Array(['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']).forEach((i, index) => {
-        const option_ = {
-          x: 24 + index * 72,
-          y: 96 + option.y,
-          width: 60,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          fillStyle: i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: i[1]
-        }
+    new Array(['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']).forEach((i, index) => {
+      const option_ = {
+        x: 24 + index * 72,
+        y: 96 + option.y,
+        width: 60,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        fillStyle: i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: i[1]
+      }
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.type = i[0]
-          this.init()
-        }
+        this.type = i[0]
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
     ctx.restore()
   }
@@ -827,7 +821,16 @@ class Page {
 
         this.InstanceCardPreview.render()
 
-        const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '卸载' }
+        const option = {
+          y: buttonY + 24,
+          width: 108,
+          height: 36,
+          radius: 8,
+          font: `900 12px ${window.fontFamily}`,
+          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+          text: '卸载'
+        }
+        option.x = (windowWidth - option.width) / 2
 
         new Button(option).render()
 
@@ -848,7 +851,15 @@ class Page {
         this.InstanceMasterPreview.render()
 
         this.preview.skill.forEach((i, index) => {
-          const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+          const option = {
+            x: windowWidth / 2 - 40,
+            y: buttonY + 12,
+            width: 72,
+            height: 30,
+            radius: 8,
+            font: `900 10px ${window.fontFamily}`,
+            text: i.name
+          }
 
           option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
@@ -877,7 +888,16 @@ class Page {
 
       this.InstanceCardPreview.render()
 
-      const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '装载' }
+      const option = {
+        y: buttonY + 24,
+        width: 108,
+        height: 36,
+        radius: 8,
+        font: `900 12px ${window.fontFamily}`,
+        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: '装载'
+      }
+      option.x = (windowWidth - option.width) / 2
 
       new Button(option).render()
 
@@ -891,7 +911,16 @@ class Page {
 
       closeCover.push(option)
 
-      const option_ = { x: windowWidth / 2 - 60, y: buttonY + 100, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '合成' }
+      const option_ = {
+        y: buttonY + 84,
+        width: 108,
+        height: 36,
+        radius: 8,
+        font: `900 12px ${window.fontFamily}`,
+        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: '合成'
+      }
+      option_.x = (windowWidth - option_.width) / 2
 
       new Button(option_).render()
 
@@ -912,7 +941,15 @@ class Page {
       this.InstanceMasterPreview.render()
 
       this.preview.skill.forEach((i, index) => {
-        const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+        const option = {
+          x: windowWidth / 2 - 40,
+          y: buttonY + 12,
+          width: 72,
+          height: 30,
+          radius: 8,
+          font: `900 10px ${window.fontFamily}`,
+          text: i.name
+        }
 
         option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
@@ -934,7 +971,16 @@ class Page {
         closeCover.push(option)
       })
 
-      const option = { x: windowWidth / 2 - 60, y: buttonY + 80, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '装载' }
+      const option = {
+        y: buttonY + 66,
+        width: 108,
+        height: 36,
+        radius: 8,
+        font: `900 12px ${window.fontFamily}`,
+        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        text: '装载'
+      }
+      option.x = (windowWidth - option.width) / 2
 
       new Button(option).render()
 

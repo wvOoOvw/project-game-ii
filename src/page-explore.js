@@ -346,26 +346,24 @@ class Page {
 
     ctx.clip()
 
-    {
-      new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
-        const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+    new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
+      const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
-        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.type = i[0]
-          this.init()
-        }
+        this.type = i[0]
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
     ctx.restore()
   }
@@ -386,15 +384,22 @@ class Page {
 
     this.InstanceExplorePreview.render()
 
-    const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '进入' }
+    const option = {
+      y: buttonY + 24,
+      width: 108,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '进入'
+    }
+    option.x = (windowWidth - option.width) / 2
 
     new Button(option).render()
 
-    const buy = () => {
-      this.enter(this.preview)
-    }
+    const enter = () => this.enter(this.preview)
 
-    addEventListener('touchstart', buy, option)
+    addEventListener('touchstart', enter, option)
 
     closeCover.push(option)
 
@@ -408,7 +413,16 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: 8, font: `900 12px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '返回' }
+    const option = {
+      x: 12,
+      y: 12 + safeTop,
+      width: 72,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '返回'
+    }
 
     new Button(option).render()
 

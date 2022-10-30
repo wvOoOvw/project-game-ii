@@ -353,47 +353,43 @@ class Page {
 
     ctx.clip()
 
-    {
-      parseMoney(Imitation.state.info.money).forEach((i, index) => {
-        const option_ = { x: 24 + index * 84, y: 12 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+    parseMoney(Imitation.state.info.money).forEach((i, index) => {
+      const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
 
-        option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.money = i.key
-          this.init()
-        }
+        this.money = i.key
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
-    {
-      [['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']].forEach((i, index) => {
-        const option_ = { x: 24 + index * 84, y: 54 + option.y, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+    new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
+      const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
-        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-        new Button(option_).render()
+      new Button(option_).render()
 
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
+      const event = (e) => {
+        if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-          this.type = i[0]
-          this.init()
-        }
+        this.type = i[0]
+        this.init()
+      }
 
-        addEventListener('touchstart', event, option_)
-      })
-    }
+      addEventListener('touchstart', event, option_)
+    })
 
     ctx.restore()
   }
@@ -414,7 +410,16 @@ class Page {
 
     this.InstanceShopPreview.render()
 
-    const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '购买' }
+    const option = {
+      y: buttonY + 24,
+      width: 108,
+      height: 36,
+      radius: 8,
+      font: `900 12px ${window.fontFamily}`,
+      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+      text: '购买'
+    }
+    option.x = (windowWidth - option.width) / 2
 
     new Button(option).render()
 
@@ -467,7 +472,7 @@ class Page {
       const centerIndex = maxIndex / 2 - 0.5
       const diff = index - centerIndex
 
-      const option = { y: windowHeight - 48, width: 84, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: `${i.name} ${i.number}` }
+      const option = { y: windowHeight - 48, width: 75, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 0.75)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ${i.number}` }
 
       option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
 
