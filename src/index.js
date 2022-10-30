@@ -119,19 +119,19 @@ class Main {
         },
         team: [
           {
-            master: [{ key: 1 }],
+            master: { key: 1 },
             card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
           },
           {
-            master: [{ key: 1 }],
+            master: { key: 1 },
             card: []
           },
           {
-            master: [{ key: 1 }],
+            master: { key: 1 },
             card: []
           },
           {
-            master: [{ key: 1 }],
+            master: { key: 1 },
             card: []
           },
         ],
@@ -151,7 +151,7 @@ class Main {
       Imitation.state.battle = {
         self: {
           master: {
-            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])[0],
+            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
             buff: []
           },
           card: {

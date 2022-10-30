@@ -971,13 +971,13 @@ class Action {
   }
 
   drawEnv() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `ROUND ${this.env.round}` }
 
     new Button(option).render()
   }
 
   drawButtonOverRound() {
-    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
+    const option = { x: this.x + this.width - 84, y: this.y + this.height / 2 - 15 + 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: [`rgba(255, 255, 255, 1)`, 'rgba(0, 0, 0, 1)'], text: '结束回合' }
 
     new Button(option).render()
 
@@ -991,7 +991,7 @@ class Action {
   }
 
   drawButtonStore() {
-    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
+    const option = { x: this.x + 12, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看牌库x${this.InstanceRoleSelf.information.card.store.length}` }
 
     new Button(option).render()
 
@@ -1005,7 +1005,7 @@ class Action {
   }
 
   drawButtonCemetery() {
-    const option = { x: this.x + 96, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 28, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
+    const option = { x: this.x + 96, y: this.y + this.height / 2 - 15 - 32, width: 72, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: `查看墓地x${this.InstanceRoleSelf.information.card.cemetery.length}` }
 
     new Button(option).render()
 

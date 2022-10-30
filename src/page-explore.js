@@ -121,14 +121,151 @@ class ExploreInList {
   }
 }
 
+class ExploreInPreview {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.explore = props.explore
+
+    this.novaTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDifficulty() {
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText(`难度 ${explore.difficulty}`, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: explore.description })
+  }
+
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    ctx.save()
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    drawImage(explore.imageDOM, { x: x, y: y, width: width, height: height })
+
+    this.drawTitle()
+    this.drawName()
+    this.drawDifficulty()
+    this.drawDescription()
+
+    ctx.restore()
+  }
+}
+
 class Page {
   constructor() {
+    this.preview = null
+
     this.type = 'alltime'
 
     this.explore
 
     this.InstanceScroll
     this.InstanceExplore
+    this.InstanceExplorePreview
 
     this.init()
   }
@@ -147,6 +284,7 @@ class Page {
 
     this.instanceScroll()
     this.instanceExplore()
+    this.instanceExplorePreview()
   }
 
   instanceScroll() {
@@ -164,7 +302,7 @@ class Page {
         explore: explore,
         touchAble: true,
         touchArea: this.InstanceScroll.option,
-        touchEvent: () => this.enter(explore),
+        touchEvent: () => this.preview = explore,
       }
 
       option.height = (windowWidth - 60) / 4 * 1.35
@@ -173,6 +311,16 @@ class Page {
 
       return new ExploreInList(option)
     })
+  }
+
+  instanceExplorePreview() {
+    const option = {}
+    option.width = windowWidth * 0.7
+    option.height = option.width * 1.35
+    option.x = windowWidth * 0.15
+    option.y = (windowHeight - option.width * 1.5) / 2 - 60
+
+    this.InstanceExplorePreview = new ExploreInPreview(option)
   }
 
   drawScroll() {
@@ -238,14 +386,12 @@ class Page {
 
     this.InstanceExplorePreview.render()
 
-    const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '购买' }
+    const option = { x: windowWidth / 2 - 60, y: buttonY + 40, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '进入' }
 
     new Button(option).render()
 
     const buy = () => {
-      this.buy(this.preview)
-      this.preview = null
-      this.InstanceExplorePreview.novaTime = 0
+      this.enter(this.preview)
     }
 
     addEventListener('touchstart', buy, option)
@@ -278,7 +424,7 @@ class Page {
     Imitation.state.battle = {
       self: {
         master: {
-          ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])[0],
+          ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
           buff: []
         },
         card: {
@@ -318,8 +464,14 @@ class Page {
   render() {
     drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
-    this.drawButtonHome()
-    this.drawScroll()
+    if (this.preview) {
+      this.drawPreview()
+    }
+
+    if (!this.preview) {
+      this.drawButtonHome()
+      this.drawScroll()
+    }
   }
 }
 

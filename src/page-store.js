@@ -596,7 +596,7 @@ class Page {
     this.card = []
 
     if (this.type === 'team') {
-      this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key)])
+      this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
       this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)
       this.card = this.card.sort((a, b) => {
         const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
@@ -1080,7 +1080,7 @@ class Page {
   }
 
   loadMaster(master) {
-    Imitation.state.info.team[Imitation.state.info.teamIndex].master[0].key = master.key
+    Imitation.state.info.team[Imitation.state.info.teamIndex].master.key = master.key
 
     this.init()
     Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')

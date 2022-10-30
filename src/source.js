@@ -234,7 +234,8 @@ originCard = originCard.map(i => {
 var originExplore = [
   {
     name: '故事 I',
-    description: '梦境守卫',
+    description: '可能包含: 金币0-500枚',
+    difficulty: 1,
     type: 'alltime',
     image: J_music_47a83799595b4a5b97145a6e594620310,
     boss: {
@@ -246,7 +247,7 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { money: true, key: 1, number: 1000 },
+        { money: true, key: 1, number: Math.floor(Math.random() * 500) },
       ]
     },
     AI: (self, opposite, env) => {
@@ -255,7 +256,8 @@ var originExplore = [
   },
   {
     name: '梦境 I',
-    description: '梦境守卫',
+    description: '可能包含: 小火把(等级1)0-3张, 大火把(等级1)0-3张',
+    difficulty: 2,
     type: 'alltime',
     image: J_music_47a83799595b4a5b97145a6e594620310,
     boss: {
