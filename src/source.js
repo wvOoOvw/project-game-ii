@@ -77,7 +77,7 @@ var originMaster = [
     key: 2,
     name: '火焰领主',
     image: J_music_b6f0b1c512ad42fab204d79b85d07c140,
-    HP: l => 700 + l * 50,
+    HP: l => 700 + l * 75,
     MP: l => 140 + l * 10,
     skill: [
       {
@@ -95,7 +95,7 @@ var originMaster = [
     key: 3,
     name: '炎魔',
     image: J_music_b40316005b55465b80ae4eecad8447960,
-    HP: l => 500 + l * 50,
+    HP: l => 550 + l * 75,
     MP: l => 190 + l * 10,
     skill: [
       {
