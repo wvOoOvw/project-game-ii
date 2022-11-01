@@ -653,6 +653,7 @@ class Page {
     this.InstanceMoney
 
     this.init()
+    this.compute()
   }
 
   get bannerHeight() {
@@ -934,6 +935,37 @@ class Page {
     }
 
     addEventListener('touchstart', event, option)
+  }
+
+  compute() {
+    const library = Imitation.state.info.library
+    const reward = Imitation.state.reward.value
+
+    reward.forEach(i => {
+      if (i.card) {
+        const findInLibrary = library.card.find(i_ => i_.key === i.key && i_.level === i.level)
+        if (findInLibrary) {
+          findInLibrary.number = findInLibrary.number + i.number
+        }
+        if (!findInLibrary) {
+          library.push({ key: i.key, level: i.level, number: i.number })
+        }
+      }
+      if (i.master) {
+        const findInLibrary = library.master.find(i_ => i_.key === i.key)
+        if (findInLibrary) {
+          findInLibrary.number = findInLibrary.number + i.number
+        }
+        if (!findInLibrary) {
+          library.push({ key: i.key, level: 1, number: i.number })
+        }
+        while (findInLibrary.number >= 100 * Math.pow(4, findInLibrary.level - 1)) {
+          findInLibrary.level = findInLibrary.level + 1
+        }
+      }
+    })
+
+    Imitation.state.function.saveInfo()
   }
 
   render() {

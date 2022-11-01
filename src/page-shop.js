@@ -492,35 +492,9 @@ class Page {
 
     findInMoney.number = findInMoney.number - shop.money.number
 
-    const library = Imitation.state.info.library
     const reward = shop.reward()
 
-    reward.forEach(i => {
-      if (i.card) {
-        const findInLibrary = library.card.find(i_ => i_.key === i.key && i_.level === i.level)
-        if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + i.number
-        }
-        if (!findInLibrary) {
-          library.push({ key: i.key, level: i.level, number: i.number })
-        }
-      }
-      if (i.master) {
-        const findInLibrary = library.master.find(i_ => i_.key === i.key)
-        if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + i.number
-        }
-        if (!findInLibrary) {
-          library.push({ key: i.key, level: 1, number: i.number })
-        }
-        if (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level)) {
-          findInLibrary.level = findInLibrary.level + 1
-        }
-      }
-    })
-
     Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.function.saveInfo()
     Imitation.state.reward = { value: reward, back: 'shop', title: '购买获得' }
     Imitation.state.page.current = 'transition'
     Imitation.state.page.next = 'reward'

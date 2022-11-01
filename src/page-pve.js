@@ -1230,7 +1230,8 @@ class Page {
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
 
     self.information.card.cemetery.push(card)
-    self.information.card.consume.push(card)
+    if (!self.information.card.consume[this.env.round]) self.information.card.consume[this.env.round] = []
+    self.information.card.consume[this.env.round].push(card)
 
     while (result.length) {
       const current = result.shift()
@@ -1372,37 +1373,6 @@ class Page {
     if (this.InstanceRoleOpposite.information.master.HP <= 0) {
       const reward = Imitation.state.battle.reward()
 
-      const library = Imitation.state.info.library.card
-
-      reward.forEach(i => {
-        if (i.money) {
-          const findInLibrary = Imitation.state.info.money.find(i => i.key === i.key)
-          findInLibrary.number = findInLibrary.number + i.number
-        }
-        if (i.card) {
-          const findInLibrary = library.find(i_ => i_.key === i.key)
-          if (findInLibrary) {
-            findInLibrary.number = findInLibrary.number + i.number
-          }
-          if (!findInLibrary) {
-            library.push({ key: i.key, level: i.level, number: i.number })
-          }
-        }
-        if (i.master) {
-          const findInLibrary = library.master.find(i_ => i_.key === i.key)
-          if (findInLibrary) {
-            findInLibrary.number = findInLibrary.number + i.number
-          }
-          if (!findInLibrary) {
-            library.push({ key: i.key, level: 1, number: i.number })
-          }
-          if (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level)) {
-            findInLibrary.level = findInLibrary.level + 1
-          }
-        }
-      })
-
-      Imitation.state.function.saveInfo()
       Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
       Imitation.state.reward = { value: reward, back: 'explore', title: '战斗胜利' }
       Imitation.state.page.current = 'transition'
@@ -1416,8 +1386,6 @@ class Page {
       Imitation.state.page.next = 'reward'
       return
     }
-
-
   }
 
   render() {

@@ -24,6 +24,8 @@ import J_music_16193381303a4584989ac395336fd4880 from '../media/money/music_1619
 import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/money/music_a7e9436348e6456eb47f32a75f7392370.jpeg'
 import J_music_a2835cfbbeea40d6971fd36c0a44870d0 from '../media/money/music_a2835cfbbeea40d6971fd36c0a44870d0.jpeg'
 
+const LC = (v, l) => Math.floor(v * Math.pow(1.5, (l - 1)))
+
 var originMoney = [
   {
     key: 1,
