@@ -8,7 +8,11 @@ import J_music_88c8411d068c455099456851ec84f65c0 from '../media/card/music_88c84
 import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/card/music_98a7a38ce58546a7841d18c96e41e3760.jpeg'
 import J_music_c753fd717be543eaa25f4a1aa9240d7d0 from '../media/card/music_c753fd717be543eaa25f4a1aa9240d7d0.jpeg'
 import J_music_c12894d6ce644a37a16069502d98c9b80 from '../media/card/music_c12894d6ce644a37a16069502d98c9b80.jpeg'
-import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/card/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
+import J_tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e from '../media/card/tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e.jpeg'
+import J_tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea from '../media/card/tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea.jpeg'
+import J_tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4 from '../media/card/tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4.jpeg'
+
+import J_music_ff2679ad919b47bcbb8968bd92fd8dd10 from '../media/shop/music_ff2679ad919b47bcbb8968bd92fd8dd10.jpeg'
 
 import J_music_47a83799595b4a5b97145a6e594620310 from '../media/explore/music_47a83799595b4a5b97145a6e594620310.jpeg'
 
@@ -56,14 +60,14 @@ var originMaster = [
       {
         name: '庇护 I',
         description: l => `使用卡牌时, 回复 ${l * 15} MP`,
-        function: (card, result, self, target, env) => {
+        function: (card, result, self, opposite, env) => {
           result.push({ effect: 'cure-mp', target: 'self', value: self.master.level * 15 })
         }
       },
       {
         name: '庇护 II',
         description: l => `使用卡牌时, 回复 ${l * 15} HP`,
-        function: (card, result, self, target, env) => {
+        function: (card, result, self, opposite, env) => {
           result.push({ effect: 'cure-hp', target: 'self', value: self.master.level * 15 })
         }
       },
@@ -73,13 +77,41 @@ var originMaster = [
     key: 2,
     name: '火焰领主',
     image: J_music_b6f0b1c512ad42fab204d79b85d07c140,
-    HP: l => 900 + l * 100,
-    MP: l => 190 + l * 10,
+    HP: l => 700 + l * 50,
+    MP: l => 140 + l * 10,
     skill: [
       {
         name: '欲火',
         description: l => `使用火系卡牌时, 额外造成 ${l * 15} 伤害`,
-        function: (card, result, self, target, env) => {
+        function: (card, result, self, opposite, env) => {
+          if (card.race === '火') {
+            result.push({ effect: 'hit', target: 'opposite', value: -self.master.level * 15 })
+          }
+        }
+      }
+    ],
+  },
+  {
+    key: 3,
+    name: '炎魔',
+    image: J_music_b40316005b55465b80ae4eecad8447960,
+    HP: l => 500 + l * 50,
+    MP: l => 190 + l * 10,
+    skill: [
+      {
+        name: '火焰控制',
+        description: l => `使用火系卡牌时, 若目标的 '燃' 层数大于等于5, 从牌库抽取一张卡, 并消耗目标 1 层 '燃'`,
+        function: (card, result, self, opposite, env) => {
+          if (card.race === '火' && opposite.master.buff.filer(i => i === '燃')) {
+            result.push({ effect: 'pump-store-positive', target: 'self', value: 1 })
+            result.push({ effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 })
+          }
+        }
+      },
+      {
+        name: '欲火',
+        description: l => `使用火系卡牌时, 额外造成 ${l * 15} 伤害`,
+        function: (card, result, self, opposite, env) => {
           if (card.race === '火') {
             result.push({ effect: 'hit', target: 'opposite', value: -self.master.level * 15 })
           }
@@ -179,7 +211,7 @@ var originCard = [
     race: '火',
     limit: 3,
     image: J_music_98a7a38ce58546a7841d18c96e41e3760,
-    description: l => `消耗 20 MP, 造成 ${l * 30 + 120} 伤害, 并消耗目标 1 层'燃'`,
+    description: l => `消耗 20 MP, 造成 ${l * 30 + 120} 伤害, 并消耗目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
       if (self.MP < 20) return [{ error: 'MP 不足' }]
       if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标'燃'印记不足` }]
@@ -220,6 +252,42 @@ var originCard = [
         { animation: 'red-hit', target: 'self' },
         { effect: 'cure-hp', target: 'self', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * (card.level * 20 + 30) },
       ]
+    }
+  },
+  {
+    key: 8,
+    name: '火球术',
+    type: '进攻卡',
+    race: '火',
+    limit: 3,
+    image: J_tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
+    description: l => `造成 ${l * 30 + 120} 伤害`,
+    function: (card, self, opposite, round) => {
+      return [
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'hit', target: 'opposite', value: card.level * 30 + 120 },
+      ]
+    }
+  },
+  {
+    key: 9,
+    name: '火球萌生',
+    type: '魔法卡',
+    race: '火',
+    limit: 3,
+    image: J_tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
+    description: l => `消耗 20 MP, 造成 ${l * 10 + 40} 伤害, 从牌库抽取一张 '火球术'`,
+    function: (card, self, opposite, round) => {
+      const rt = [
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'hit', target: 'opposite', value: card.level * 10 + 40 },
+      ]
+
+      const cardInStore = self.card.store.find(i => i.key === 8)
+
+      if (cardInStore) rt.push({ effect: 'pump-store-point', target: 'self', value: [cardInStore] })
+
+      return rt
     }
   },
 ]

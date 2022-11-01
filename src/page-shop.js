@@ -243,6 +243,8 @@ class ShopInPreview {
 
     drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
 
+    ctx.globalAlpha = this.novaTime
+
     this.drawTitle()
     this.drawName()
     this.drawMoney()
