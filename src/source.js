@@ -172,12 +172,12 @@ var originCard = [
     image: J_music_4d7f219082ba4d86b1543c982d1156560,
     description: l => `消耗 500 MP, 造成目标 '燃' 层数 * ${LevelRise(50, l)} 伤害`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 500) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 500) return [{ error: 'MP 不足' }]
 
       return [
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: 500 },
-        { effect: 'cost-hp', target: 'opposite', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * LevelRise(50, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: opposite.master.buff.filter(i => i === '燃').length * LevelRise(50, card.level) },
       ]
     }
   },
@@ -190,7 +190,7 @@ var originCard = [
     image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
     description: l => `消耗 250 MP, 从牌库以及墓地抽取 1 张除自身外的火系卡牌`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 250) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 250) return [{ error: 'MP 不足' }]
 
       const rt = [
         { animation: 'red-hit', target: 'self' },
@@ -215,7 +215,7 @@ var originCard = [
     image: J_music_98a7a38ce58546a7841d18c96e41e3760,
     description: l => `消耗 200 MP, 造成 ${LevelRise(200, l)} 伤害, 并消耗目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 200) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 200) return [{ error: 'MP 不足' }]
       if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标 '燃' 不足` }]
 
       return [
@@ -250,12 +250,13 @@ var originCard = [
     image: J_music_c12894d6ce644a37a16069502d98c9b80,
     description: l => `消耗 200 MP, 吸收对手的所有 '燃' , 每有一层回复自身 ${LevelRise(100, l)} HP`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 200) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 200) return [{ error: 'MP 不足' }]
 
       return [
         { animation: 'red-hit', target: 'self' },
         { effect: 'cost-mp', target: 'self', value: 200 },
-        { effect: 'cure-hp', target: 'self', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * LevelRise(100, card.level) },
+        { effect: 'cost-hp', target: 'self', value: opposite.master.buff.filter(i => i === '燃').length * LevelRise(100, card.level) },
+        { effect: 'cost-buff', target: 'opposite', value: '燃', number: opposite.master.buff.filter(i => i === '燃').length }
       ]
     }
   },
@@ -268,7 +269,7 @@ var originCard = [
     image: J_tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
     description: l => `消耗 500 MP, 造成 ${LevelRise(150, l)} 伤害`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 500) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 500) return [{ error: 'MP 不足' }]
 
       return [
         { animation: 'red-hit', target: 'opposite' },
@@ -286,7 +287,7 @@ var originCard = [
     image: J_tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
     description: l => `消耗 250 MP, 造成 ${LevelRise(50, l)} 伤害, 从牌库抽取一张 '火球术'`,
     function: (card, self, opposite, round) => {
-      if (self.MP < 250) return [{ error: 'MP 不足' }]
+      if (self.master.MP < 250) return [{ error: 'MP 不足' }]
 
       const rt = [
         { animation: 'red-hit', target: 'opposite' },
