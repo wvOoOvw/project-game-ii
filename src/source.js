@@ -1,6 +1,5 @@
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 
-
 import J_music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/card/music_2fec7f9242b44b64a914f7cc19d25abe0.jpg'
 import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/card/music_4d7f219082ba4d86b1543c982d1156560.jpg'
 import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/card/music_6e9e96c75cf04411baa154b1d6a3c7360.jpg'
@@ -20,9 +19,7 @@ import J_music_1107cbd537144759999fbd7dc0fdb6650 from '../media/master/music_110
 import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/master/music_b6f0b1c512ad42fab204d79b85d07c140.jpg'
 import J_music_b40316005b55465b80ae4eecad8447960 from '../media/master/music_b40316005b55465b80ae4eecad8447960.jpg'
 
-import J_music_16193381303a4584989ac395336fd4880 from '../media/money/music_16193381303a4584989ac395336fd4880.jpg'
-import J_music_a7e9436348e6456eb47f32a75f7392370 from '../media/money/music_a7e9436348e6456eb47f32a75f7392370.jpg'
-import J_music_a2835cfbbeea40d6971fd36c0a44870d0 from '../media/money/music_a2835cfbbeea40d6971fd36c0a44870d0.jpg'
+import J_music_5c3cdbd72894434e891ce792de441feb0 from '../media/money/music_5c3cdbd72894434e891ce792de441feb0.jpg'
 
 const LevelRise = (v, l) => Math.floor(v * Math.pow(1.2, (l - 1)))
 
@@ -30,17 +27,17 @@ var originMoney = [
   {
     key: 1,
     name: '金币',
-    image: J_music_16193381303a4584989ac395336fd4880,
+    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
   {
     key: 2,
     name: '钻石',
-    image: J_music_a7e9436348e6456eb47f32a75f7392370,
+    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
   {
     key: 3,
     name: '碎片',
-    image: J_music_a2835cfbbeea40d6971fd36c0a44870d0,
+    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
 ]
 
@@ -313,7 +310,7 @@ originCard = originCard.map(i => {
 var originExplore = [
   {
     name: '故事 I',
-    description: '可能包含: 金币0-500枚',
+    description: '可能包含: 金币 0 - 500 枚',
     difficulty: 1,
     type: 'alltime',
     image: J_music_47a83799595b4a5b97145a6e594620310,

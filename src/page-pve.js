@@ -4,11 +4,11 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Button } from './ui-button'
 import { Scroll } from './ui-scroll'
 
-import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpg'
+import ImageSource from '../media/background/music_3fc1533a1a964121b783582911d683330.jpg'
+
+const ImageBackground = createImage(ImageSource)
 
 const ctx = canvas.getContext('2d')
-
-const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
@@ -463,8 +463,6 @@ class Modal {
   render() {
     this.InstanceScroll.scrollY = this.bannerHeight + this.cardHeight - this.InstanceScroll.height + 12
 
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-
     if (this.preview) {
       this.drawPreview()
     }
@@ -504,7 +502,8 @@ class CardInOpposite {
 
     ctx.clip()
 
-    drawImage(ImageBackground, { x: x, y: y, width: width, height: height })
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fill()
 
     ctx.restore()
   }
@@ -1154,10 +1153,6 @@ class Page {
     this.InstanceModal.render()
   }
 
-  drawBackground() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
-  }
-
   drawButtonHome() {
     const option = {
       x: 12,
@@ -1384,7 +1379,7 @@ class Page {
   }
 
   render() {
-    this.drawBackground()
+    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     if (this.modal) {
       this.drawModal()

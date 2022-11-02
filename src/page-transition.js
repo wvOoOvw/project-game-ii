@@ -1,11 +1,11 @@
 import { createImage, numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
-import J_music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/background/music_8abd849fe01a4fb68dceacc6018190fc0.jpg'
+import ImageSource from '../media/background/music_cacbcd0fe27247e69c12d67f3ea1673e0.jpg'
+
+const ImageBackground = createImage(ImageSource)
 
 const ctx = canvas.getContext('2d')
-
-const ImageBackground = createImage(J_music_8abd849fe01a4fb68dceacc6018190fc0)
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight

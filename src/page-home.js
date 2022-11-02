@@ -3,11 +3,9 @@ import { drawImage } from './utils-canvas'
 
 import { Button } from './ui-button'
 
-import J_music_56280e428411459c823ce172d97da20c0 from '../media/background/music_56280e428411459c823ce172d97da20c0.jpg'
+import ImageSource from '../media/background/music_56280e428411459c823ce172d97da20c0.jpg'
 
-const ctx = canvas.getContext('2d')
-
-const ImageBackground = createImage(J_music_56280e428411459c823ce172d97da20c0)
+const ImageBackground = createImage(ImageSource)
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight

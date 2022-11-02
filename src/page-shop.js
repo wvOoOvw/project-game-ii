@@ -4,11 +4,11 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 
-import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpg'
+import ImageSource from '../media/background/music_3fc1533a1a964121b783582911d683330.jpg'
+
+const ImageBackground = createImage(ImageSource)
 
 const ctx = canvas.getContext('2d')
-
-const ImageBackground = createImage(J_music_1c31bcc267a545ef971109512053f3e50)
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
