@@ -959,7 +959,7 @@ class Page {
         if (!findInLibrary) {
           library.push({ key: i.key, level: 1, number: i.number })
         }
-        while (findInLibrary.number >= 100 * Math.pow(4, findInLibrary.level - 1)) {
+        while (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level - 1)) {
           findInLibrary.level = findInLibrary.level + 1
         }
       }

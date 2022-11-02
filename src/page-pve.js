@@ -14,7 +14,7 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class CardInList {
+class ModalCardInList {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -122,7 +122,7 @@ class CardInList {
   }
 }
 
-class CardInPreview {
+class ModalCardInPreview {
   constructor(props) {
     this.x = props.x
     this.y = props.y
@@ -349,7 +349,7 @@ class Modal {
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
       option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
 
-      return new CardInList(option)
+      return new ModalCardInList(option)
     })
   }
 
@@ -360,7 +360,7 @@ class Modal {
     option.x = windowWidth * 0.15
     option.y = (windowHeight - option.width * 1.5) / 2 - 60
 
-    this.InstanceCardPreview = new CardInPreview(option)
+    this.InstanceCardPreview = new ModalCardInPreview(option)
   }
 
   drawScroll() {

@@ -454,7 +454,7 @@ class MasterInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, levelText(master.level), `${master.number / Math.pow(4, master.level - 1)}%`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([master.name, levelText(master.level), `${master.number / Math.pow(3, master.level - 1)}%`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawHP() {
@@ -1033,12 +1033,12 @@ class Page {
     const findInLibraryUpper = library.find(i_ => i_.key === card.key && i_.level === card.level + 1)
     const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
 
-    if (findInLibrary.number < 4) {
+    if (findInLibrary.number < 3) {
       Imitation.state.function.message('卡牌数量不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    findInLibrary.number = findInLibrary.number - 4
+    findInLibrary.number = findInLibrary.number - 3
 
     if (findInLibrary.number === 0) {
       const index = library.indexOf(findInLibrary)

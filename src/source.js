@@ -63,14 +63,14 @@ var originMaster = [
         name: '庇护 I',
         description: l => `使用卡牌时, 回复 5% HP`,
         function: (card, result, self, opposite, env) => {
-          result.push({ effect: 'cure-hp', target: 'self', value: Math.floor(self.HP_ * 0.05) })
+          result.push({ effect: 'cure-hp', target: 'self', value: Math.floor(self.master.HP_ * 0.05) })
         }
       },
       {
         name: '庇护 II',
         description: l => `使用卡牌时, 回复 5% MP`,
         function: (card, result, self, opposite, env) => {
-          result.push({ effect: 'cure-mp', target: 'self', value: Math.floor(self.MP_ * 0.05) })
+          result.push({ effect: 'cure-mp', target: 'self', value: Math.floor(self.master.MP_ * 0.05) })
         }
       },
     ],
@@ -244,14 +244,17 @@ var originCard = [
   {
     key: 7,
     name: '火焰聚能',
-    type: '治疗卡',
+    type: '魔法卡',
     race: '火',
     limit: 3,
     image: J_music_c12894d6ce644a37a16069502d98c9b80,
-    description: l => `吸收对手的所有'燃', 每有一层回复自身 ${LevelRise(100, l)} HP`,
+    description: l => `消耗 200 MP, 吸收对手的所有 '燃' , 每有一层回复自身 ${LevelRise(100, l)} HP`,
     function: (card, self, opposite, round) => {
+      if (self.MP < 200) return [{ error: 'MP 不足' }]
+
       return [
         { animation: 'red-hit', target: 'self' },
+        { effect: 'cost-mp', target: 'self', value: 200 },
         { effect: 'cure-hp', target: 'self', value: opposite.master.buff.reduce((t, i) => i === '燃' ? t + 1 : t, 0) * LevelRise(100, card.level) },
       ]
     }
