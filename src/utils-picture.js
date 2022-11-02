@@ -24,7 +24,6 @@ import music_02f36cde2cb547ae99936af6f53032110 from '../media/image-s/music_02f3
 import music_1107cbd537144759999fbd7dc0fdb6650 from '../media/image-s/music_1107cbd537144759999fbd7dc0fdb6650.jpg'
 import music_16193381303a4584989ac395336fd4880 from '../media/image-s/music_16193381303a4584989ac395336fd4880.jpg'
 import music_1c31bcc267a545ef971109512053f3e50 from '../media/image-s/music_1c31bcc267a545ef971109512053f3e50.jpg'
-import music_47a83799595b4a5b97145a6e594620310 from '../media/image-s/music_47a83799595b4a5b97145a6e594620310.jpg'
 import music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/image-s/music_6e9e96c75cf04411baa154b1d6a3c7360.jpg'
 import music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/image-s/music_8abd849fe01a4fb68dceacc6018190fc0.jpg'
 import music_a2835cfbbeea40d6971fd36c0a44870d0 from '../media/image-s/music_a2835cfbbeea40d6971fd36c0a44870d0.jpg'
@@ -103,7 +102,7 @@ class Picture {
       'master-3': music_16193381303a4584989ac395336fd4880,
 
       'card-1': music_1c31bcc267a545ef971109512053f3e50,
-      'card-2': music_47a83799595b4a5b97145a6e594620310,
+      'card-2': tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
       'card-3': tiku_1b2d4a597dd55f78b934645604ac71d47adc47ffcea50103eefd7666e2756a52,
       'card-4': music_6e9e96c75cf04411baa154b1d6a3c7360,
       'card-5': music_a7e9436348e6456eb47f32a75f7392370,
