@@ -334,7 +334,7 @@ var originExplore = [
   },
   {
     name: '梦境 I',
-    description: '可能包含: 小火把(等级1)0-3张, 大火把(等级1)0-3张',
+    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
     difficulty: 2,
     type: 'alltime',
     image: J_music_47a83799595b4a5b97145a6e594620310,
@@ -348,8 +348,8 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { card: true, key: 1, level: 1, number: Math.floor(Math.random() * 3) },
-        { card: true, key: 2, level: 1, number: Math.floor(Math.random() * 3) },
+        { card: true, key: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 2, exp: Math.floor(Math.random() * 20) },
       ]
     },
     AI: (self, opposite, env) => {
@@ -368,7 +368,7 @@ originExplore = originExplore.map(i => {
 var originShop = [
   {
     name: '火系基础礼盒I',
-    description: '可能包含: 小火把(等级1)2-5张, 大火把(等级1)2-5张',
+    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
     type: 'alltime',
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     money: {
@@ -377,15 +377,16 @@ var originShop = [
     },
     reward: () => {
       return [
-        { card: true, key: 1, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { card: true, key: 2, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { card: true, key: 4, level: 1, number: Math.floor(Math.random() * 4 + 2) },
+        { card: true, key: 1, level: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 2, level: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 4, level: 1, exp: Math.floor(Math.random() * 20) },
+        
       ]
     },
   },
   {
     name: '火系基础礼盒II',
-    description: '可能包含: 点燃(等级1)2-5张, 引燃(等级1)2-5张, 火焰领主经验50-100',
+    description: '可能包含: 点燃 Exp 0 - 20, 引燃 Exp 0 - 20, 火焰领主 Exp 50-100',
     type: 'alltime',
     image: J_music_ff2679ad919b47bcbb8968bd92fd8dd10,
     money: {
@@ -394,9 +395,9 @@ var originShop = [
     },
     reward: () => {
       return [
-        { card: true, key: 3, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { card: true, key: 5, level: 1, number: Math.floor(Math.random() * 4 + 2) },
-        { master: true, key: 2, number: Math.floor(Math.random() * 50 + 50) },
+        { card: true, key: 3, level: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 5, level: 1, exp: Math.floor(Math.random() * 20) },
+        { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
       ]
     },
   },

@@ -76,7 +76,7 @@ class MoneyInList {
     ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([money.name, money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(money.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -165,10 +165,6 @@ class CardInList {
     const y_ = y + height - height_ - width * 0.05
     const radius_ = width * 0.03
 
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -180,7 +176,7 @@ class CardInList {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -255,10 +251,6 @@ class CardInPreview {
     const y_ = y + height - height_ - width * 0.05
     const radius_ = width * 0.03
 
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -270,7 +262,7 @@ class CardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([card.name, card.exp].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRace() {
@@ -448,7 +440,7 @@ class MasterInList {
     ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, levelText(master.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(master.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -536,7 +528,7 @@ class MasterInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, `x${master.number}`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([master.name, master.exp].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawHP() {
@@ -681,7 +673,7 @@ class Page {
     this.money = []
 
     if (this.type === 'card') {
-      this.card = parseCard(Imitation.state.reward.value.filter(i => i.card), true)
+      this.card = parseCard(Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
     }
     if (this.type === 'master') {
       this.master = parseMaster(Imitation.state.reward.value.filter(i => i.master).map(i => ({ ...i, level: 1 })))
@@ -943,23 +935,28 @@ class Page {
 
     reward.forEach(i => {
       if (i.card) {
-        const findInLibrary = library.card.find(i_ => i_.key === i.key && i_.level === i.level)
+        const findInLibrary = library.card.find(i_ => i_.key === i.key)
         if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + i.number
+          findInLibrary.exp = findInLibrary.exp + i.exp
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: i.level, number: i.number })
+          library.push({ key: i.key, level: 1, exp: i.exp })
+        }
+        while (findInLibrary.exp >= 100 * Math.pow(2, findInLibrary.level - 1)) {
+          findInLibrary.exp = findInLibrary.exp - 100 * Math.pow(2, findInLibrary.level - 1)
+          findInLibrary.level = findInLibrary.level + 1
         }
       }
       if (i.master) {
         const findInLibrary = library.master.find(i_ => i_.key === i.key)
         if (findInLibrary) {
-          findInLibrary.number = findInLibrary.number + i.number
+          findInLibrary.exp = findInLibrary.exp + i.exp
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: 1, number: i.number })
+          library.push({ key: i.key, level: 1, exp: i.exp })
         }
-        while (findInLibrary.number >= 100 * Math.pow(3, findInLibrary.level - 1)) {
+        while (findInLibrary.exp >= 100 * Math.pow(2, findInLibrary.level - 1)) {
+          findInLibrary.exp = findInLibrary.exp - 100 * Math.pow(2, findInLibrary.level - 1)
           findInLibrary.level = findInLibrary.level + 1
         }
       }

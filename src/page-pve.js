@@ -81,10 +81,6 @@ class ModalCardInList {
     const y_ = y + height - height_ - width * 0.05
     const radius_ = width * 0.03
 
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -96,7 +92,7 @@ class ModalCardInList {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([card.name, levelText(card.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -171,10 +167,6 @@ class ModalCardInPreview {
     const y_ = y + height - height_ - width * 0.05
     const radius_ = width * 0.03
 
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -186,7 +178,7 @@ class ModalCardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([card.name, levelText(card.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRace() {

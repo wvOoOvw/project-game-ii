@@ -444,8 +444,8 @@ class Page {
           buff: []
         },
         card: {
-          team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true),
-          store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)),
+          team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+          store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
           hand: [],
           cemetery: [],
           consume: []
@@ -457,8 +457,8 @@ class Page {
           buff: []
         },
         card: {
-          team: parseCard(explore.boss.card, true),
-          store: setArrayRandom(parseCard(explore.boss.card, true)),
+          team: parseCard(explore.boss.card),
+          store: setArrayRandom(parseCard(explore.boss.card)),
           hand: [],
           cemetery: [],
           consume: []

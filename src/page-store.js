@@ -83,8 +83,6 @@ class CardInList {
 
     const text = [card.name, levelText(card.level)]
 
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -171,10 +169,6 @@ class CardInPreview {
     const y_ = y + height - height_ - width * 0.05
     const radius_ = width * 0.03
 
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
@@ -186,7 +180,7 @@ class CardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([card.name, levelText(card.level), `${card.exp / Math.pow(2, card.level - 1)}%`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRace() {
@@ -454,7 +448,7 @@ class MasterInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, levelText(master.level), `${master.number / Math.pow(3, master.level - 1)}%`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([master.name, levelText(master.level), `${master.exp / Math.pow(2, master.level - 1)}%`].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawHP() {
@@ -594,7 +588,7 @@ class Page {
 
     if (this.type === 'team') {
       this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
-      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)
+      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
       this.card = this.card.sort((a, b) => {
         const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
         const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
@@ -907,29 +901,6 @@ class Page {
       addEventListener('touchstart', loadCard, option)
 
       closeCover.push(option)
-
-      const option_ = {
-        y: buttonY + 84,
-        width: 108,
-        height: 36,
-        radius: 8,
-        font: `900 12px ${window.fontFamily}`,
-        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        text: '合成'
-      }
-      option_.x = (windowWidth - option_.width) / 2
-
-      new Button(option_).render()
-
-      const composeCard = () => {
-        this.composeCard(this.preview)
-        this.preview = null
-        this.InstanceCardPreview.novaTime = 0
-      }
-
-      addEventListener('touchstart', composeCard, option_)
-
-      closeCover.push(option_)
     }
 
     if (this.type === 'library-master') {
@@ -1025,56 +996,11 @@ class Page {
     addEventListener('touchstart', event, option)
   }
 
-  composeCard(card) {
-    const library = Imitation.state.info.library.card
-    const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
-
-    const findInLibrary = library.find(i_ => i_.key === card.key && i_.level === card.level)
-    const findInLibraryUpper = library.find(i_ => i_.key === card.key && i_.level === card.level + 1)
-    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
-
-    if (findInLibrary.number < 3) {
-      Imitation.state.function.message('卡牌数量不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
-      return
-    }
-
-    findInLibrary.number = findInLibrary.number - 3
-
-    if (findInLibrary.number === 0) {
-      const index = library.indexOf(findInLibrary)
-      library.splice(index, 1)
-    }
-
-    if (findInLibraryUpper) {
-      findInLibraryUpper.number = findInLibraryUpper.number + 1
-    }
-
-    if (!findInLibraryUpper) {
-      library.push({ key: card.key, level: card.level + 1, number: 1 })
-    }
-
-    if (findInTeam) {
-      if (findInTeam.number > findInLibrary.number) {
-        findInTeam.number = findInLibrary.number
-      }
-
-      if (findInTeam.number === 0) {
-        const index = team.indexOf(findInTeam)
-        team.splice(index, 1)
-      }
-    }
-
-    this.init()
-    Imitation.state.function.message('合成成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.function.saveInfo()
-  }
-
   loadCard(card) {
     const library = Imitation.state.info.library.card
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
-    const findInLibrary = library.find(i_ => i_.key === card.key && i_.level === card.level)
-    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
+    const findInTeam = team.find(i_ => i_.key === card.key)
 
     if (team.reduce((t, i) => t + i.number, 0) > 40) {
       Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
@@ -1083,11 +1009,6 @@ class Page {
 
     if (team.filter(i => i.key === card.key).reduce((t, i) => t + i.number, 0) >= card.limit) {
       Imitation.state.function.message('超出卡牌数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
-      return
-    }
-
-    if (findInTeam && findInTeam.number === findInLibrary.number) {
-      Imitation.state.function.message('卡组数量不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -1108,7 +1029,7 @@ class Page {
   unloadCard(card) {
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
-    const findInTeam = team.find(i_ => i_.key === card.key && i_.level === card.level)
+    const findInTeam = team.find(i_ => i_.key === card.key)
 
     findInTeam.number = findInTeam.number - 1
 

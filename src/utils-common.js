@@ -1,18 +1,20 @@
 import { originMoney, originMaster, originCard, originBoss, originExplore } from './source'
 
-const parseCard = (array, numberFlat) => {
+const parseCard = (array) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
 
     const origin = originCard.find(i_ => i.key === i_.key)
 
-    if (numberFlat) {
-      const item = { ...origin, ...i }
+    const item = { ...origin, ...i }
+
+    if (!item.number) {
+      result_.push({ ...origin, ...i })
+    }
+
+    if (item.number) {
       delete item.number
       result_.push(...new Array(i.number).fill().map(i => ({ ...item })))
-    }
-    if (!numberFlat) {
-      result_.push({ ...origin, ...i })
     }
 
     return result_

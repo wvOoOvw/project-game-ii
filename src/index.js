@@ -70,7 +70,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'home',
+        current: 'pve',
         next: '',
         map: {
           'transition': PageTransition,
@@ -114,13 +114,13 @@ class Main {
     if (!info) {
       const responseHTTP = {
         library: {
-          master: originMaster.map(i => ({ key: i.key, level: 1, number: 0 })),
-          card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
+          master: originMaster.map(i => ({ key: i.key, level: 1, exp: 0 })),
+          card: originCard.map(i => ({ key: i.key, level: 1, exp: 0 }))
         },
         team: [
           {
             master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key, level: 1, number: i.limit }))
+            card: originCard.map(i => ({ key: i.key, number: i.limit }))
           },
           {
             master: { key: 1 },
@@ -155,8 +155,8 @@ class Main {
             buff: []
           },
           card: {
-            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true),
-            store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card, true)),
+            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+            store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
             hand: [],
             cemetery: [],
             consume: []
@@ -168,8 +168,8 @@ class Main {
             buff: []
           },
           card: {
-            team: parseCard(originExplore[0].boss.card, true),
-            store: setArrayRandom(parseCard(originExplore[0].boss.card, true)),
+            team: parseCard(originExplore[0].boss.card),
+            store: setArrayRandom(parseCard(originExplore[0].boss.card)),
             hand: [],
             cemetery: [],
             consume: []
