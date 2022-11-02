@@ -70,7 +70,7 @@ class Main {
   ImitationInit() {
     Imitation.state = {
       page: {
-        current: 'pve',
+        current: 'store',
         next: '',
         map: {
           'transition': PageTransition,

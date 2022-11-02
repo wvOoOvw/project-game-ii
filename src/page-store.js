@@ -806,111 +806,72 @@ class Page {
 
     const buttonY = this.InstanceMasterPreview.y + this.InstanceMasterPreview.height
 
-    if (this.type === 'team') {
-      if (this.InstanceCardList.find(i => i.card === this.preview)) {
-        this.InstanceCardPreview.card = this.preview
+    if (this.InstanceCardList.find(i => i.card === this.preview)) {
+      this.InstanceCardPreview.card = this.preview
+      this.InstanceCardPreview.render()
 
-        this.InstanceCardPreview.render()
+      const count = Imitation.state.info.team[Imitation.state.info.teamIndex].card.find(i => i.key === this.preview.key) ? Imitation.state.info.team[Imitation.state.info.teamIndex].card.find(i => i.key === this.preview.key).number : 0
 
+      {
         const option = {
           y: buttonY + 24,
-          width: 108,
+          width: 36,
+          height: 36,
+          radius: 18,
+          font: `900 12px ${window.fontFamily}`,
+          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        }
+        option.text = count
+        option.x = (windowWidth - option.width) / 2
+
+        new Button(option).render()
+      }
+
+      {
+        const option = {
+          y: buttonY + 24,
+          width: 90,
           height: 36,
           radius: 8,
           font: `900 12px ${window.fontFamily}`,
           fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: '卸载'
         }
-        option.x = (windowWidth - option.width) / 2
+        option.text = '装载'
+        option.x = (windowWidth - option.width) / 2 - (option.width / 2 + 36)
 
         new Button(option).render()
 
-        const unloadCard = () => {
-          this.unloadCard(this.preview)
-          this.preview = null
-          this.InstanceCardPreview.novaTime = 0
-        }
-
-        addEventListener('touchstart', unloadCard, option)
+        addEventListener('touchstart', () => this.loadCard(this.preview), option)
 
         closeCover.push(option)
       }
 
-      if (this.InstanceMasterList.find(i => i.master === this.preview)) {
-        this.InstanceMasterPreview.master = this.preview
+      {
+        const option = {
+          y: buttonY + 24,
+          width: 90,
+          height: 36,
+          radius: 8,
+          font: `900 12px ${window.fontFamily}`,
+          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        }
+        option.text = '卸载'
+        option.x = (windowWidth - option.width) / 2 + (option.width / 2 + 36)
 
-        this.InstanceMasterPreview.render()
+        new Button(option).render()
 
-        this.preview.skill.forEach((i, index) => {
-          const option = {
-            x: windowWidth / 2 - 40,
-            y: buttonY + 12,
-            width: 72,
-            height: 30,
-            radius: 8,
-            font: `900 10px ${window.fontFamily}`,
-            text: i.name
-          }
+        addEventListener('touchstart', () => this.unloadCard(this.preview), option)
 
-          option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-          const maxIndex = this.preview.skill.length
-          const centerIndex = maxIndex / 2 - 0.5
-
-          const diff = (index - centerIndex) * option.width * 1.1
-
-          option.x = option.x + diff
-
-          new Button(option).render()
-
-          const event = (e) => {
-            this.InstanceMasterPreview.skillIndex = index
-          }
-
-          addEventListener('touchstart', event, option)
-
-          closeCover.push(option)
-        })
+        closeCover.push(option)
       }
     }
 
-    if (this.type === 'library-card') {
-      this.InstanceCardPreview.card = this.preview
-
-      this.InstanceCardPreview.render()
-
-      const option = {
-        y: buttonY + 24,
-        width: 108,
-        height: 36,
-        radius: 8,
-        font: `900 12px ${window.fontFamily}`,
-        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        text: '装载'
-      }
-      option.x = (windowWidth - option.width) / 2
-
-      new Button(option).render()
-
-      const loadCard = () => {
-        this.loadCard(this.preview)
-        this.preview = null
-        this.InstanceCardPreview.novaTime = 0
-      }
-
-      addEventListener('touchstart', loadCard, option)
-
-      closeCover.push(option)
-    }
-
-    if (this.type === 'library-master') {
+    if (this.InstanceMasterList.find(i => i.master === this.preview)) {
       this.InstanceMasterPreview.master = this.preview
-
       this.InstanceMasterPreview.render()
 
       this.preview.skill.forEach((i, index) => {
         const option = {
-          x: windowWidth / 2 - 40,
           y: buttonY + 12,
           width: 72,
           height: 30,
@@ -918,49 +879,42 @@ class Page {
           font: `900 10px ${window.fontFamily}`,
           text: i.name
         }
+        option.x = (windowWidth - option.width) / 2
 
         option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5
 
-        const diff = (index - centerIndex) * option.width * 1.1
+        const diff = (index - centerIndex) * (option.width + 12)
 
         option.x = option.x + diff
 
         new Button(option).render()
 
-        const event = (e) => {
-          this.InstanceMasterPreview.skillIndex = index
-        }
-
-        addEventListener('touchstart', event, option)
+        addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, option)
 
         closeCover.push(option)
+
+        if (this.type === 'library-master') {
+          const option = {
+            y: buttonY + 66,
+            width: 90,
+            height: 36,
+            radius: 8,
+            font: `900 12px ${window.fontFamily}`,
+            fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+            text: '装载'
+          }
+          option.x = (windowWidth - option.width) / 2
+
+          new Button(option).render()
+
+          addEventListener('touchstart', () => this.loadMaster(this.preview), option)
+
+          closeCover.push(option)
+        }
       })
-
-      const option = {
-        y: buttonY + 66,
-        width: 108,
-        height: 36,
-        radius: 8,
-        font: `900 12px ${window.fontFamily}`,
-        fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        text: '装载'
-      }
-      option.x = (windowWidth - option.width) / 2
-
-      new Button(option).render()
-
-      const loadMaster = () => {
-        this.loadMaster(this.preview)
-        this.preview = null
-        this.InstanceMasterPreview.novaTime = 0
-      }
-
-      addEventListener('touchstart', loadMaster, option)
-
-      closeCover.push(option)
     }
 
     const close = (e) => {
@@ -997,7 +951,6 @@ class Page {
   }
 
   loadCard(card) {
-    const library = Imitation.state.info.library.card
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
@@ -1021,7 +974,7 @@ class Page {
     }
 
     this.init()
-
+    this.preview = null
     Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
@@ -1031,6 +984,11 @@ class Page {
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
+    if (!findInTeam) {
+      Imitation.state.function.message('未装载当前卡牌', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      return
+    }
+
     findInTeam.number = findInTeam.number - 1
 
     if (findInTeam.number === 0) {
@@ -1039,6 +997,7 @@ class Page {
     }
 
     this.init()
+    this.preview = null
     Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
@@ -1047,6 +1006,7 @@ class Page {
     Imitation.state.info.team[Imitation.state.info.teamIndex].master.key = master.key
 
     this.init()
+    this.preview = null
     Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
     Imitation.state.function.saveInfo()
   }
