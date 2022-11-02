@@ -22,4 +22,6 @@ class Sound {
   }
 }
 
-export { Sound }
+const SoundInstance = new Sound()
+
+export { SoundInstance as Sound }

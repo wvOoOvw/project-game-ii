@@ -3,9 +3,7 @@ import { drawImage } from './utils-canvas'
 
 import { Button } from './ui-button'
 
-import ImageSource from '../media/background/music_56280e428411459c823ce172d97da20c0.jpg'
-
-const ImageBackground = createImage(ImageSource)
+import { Image } from './utils-image'
 
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
@@ -55,7 +53,7 @@ class Page {
   }
 
   render() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Image.get('background-home'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     this.drawButtonExplore()
     this.drawButtonStore()

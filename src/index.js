@@ -12,8 +12,9 @@ import PageShop from './page-shop'
 import PageReward from './page-reward'
 
 import { Message } from './ui-message'
+import { Animation } from './ui-animation'
+
 import { Sound } from './utils-sound'
-import { Animation } from './utils-animation'
 
 import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, numberFix } from './utils-common'
 
@@ -29,7 +30,6 @@ class Main {
     this.instance
 
     this.instanceMessage = new Message()
-    this.instanceSound = new Sound()
     this.instanceAnimation = new Animation()
 
     this.ImitationInit()
@@ -96,7 +96,7 @@ class Main {
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
         message: (...props) => this.instanceMessage.send(...props),
-        sound: (...props) => this.instanceSound.play(...props),
+        sound: (...props) => Sound.play(...props),
         animation: (...props) => this.instanceAnimation.play(...props),
         saveInfo: () => {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))

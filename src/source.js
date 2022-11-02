@@ -309,6 +309,7 @@ originCard = originCard.map(i => {
 
 var originExplore = [
   {
+    key: 1,
     name: '故事 I',
     description: '可能包含: 金币 0 - 500 枚',
     difficulty: 1,
@@ -331,6 +332,7 @@ var originExplore = [
     }
   },
   {
+    key: 2,
     name: '梦境 I',
     description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
     difficulty: 2,
@@ -365,6 +367,7 @@ originExplore = originExplore.map(i => {
 
 var originShop = [
   {
+    key: 1,
     name: '火系基础礼盒I',
     description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
     type: 'alltime',
@@ -383,6 +386,7 @@ var originShop = [
     },
   },
   {
+    key: 2,
     name: '火系基础礼盒II',
     description: '可能包含: 点燃 Exp 0 - 20, 引燃 Exp 0 - 20, 火焰领主 Exp 50-100',
     type: 'alltime',

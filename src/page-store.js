@@ -4,9 +4,7 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 
-import ImageSource from '../media/background/music_3fc1533a1a964121b783582911d683330.jpg'
-
-const ImageBackground = createImage(ImageSource)
+import { Image } from './utils-image'
 
 const ctx = canvas.getContext('2d')
 
@@ -1012,7 +1010,7 @@ class Page {
   }
 
   render() {
-    drawImage(ImageBackground, { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Image.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     if (this.preview) {
       this.drawPreview()
