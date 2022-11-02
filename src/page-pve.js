@@ -4,7 +4,7 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Button } from './ui-button'
 import { Scroll } from './ui-scroll'
 
-import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpeg'
+import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpg'
 
 const ctx = canvas.getContext('2d')
 

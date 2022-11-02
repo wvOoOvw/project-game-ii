@@ -3,7 +3,7 @@ import { drawImage } from './utils-canvas'
 
 import { Button } from './ui-button'
 
-import J_music_56280e428411459c823ce172d97da20c0 from '../media/background/music_56280e428411459c823ce172d97da20c0.jpeg'
+import J_music_56280e428411459c823ce172d97da20c0 from '../media/background/music_56280e428411459c823ce172d97da20c0.jpg'
 
 const ctx = canvas.getContext('2d')
 

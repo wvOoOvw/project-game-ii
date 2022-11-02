@@ -1,7 +1,7 @@
 import { createImage, numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
-import J_music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/background/music_8abd849fe01a4fb68dceacc6018190fc0.jpeg'
+import J_music_8abd849fe01a4fb68dceacc6018190fc0 from '../media/background/music_8abd849fe01a4fb68dceacc6018190fc0.jpg'
 
 const ctx = canvas.getContext('2d')
 

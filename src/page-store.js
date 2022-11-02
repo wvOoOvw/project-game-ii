@@ -4,7 +4,7 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
 
-import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpeg'
+import J_music_1c31bcc267a545ef971109512053f3e50 from '../media/background/music_1c31bcc267a545ef971109512053f3e50.jpg'
 
 const ctx = canvas.getContext('2d')
 
@@ -895,26 +895,26 @@ class Page {
         addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, option)
 
         closeCover.push(option)
-
-        if (this.type === 'library-master') {
-          const option = {
-            y: buttonY + 66,
-            width: 90,
-            height: 36,
-            radius: 8,
-            font: `900 12px ${window.fontFamily}`,
-            fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-            text: '装载'
-          }
-          option.x = (windowWidth - option.width) / 2
-
-          new Button(option).render()
-
-          addEventListener('touchstart', () => this.loadMaster(this.preview), option)
-
-          closeCover.push(option)
-        }
       })
+
+      if (this.type === 'library-master') {
+        const option = {
+          y: buttonY + 66,
+          width: 108,
+          height: 36,
+          radius: 8,
+          font: `900 12px ${window.fontFamily}`,
+          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+          text: '装载'
+        }
+        option.x = (windowWidth - option.width) / 2
+
+        new Button(option).render()
+
+        addEventListener('touchstart', () => this.loadMaster(this.preview), option)
+
+        closeCover.push(option)
+      }
     }
 
     const close = (e) => {
