@@ -27,7 +27,7 @@ const parseMaster = (array) => {
 
     const origin = originMaster.find(i_ => i.key === i_.key)
 
-    result_.push({ ...origin, ...i, HP: origin.HP(i.level), MP: origin.MP(i.level), })
+    result_.push({ ...origin, ...i, HP: origin.HP(i.level), MP: origin.MP(i.level), HP_: origin.HP(i.level), MP_: origin.MP(i.level) })
 
     return result_
   }, [])

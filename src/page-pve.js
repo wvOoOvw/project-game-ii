@@ -841,7 +841,7 @@ class Role {
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`HP ${information.master.HP}`, option.x + option.width / 2, option.y + option.height / 2)
+    ctx.fillText(`HP ${information.master.HP} / ${information.master.HP_}`, option.x + option.width / 2, option.y + option.height / 2)
 
     option.x = x + width / 2 + width * 0.02
 
@@ -852,7 +852,7 @@ class Role {
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`MP ${information.master.MP}`, option.x + option.width / 2, option.y + option.height / 2)
+    ctx.fillText(`MP ${information.master.MP} / ${information.master.MP_}`, option.x + option.width / 2, option.y + option.height / 2)
   }
 
   drawBuff() {
@@ -1209,20 +1209,6 @@ class Page {
 
     Imitation.state.function.message([card.name, levelText(card.level)].join(' '), 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
 
-    if (result.find(i => i.animation)) {
-      const animations = result.filter(i => i.animation)
-
-      while (animations.length) {
-        const current = animations.shift()
-        if (current.target === 'self') {
-          Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
-        }
-        if (current.target === 'opposite') {
-          Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
-        }
-      }
-    }
-
     self.information.master.skill.forEach(skill => {
       skill.function(card, result, self.information, opposite.information, this.env)
     })
@@ -1236,15 +1222,42 @@ class Page {
     while (result.length) {
       const current = result.shift()
 
+      if (current.custom) {
+        current.custom(card, result, self.information, opposite.information, this.env)
+      }
+
+      if (current.animation) {
+        if (current.target === 'self') {
+          Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
+        }
+        if (current.target === 'opposite') {
+          Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
+        }
+      }
+
       if (current.effect === 'cost-mp') {
         if (current.target === 'self') {
           self.information.master.MP = self.information.master.MP - current.value
         }
       }
 
-      if (current.effect === 'hit') {
+      if (current.effect === 'cost-hp') {
         if (current.target === 'opposite') {
           opposite.information.master.HP = opposite.information.master.HP - current.value
+        }
+      }
+
+      if (current.effect === 'cure-hp') {
+        if (current.target === 'self') {
+          self.information.master.HP = self.information.master.HP + current.value
+          self.information.master.HP = Math.min(self.information.master.HP, self.information.master.HP_)
+        }
+      }
+
+      if (current.effect === 'cure-mp') {
+        if (current.target === 'self') {
+          self.information.master.MP = self.information.master.MP + current.value
+          self.information.master.MP = Math.min(self.information.master.MP, self.information.master.MP_)
         }
       }
 
@@ -1276,18 +1289,6 @@ class Page {
             }
             return true
           })
-        }
-      }
-
-      if (current.effect === 'cure-hp') {
-        if (current.target === 'self') {
-          self.information.master.HP = self.information.master.HP + current.value
-        }
-      }
-
-      if (current.effect === 'cure-mp') {
-        if (current.target === 'self') {
-          self.information.master.MP = self.information.master.MP + current.value
         }
       }
 
@@ -1337,6 +1338,8 @@ class Page {
       if (!card) return
       this.pumpCard(card, this.env.current)
     })
+
+    this.env.current.information.master.MP = this.env.current.information.master.MP_
 
     if (this.env.current === this.InstanceRoleSelf) {
       this.env.round = this.env.round + 1
