@@ -96,8 +96,8 @@ class Main {
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
         message: (...props) => this.instanceMessage.send(...props),
-        sound: (...props) => Sound.play(...props),
         animation: (...props) => this.instanceAnimation.play(...props),
+        sound: (...props) => Sound.play(...props),
         saveInfo: () => {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         }
@@ -119,7 +119,7 @@ class Main {
         },
         team: [
           {
-            master: { key: 1 },
+            master: { key: 3 },
             card: originCard.map(i => ({ key: i.key, number: i.limit }))
           },
           {
@@ -137,9 +137,9 @@ class Main {
         ],
         teamIndex: 0,
         money: [
-          { key: 1, number: 1000 },
-          { key: 2, number: 1000 },
-          { key: 3, number: 1000 },
+          { key: 1, number: 100000 },
+          { key: 2, number: 100000 },
+          { key: 3, number: 100000 },
         ]
       }
 

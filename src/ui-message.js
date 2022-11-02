@@ -18,13 +18,13 @@ class Message {
     this.show = false
 
     this.opacity = 0
-    this.width = Math.min(windowWidth - 24, 180)
+    this.width = Math.min(windowWidth - 24, 200)
     this.height = 32
     this.x = (windowWidth - this.width) / 2
     this.y = windowHeight
   }
 
-  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)', timeout= 750) {
+  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)', timeout = 750) {
     clearTimeout(this.timeoutRef)
 
     this.message = message

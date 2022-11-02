@@ -14,18 +14,6 @@ class Scroll {
     this.scrollX = props.scrollX || 0
     this.scrollY = props.scrollY || 0
 
-    // this.scrollbarHidden = props.scrollbarHidden || false
-
-    // this.scrollbarOffset = props.scrollbarOffset || 4
-
-    // this.scrollbarThick = props.scrollbarThick || 2
-
-    // this.scrollbarColor = props.scrollbarColor || 'rgba(0, 0, 0, opacity)'
-
-    // this.scrollbarOpacity = 0
-
-    // this.scrollbarTimeout = false
-
     this.scrollPosition = [0, 0]
 
     this.mouseDownPosition = null
@@ -85,29 +73,6 @@ class Scroll {
     ctx.clip()
 
     callback(this.scrollPosition)
-
-    // if (!this.scrollbarHidden) {
-    //   if (this.scrollX > 0) {
-    //     const lineW = this.width * (this.width / (this.scrollX + this.width))
-    //     const lineX = this.resultX + (this.width - lineW) * (this.scrollPosition[0] / this.scrollX)
-
-    //     drawRect({ x: lineX, y: this.resultY + this.height - this.scrollbarOffset, width: lineW, height: this.scrollbarThick })
-    //   }
-    //   if (this.scrollY > 0) {
-    //     const lineH = this.height * (this.height / (this.scrollY + this.height))
-    //     const lineY = this.resultY + (this.height - lineH) * (this.scrollPosition[1] / this.scrollY)
-
-    //     drawRect({ x: this.resultX + this.width - this.scrollbarOffset, y: lineY, width: this.scrollbarThick, height: lineH })
-    //   }
-    //   if (this.scrollX > 0 || this.scrollY > 0) {
-    //     if (this.scrollbarTimeout && this.scrollbarOpacity < 1) this.scrollbarOpacity = this.scrollbarOpacity + 0.05
-    //     if (!this.scrollbarTimeout && this.scrollbarOpacity > 0) this.scrollbarOpacity = this.scrollbarOpacity - 0.05
-
-    //     ctx.fillStyle = this.scrollbarColor.replace('opacity', this.scrollbarOpacity)
-
-    //     ctx.fill()
-    //   }
-    // }
 
     ctx.restore()
 

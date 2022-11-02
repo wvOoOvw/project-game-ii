@@ -12,6 +12,38 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
+class RoleMessage {
+  constructor() {
+    this.queqe = []
+  }
+
+  play(option) {
+    this.queqe.push({ ...option, time: 60 })
+  }
+
+  render() {
+    this.queqe.forEach((i, index) => {
+      ctx.save()
+
+      ctx.globalAlpha = i.time / 60
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 ${14 * (i.time / 120 + 0.5)}px ${window.fontFamily}`
+
+      ctx.fillStyle = i.fillStyle
+      ctx.fillText(i.text, i.x + (i.time - 60) / 9, i.y + (i.time - 60) / 3)
+
+      ctx.restore()
+
+      i.time = numberFix(i.time - 1)
+
+      if (i.time === 0) {
+        this.queqe.splice(index, 1)
+      }
+    })
+  }
+}
+
 class ModalCardInList {
   constructor(props) {
     this.x = props.x
@@ -264,6 +296,8 @@ class ModalCardInPreview {
     ctx.clip()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -898,7 +932,6 @@ class Role {
     this.information.card.hand.forEach((i, index) => {
       const maxIndex = this.information.card.hand.length
       const centerIndex = maxIndex / 2 - 0.5
-
       const diff = index - centerIndex
 
       const option = {
@@ -1046,6 +1079,7 @@ class Page {
     this.InstanceRoleOpposite
     this.InstanceAction
     this.InstanceModal
+    this.InstanceRoleMessage = new RoleMessage()
 
     this.instanceRoleSelf()
     this.instanceRoleOpposite()
@@ -1192,10 +1226,8 @@ class Page {
       return
     }
 
-    Imitation.state.function.message([card.name, levelText(card.level)].join(' '), 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-
     self.information.master.skill.forEach(skill => {
-      skill.function(card, result, self.information, opposite.information, this.env)
+      skill.function(card, skill, result, self.information, opposite.information, this.env)
     })
 
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
@@ -1204,8 +1236,14 @@ class Page {
     if (!self.information.card.consume[this.env.round]) self.information.card.consume[this.env.round] = []
     self.information.card.consume[this.env.round].push(card)
 
+    var roleMessageTime = 0
+
     while (result.length) {
       const current = result.shift()
+
+      if (current.message) {
+        Imitation.state.function.message(current.message, 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+      }
 
       if (current.custom) {
         current.custom(card, result, self.information, opposite.information, this.env)
@@ -1220,96 +1258,111 @@ class Page {
         }
       }
 
-      if (current.effect === 'cost-mp') {
-        if (current.target === 'self') {
-          self.information.master.MP = self.information.master.MP - current.value
-        }
+      if (current.roleMessage) {
+        setTimeout(() => {
+          if (current.target === 'self') {
+            this.InstanceRoleMessage.play({ text: current.roleMessage, x: self.x + self.width / 2, y: self.y + self.height / 2, fillStyle: current.fillStyle })
+          }
+          if (current.target === 'opposite') {
+            this.InstanceRoleMessage.play({ text: current.roleMessage, x: opposite.x + opposite.width / 2, y: opposite.y + opposite.height / 2, fillStyle: current.fillStyle })
+          }
+        }, roleMessageTime * 500)
+
+        roleMessageTime = roleMessageTime + 1
       }
 
-      if (current.effect === 'cost-hp') {
-        if (current.target === 'opposite') {
-          opposite.information.master.HP = opposite.information.master.HP - current.value
+      if (current.effect) {
+        if (current.effect === 'cost-mp') {
+          if (current.target === 'self') {
+            self.information.master.MP = self.information.master.MP - current.value
+          }
         }
-      }
 
-      if (current.effect === 'cure-hp') {
-        if (current.target === 'self') {
-          self.information.master.HP = self.information.master.HP + current.value
-          self.information.master.HP = Math.min(self.information.master.HP, self.information.master.HP_)
+        if (current.effect === 'cost-hp') {
+          if (current.target === 'opposite') {
+            opposite.information.master.HP = opposite.information.master.HP - current.value
+          }
         }
-      }
 
-      if (current.effect === 'cure-mp') {
-        if (current.target === 'self') {
-          self.information.master.MP = self.information.master.MP + current.value
-          self.information.master.MP = Math.min(self.information.master.MP, self.information.master.MP_)
+        if (current.effect === 'cure-hp') {
+          if (current.target === 'self') {
+            self.information.master.HP = self.information.master.HP + current.value
+            self.information.master.HP = Math.min(self.information.master.HP, self.information.master.HP_)
+          }
         }
-      }
 
-      if (current.effect === 'buff') {
-        if (current.target === 'self') {
-          self.information.master.buff.push(...new Array(current.number).fill(current.value))
+        if (current.effect === 'cure-mp') {
+          if (current.target === 'self') {
+            self.information.master.MP = self.information.master.MP + current.value
+            self.information.master.MP = Math.min(self.information.master.MP, self.information.master.MP_)
+          }
         }
-        if (current.target === 'opposite') {
-          opposite.information.master.buff.push(...new Array(current.number).fill(current.value))
-        }
-      }
 
-      if (current.effect === 'cost-buff') {
-        let count = 0
-        if (current.target === 'self') {
-          self.information.master.buff = self.information.master.buff.filter(i => {
-            if (i === current.value && count !== current.number) {
-              count = count + 1
-              return false
-            }
-            return true
-          })
+        if (current.effect === 'buff') {
+          if (current.target === 'self') {
+            self.information.master.buff.push(...new Array(current.number).fill(current.value))
+          }
+          if (current.target === 'opposite') {
+            opposite.information.master.buff.push(...new Array(current.number).fill(current.value))
+          }
         }
-        if (current.target === 'opposite') {
-          opposite.information.master.buff = opposite.information.master.buff.filter(i => {
-            if (i === current.value && count !== current.number) {
-              count = count + 1
-              return false
-            }
-            return true
-          })
-        }
-      }
 
-      if (current.effect === 'pump-store-positive') {
-        if (current.target === 'self') {
-          new Array(current.value).fill().forEach(i => {
-            const card = this.InstanceRoleSelf.information.card.store.shift()
-            if (!card) return
-            this.pumpCard(card, this.InstanceRoleSelf)
-          })
+        if (current.effect === 'cost-buff') {
+          let count = 0
+          if (current.target === 'self') {
+            self.information.master.buff = self.information.master.buff.filter(i => {
+              if (i === current.value && count !== current.number) {
+                count = count + 1
+                return false
+              }
+              return true
+            })
+          }
+          if (current.target === 'opposite') {
+            opposite.information.master.buff = opposite.information.master.buff.filter(i => {
+              if (i === current.value && count !== current.number) {
+                count = count + 1
+                return false
+              }
+              return true
+            })
+          }
         }
-      }
 
-      if (current.effect === 'pump-store-point') {
-        if (current.target === 'self') {
-          current.value.forEach(i => {
-            this.pumpCard(i, this.InstanceRoleSelf)
-            this.InstanceRoleSelf.information.card.store = this.InstanceRoleSelf.information.card.store.filter(i_ => i_ !== i)
-          })
+        if (current.effect === 'pump-store-positive') {
+          if (current.target === 'self') {
+            new Array(current.value).fill().forEach(i => {
+              const card = this.InstanceRoleSelf.information.card.store.shift()
+              if (!card) return
+              this.pumpCard(card, this.InstanceRoleSelf)
+            })
+          }
         }
-      }
 
-      if (current.effect === 'pump-cemetery-positive') {
-        if (current.target === 'self') {
-          new Array(current.value).fill().forEach(i => {
-            this.pumpCard(this.InstanceRoleSelf.information.card.cemetery.shift(), this.InstanceRoleSelf)
-          })
+        if (current.effect === 'pump-store-point') {
+          if (current.target === 'self') {
+            current.value.forEach(i => {
+              this.pumpCard(i, this.InstanceRoleSelf)
+              this.InstanceRoleSelf.information.card.store = this.InstanceRoleSelf.information.card.store.filter(i_ => i_ !== i)
+            })
+          }
         }
-      }
 
-      if (current.effect === 'pump-cemetery-point') {
-        if (current.target === 'self') {
-          current.value.forEach(i => {
-            this.pumpCard(i, this.InstanceRoleSelf)
-            this.InstanceRoleSelf.information.card.cemetery = this.InstanceRoleSelf.information.card.cemetery.filter(i_ => i_ !== i)
-          })
+        if (current.effect === 'pump-cemetery-positive') {
+          if (current.target === 'self') {
+            new Array(current.value).fill().forEach(i => {
+              this.pumpCard(this.InstanceRoleSelf.information.card.cemetery.shift(), this.InstanceRoleSelf)
+            })
+          }
+        }
+
+        if (current.effect === 'pump-cemetery-point') {
+          if (current.target === 'self') {
+            current.value.forEach(i => {
+              this.pumpCard(i, this.InstanceRoleSelf)
+              this.InstanceRoleSelf.information.card.cemetery = this.InstanceRoleSelf.information.card.cemetery.filter(i_ => i_ !== i)
+            })
+          }
         }
       }
     }
@@ -1388,6 +1441,7 @@ class Page {
       this.drawAction()
       this.drawRoleOpposite()
       this.drawRoleSelf()
+      this.InstanceRoleMessage.render()
     }
   }
 }

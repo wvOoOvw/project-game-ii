@@ -1,4 +1,4 @@
-import { createImage, numberFix } from './utils-common'
+import { numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
 import { Picture } from './utils-picture'

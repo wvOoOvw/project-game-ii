@@ -472,7 +472,7 @@ class Page {
       const centerIndex = maxIndex / 2 - 0.5
       const diff = index - centerIndex
 
-      const option = { y: windowHeight - 48, width: 75, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 0.75)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ${i.number}` }
+      const option = { y: windowHeight - 48, width: 90, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 0.75)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ¥${i.number}` }
 
       option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
 
