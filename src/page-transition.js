@@ -1,7 +1,7 @@
 import { createImage, numberFix } from './utils-common'
 import { drawImage } from './utils-canvas'
 
-import { Image } from './utils-image'
+import { Picture } from './utils-picture'
 
 const ctx = canvas.getContext('2d')
 
@@ -37,7 +37,7 @@ class PageTransition {
 
     ctx.globalAlpha = this.opacity
 
-    drawImage(Image.get('background-transition'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-transition'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     ctx.globalAlpha = 1
   }

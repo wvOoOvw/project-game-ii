@@ -1,25 +1,6 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { arrayRandom } from './utils-common'
 
-import J_music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/card/music_2fec7f9242b44b64a914f7cc19d25abe0.jpg'
-import J_music_4d7f219082ba4d86b1543c982d1156560 from '../media/card/music_4d7f219082ba4d86b1543c982d1156560.jpg'
-import J_music_6e9e96c75cf04411baa154b1d6a3c7360 from '../media/card/music_6e9e96c75cf04411baa154b1d6a3c7360.jpg'
-import J_music_88c8411d068c455099456851ec84f65c0 from '../media/card/music_88c8411d068c455099456851ec84f65c0.jpg'
-import J_music_98a7a38ce58546a7841d18c96e41e3760 from '../media/card/music_98a7a38ce58546a7841d18c96e41e3760.jpg'
-import J_music_c753fd717be543eaa25f4a1aa9240d7d0 from '../media/card/music_c753fd717be543eaa25f4a1aa9240d7d0.jpg'
-import J_music_c12894d6ce644a37a16069502d98c9b80 from '../media/card/music_c12894d6ce644a37a16069502d98c9b80.jpg'
-import J_tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e from '../media/card/tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e.jpg'
-import J_tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea from '../media/card/tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea.jpg'
-import J_tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4 from '../media/card/tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4.jpg'
-
-import J_tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf from '../media/shop/tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf.jpg'
-
-import J_music_47a83799595b4a5b97145a6e594620310 from '../media/explore/music_47a83799595b4a5b97145a6e594620310.jpg'
-
-import J_music_1107cbd537144759999fbd7dc0fdb6650 from '../media/master/music_1107cbd537144759999fbd7dc0fdb6650.jpg'
-import J_music_b6f0b1c512ad42fab204d79b85d07c140 from '../media/master/music_b6f0b1c512ad42fab204d79b85d07c140.jpg'
-import J_music_b40316005b55465b80ae4eecad8447960 from '../media/master/music_b40316005b55465b80ae4eecad8447960.jpg'
-
-import J_music_5c3cdbd72894434e891ce792de441feb0 from '../media/money/music_5c3cdbd72894434e891ce792de441feb0.jpg'
+import { Picture } from './utils-picture'
 
 const LevelRise = (v, l) => Math.floor(v * Math.pow(1.2, (l - 1)))
 
@@ -27,32 +8,107 @@ var originMoney = [
   {
     key: 1,
     name: '金币',
-    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
   {
     key: 2,
     name: '钻石',
-    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
   {
     key: 3,
     name: '碎片',
-    image: J_music_5c3cdbd72894434e891ce792de441feb0,
   },
 ]
 
-originMoney = originMoney.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
+var originExplore = [
+  {
+    key: 1,
+    name: '故事 I',
+    description: '可能包含: 金币 0 - 500 枚',
+    difficulty: 1,
+    type: 'alltime',
+    boss: {
+      master: { key: 1, level: 1 },
+      card: [
+        { key: 1, level: 1, number: 10 },
+        { key: 2, level: 1, number: 10 },
+      ]
+    },
+    reward: () => {
+      return [
+        { money: true, key: 1, number: Math.floor(Math.random() * 500) },
+      ]
+    },
+    AI: (self, opposite, env) => {
+      return arrayRandom(self.card.hand, 1)
+    }
+  },
+  {
+    key: 2,
+    name: '梦境 I',
+    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
+    difficulty: 2,
+    type: 'alltime',
+    boss: {
+      master: { key: 2, level: 2 },
+      card: [
+        { key: 1, level: 3, number: 10 },
+        { key: 2, level: 3, number: 10 },
+        { key: 3, level: 3, number: 10 },
+      ]
+    },
+    reward: () => {
+      return [
+        { card: true, key: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 2, exp: Math.floor(Math.random() * 20) },
+      ]
+    },
+    AI: (self, opposite, env) => {
+      return arrayRandom(self.card.hand, 1)
+    }
+  },
+]
 
-  return i
-})
+var originShop = [
+  {
+    key: 1,
+    name: '火系基础礼盒I',
+    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
+    type: 'alltime',
+    money: {
+      key: 1,
+      number: 1000
+    },
+    reward: () => {
+      return [
+        { card: true, key: 1, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 2, exp: Math.floor(Math.random() * 20) },
+
+      ]
+    },
+  },
+  {
+    key: 2,
+    name: '火系基础礼盒II',
+    description: '可能包含: 点燃 Exp 0 - 20, 引燃 Exp 0 - 20, 火焰领主 Exp 50-100',
+    type: 'alltime',
+    money: {
+      key: 2,
+      number: 1000
+    },
+    reward: () => {
+      return [
+        { card: true, key: 3, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 5, exp: Math.floor(Math.random() * 20) },
+        { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
+      ]
+    },
+  },
+]
 
 var originMaster = [
   {
     key: 1,
     name: '艾露恩',
-    image: J_music_1107cbd537144759999fbd7dc0fdb6650,
     HP: l => LevelRise(1000, l),
     MP: l => 1000,
     skill: [
@@ -75,7 +131,6 @@ var originMaster = [
   {
     key: 2,
     name: '火焰领主',
-    image: J_music_b6f0b1c512ad42fab204d79b85d07c140,
     HP: l => LevelRise(800, l),
     MP: l => 1200,
     skill: [
@@ -93,7 +148,6 @@ var originMaster = [
   {
     key: 3,
     name: '炎魔',
-    image: J_music_b40316005b55465b80ae4eecad8447960,
     HP: l => LevelRise(700, l),
     MP: l => 1500,
     skill: [
@@ -120,13 +174,6 @@ var originMaster = [
   },
 ]
 
-originMaster = originMaster.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
-
-  return i
-})
-
 var originCard = [
   {
     key: 1,
@@ -134,7 +181,6 @@ var originCard = [
     type: '进攻卡',
     race: '火',
     limit: 3,
-    image: J_music_88c8411d068c455099456851ec84f65c0,
     description: l => `造成 ${LevelRise(100, l)} 伤害, 并附加给目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
       return [
@@ -150,7 +196,6 @@ var originCard = [
     type: '进攻卡',
     race: '火',
     limit: 3,
-    image: J_music_2fec7f9242b44b64a914f7cc19d25abe0,
     description: l => `造成 ${LevelRise(50, l)} 伤害, 并附加给目标 2 层 '燃'`,
     function: (card, self, opposite, round) => {
       return [
@@ -166,7 +211,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_music_4d7f219082ba4d86b1543c982d1156560,
     description: l => `消耗 500 MP, 造成目标 '燃' 层数 * ${LevelRise(50, l)} 伤害`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 500) return [{ error: 'MP 不足' }]
@@ -184,7 +228,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_music_6e9e96c75cf04411baa154b1d6a3c7360,
     description: l => `消耗 250 MP, 从牌库以及墓地抽取 1 张除自身外的火系卡牌`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 250) return [{ error: 'MP 不足' }]
@@ -209,7 +252,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_music_98a7a38ce58546a7841d18c96e41e3760,
     description: l => `消耗 200 MP, 造成 ${LevelRise(200, l)} 伤害, 并消耗目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 200) return [{ error: 'MP 不足' }]
@@ -229,7 +271,6 @@ var originCard = [
     type: '进攻卡',
     race: '火',
     limit: 3,
-    image: J_music_c753fd717be543eaa25f4a1aa9240d7d0,
     description: l => `造成 ${LevelRise(100, l)} 伤害, 若目标拥有 '燃' 则伤害 * 1.5`,
     function: (card, self, opposite, round) => {
       return [
@@ -244,7 +285,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_music_c12894d6ce644a37a16069502d98c9b80,
     description: l => `消耗 200 MP, 吸收对手的所有 '燃' , 每有一层回复自身 ${LevelRise(100, l)} HP`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 200) return [{ error: 'MP 不足' }]
@@ -263,7 +303,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
     description: l => `消耗 500 MP, 造成 ${LevelRise(150, l)} 伤害`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 500) return [{ error: 'MP 不足' }]
@@ -281,7 +320,6 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    image: J_tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
     description: l => `消耗 250 MP, 造成 ${LevelRise(50, l)} 伤害, 从牌库抽取一张 '火球术'`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 250) return [{ error: 'MP 不足' }]
@@ -300,116 +338,10 @@ var originCard = [
   },
 ]
 
-originCard = originCard.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
-
-  return i
-})
-
-var originExplore = [
-  {
-    key: 1,
-    name: '故事 I',
-    description: '可能包含: 金币 0 - 500 枚',
-    difficulty: 1,
-    type: 'alltime',
-    image: J_music_47a83799595b4a5b97145a6e594620310,
-    boss: {
-      master: { key: 1, level: 1 },
-      card: [
-        { key: 1, level: 1, number: 10 },
-        { key: 2, level: 1, number: 10 },
-      ]
-    },
-    reward: () => {
-      return [
-        { money: true, key: 1, number: Math.floor(Math.random() * 500) },
-      ]
-    },
-    AI: (self, opposite, env) => {
-      return arrayRandom(self.card.hand, 1)
-    }
-  },
-  {
-    key: 2,
-    name: '梦境 I',
-    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
-    difficulty: 2,
-    type: 'alltime',
-    image: J_music_47a83799595b4a5b97145a6e594620310,
-    boss: {
-      master: { key: 2, level: 2 },
-      card: [
-        { key: 1, level: 3, number: 10 },
-        { key: 2, level: 3, number: 10 },
-        { key: 3, level: 3, number: 10 },
-      ]
-    },
-    reward: () => {
-      return [
-        { card: true, key: 1, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 2, exp: Math.floor(Math.random() * 20) },
-      ]
-    },
-    AI: (self, opposite, env) => {
-      return arrayRandom(self.card.hand, 1)
-    }
-  },
-]
-
-originExplore = originExplore.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
-
-  return i
-})
-
-var originShop = [
-  {
-    key: 1,
-    name: '火系基础礼盒I',
-    description: '可能包含: 小火把 Exp 0 - 20, 大火把 Exp 0 - 20',
-    type: 'alltime',
-    image: J_tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
-    money: {
-      key: 1,
-      number: 1000
-    },
-    reward: () => {
-      return [
-        { card: true, key: 1, level: 1, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 2, level: 1, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 4, level: 1, exp: Math.floor(Math.random() * 20) },
-        
-      ]
-    },
-  },
-  {
-    key: 2,
-    name: '火系基础礼盒II',
-    description: '可能包含: 点燃 Exp 0 - 20, 引燃 Exp 0 - 20, 火焰领主 Exp 50-100',
-    type: 'alltime',
-    image: J_tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
-    money: {
-      key: 2,
-      number: 1000
-    },
-    reward: () => {
-      return [
-        { card: true, key: 3, level: 1, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 5, level: 1, exp: Math.floor(Math.random() * 20) },
-        { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
-      ]
-    },
-  },
-]
-
-originShop = originShop.map(i => {
-  i.imageDOM = new Image()
-  i.imageDOM.src = i.image
-
-  return i
-})
+originMoney.forEach(i => i.imageDOM = Picture.get('money-' + i.key))
+originExplore.forEach(i => i.imageDOM = Picture.get('explore-' + i.key))
+originShop.forEach(i => i.imageDOM = Picture.get('shop-' + i.key))
+originMaster.forEach(i => i.imageDOM = Picture.get('master-' + i.key))
+originCard.forEach(i => i.imageDOM = Picture.get('card-' + i.key))
 
 export { originMoney, originMaster, originCard, originExplore, originShop }

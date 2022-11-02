@@ -4,7 +4,7 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 import { Button } from './ui-button'
 import { Scroll } from './ui-scroll'
 
-import { Image } from './utils-image'
+import { Picture } from './utils-picture'
 
 const ctx = canvas.getContext('2d')
 
@@ -1377,7 +1377,7 @@ class Page {
   }
 
   render() {
-    drawImage(Image.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
     if (this.modal) {
       this.drawModal()

@@ -13,7 +13,6 @@ class Message {
     this.backgroundColor = 'rgba(255, 255, 255, 1)'
     this.textColor = 'rgba(0, 0, 0, 1)'
 
-    this.timeout = 750
     this.timeoutRef = null
 
     this.show = false
@@ -25,7 +24,7 @@ class Message {
     this.y = windowHeight
   }
 
-  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
+  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)', timeout= 750) {
     clearTimeout(this.timeoutRef)
 
     this.message = message
@@ -36,7 +35,7 @@ class Message {
     this.timeoutRef = setTimeout(() => {
       this.show = false
       this.timeoutRef = null
-    }, this.timeout)
+    }, timeout)
   }
 
   render() {
