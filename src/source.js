@@ -116,16 +116,20 @@ var originMaster = [
         name: '庇护 I',
         description: l => `使用卡牌时, 回复 5% HP`,
         function: (card, skill, result, self, opposite, env) => {
-          result.push({ effect: 'cure-hp', target: 'self', value: Math.floor(self.master.HP_ * 0.05) })
-          result.push({ roleMessage: `${skill.name} HP + ${Math.floor(self.master.HP_ * 0.05)}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          const cure = Math.floor(self.master.HP_ * 0.05)
+
+          result.push({ effect: 'cure-hp', target: 'self', value: cure })
+          result.push({ roleMessage: `${skill.name} HP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
         }
       },
       {
         name: '庇护 II',
         description: l => `使用卡牌时, 回复 5% MP`,
         function: (card, skill, result, self, opposite, env) => {
-          result.push({ effect: 'cure-mp', target: 'self', value: Math.floor(self.master.MP_ * 0.05) })
-          result.push({ roleMessage: `${skill.name} MP + ${Math.floor(self.master.HP_ * 0.05)}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          const cure = Math.floor(self.master.MP_ * 0.05)
+
+          result.push({ effect: 'cure-mp', target: 'self', value: cure })
+          result.push({ roleMessage: `${skill.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
         }
       },
     ],
@@ -141,8 +145,10 @@ var originMaster = [
         description: l => `使用火系卡牌时, 额外造成 ${LevelRise(50, l)} 伤害`,
         function: (card, skill, result, self, opposite, env) => {
           if (card.race === '火') {
-            result.push({ effect: 'cost-hp', target: 'opposite', value: LevelRise(50, self.master.level) })
-            result.push({ roleMessage: `${skill.name} HP - ${LevelRise(50, self.master.level)}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            const damage = LevelRise(50, self.master.level)
+
+            result.push({ effect: 'cost-hp', target: 'opposite', value: damage })
+            result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
           }
         }
       }
@@ -169,8 +175,10 @@ var originMaster = [
         description: l => `使用火系卡牌时, 额外造成 ${LevelRise(50, l)} 伤害`,
         function: (card, skill, result, self, opposite, env) => {
           if (card.race === '火') {
-            result.push({ effect: 'cost-hp', target: 'opposite', value: LevelRise(50, self.master.level) })
-            result.push({ roleMessage: `${skill.name} HP - ${LevelRise(50, self.master.level)}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            const damage = LevelRise(50, self.master.level)
+
+            result.push({ effect: 'cost-hp', target: 'opposite', value: damage })
+            result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
           }
         }
       }
@@ -187,10 +195,13 @@ var originCard = [
     limit: 3,
     description: l => `造成 ${LevelRise(100, l)} 伤害, 并附加给目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
+      const damage = LevelRise(100, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(100, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: damage },
         { effect: 'buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
@@ -203,10 +214,13 @@ var originCard = [
     limit: 3,
     description: l => `造成 ${LevelRise(50, l)} 伤害, 并附加给目标 2 层 '燃'`,
     function: (card, self, opposite, round) => {
+      const damage = LevelRise(50, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(50, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: damage },
         { effect: 'buff', target: 'opposite', value: '燃', number: 2 }
       ]
     }
@@ -221,11 +235,14 @@ var originCard = [
     function: (card, self, opposite, round) => {
       if (self.master.MP < 500) return [{ error: 'MP 不足' }]
 
+      const damage = opposite.master.buff.filter(i => i === '燃').length * LevelRise(50, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: 500 },
-        { effect: 'cost-hp', target: 'opposite', value: opposite.master.buff.filter(i => i === '燃').length * LevelRise(50, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: damage },
       ]
     }
   },
@@ -242,7 +259,7 @@ var originCard = [
       const rt = [
         { message: [card.name, levelText(card.level)].join(' ') },
         { animation: 'red-hit', target: 'self' },
-        { effect: 'cost-mp', target: 'self', value: 25 },
+        { effect: 'cost-mp', target: 'self', value: 250 },
       ]
 
       const cardInStore = self.card.store.find(i => i.race === '火' && i.key !== card.key)
@@ -260,16 +277,19 @@ var originCard = [
     type: '魔法卡',
     race: '火',
     limit: 3,
-    description: l => `消耗 200 MP, 造成 ${LevelRise(200, l)} 伤害, 并消耗目标 1 层 '燃'`,
+    description: l => `消耗 200 MP, 造成 ${LevelRise(200, l)} 伤害, 并消耗目标 1 层 '燃', 目标没有 '燃' 时无法使用`,
     function: (card, self, opposite, round) => {
       if (self.master.MP < 200) return [{ error: 'MP 不足' }]
       if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标 '燃' 不足` }]
 
+      const damage = LevelRise(200, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: 200 },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(200, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: damage },
         { effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
       ]
     }
@@ -282,10 +302,13 @@ var originCard = [
     limit: 3,
     description: l => `造成 ${LevelRise(100, l)} 伤害, 若目标拥有 '燃' 则伤害 * 1.5`,
     function: (card, self, opposite, round) => {
+      const damage = opposite.master.buff.find(i => i === '燃') ? LevelRise(100, card.level) * 1.5 : LevelRise(100, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: opposite.master.buff.find(i => i === '燃') ? LevelRise(100, card.level) * 1.5 : LevelRise(100, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: damage },
       ]
     }
   },
@@ -299,11 +322,14 @@ var originCard = [
     function: (card, self, opposite, round) => {
       if (self.master.MP < 200) return [{ error: 'MP 不足' }]
 
+      const cure = opposite.master.buff.filter(i => i === '燃').length * LevelRise(100, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${skill.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
         { animation: 'red-hit', target: 'self' },
         { effect: 'cost-mp', target: 'self', value: 200 },
-        { effect: 'cost-hp', target: 'self', value: opposite.master.buff.filter(i => i === '燃').length * LevelRise(100, card.level) },
+        { effect: 'cost-hp', target: 'self', value: cure },
         { effect: 'cost-buff', target: 'opposite', value: '燃', number: opposite.master.buff.filter(i => i === '燃').length }
       ]
     }
@@ -318,8 +344,11 @@ var originCard = [
     function: (card, self, opposite, round) => {
       if (self.master.MP < 500) return [{ error: 'MP 不足' }]
 
+      const damage = LevelRise(150, card.level)
+
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: 500 },
         { effect: 'cost-hp', target: 'opposite', value: LevelRise(150, card.level) },
@@ -336,11 +365,14 @@ var originCard = [
     function: (card, self, opposite, round) => {
       if (self.master.MP < 250) return [{ error: 'MP 不足' }]
 
+      const damage = LevelRise(50, card.level)
+
       const rt = [
         { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'cost-mp', target: 'self', value: 250 },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(50, card.level) },
+        { effect: 'cost-hp', target: 'opposite', value: LevelRise(150, card.level) },
       ]
 
       const cardInStore = self.card.store.find(i => i.key === 8)

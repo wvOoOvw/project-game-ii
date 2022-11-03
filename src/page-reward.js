@@ -74,7 +74,7 @@ class MoneyInList {
     ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(money.name, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(`${money.name} ${money.number}`, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
