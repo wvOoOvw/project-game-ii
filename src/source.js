@@ -326,7 +326,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${skill.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
+        { roleMessage: `${card.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
         { animation: 'red-hit', target: 'self' },
         { effect: 'cost-mp', target: 'self', value: 200 },
         { effect: 'cost-hp', target: 'self', value: cure },

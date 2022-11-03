@@ -55,7 +55,7 @@ class Picture {
     this.map = {
       'background-home': music_3fc1533a1a964121b783582911d683330,
       'background-transition': tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
-      'background-page': tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4,
+      'background-page': tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010,
 
       'money-1': music_0de0bd75a86a478397334aa691d060200,
       'money-2': music_0de0bd75a86a478397334aa691d060200,
