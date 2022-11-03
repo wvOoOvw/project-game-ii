@@ -211,7 +211,7 @@ class ModalCardInPreview {
     ctx.fillText([card.name, levelText(card.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawRace() {
+  drawRaceType() {
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -232,31 +232,7 @@ class ModalCardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawType() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -301,8 +277,7 @@ class ModalCardInPreview {
 
     this.drawTitle()
     this.drawName()
-    this.drawRace()
-    this.drawType()
+    this.drawRaceType()
     this.drawDescription()
 
     ctx.restore()
@@ -659,7 +634,7 @@ class CardInSelf {
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawRace() {
+  drawRaceType() {
     const { x, y, width, height } = this.option
     const ifTouchEndTime = this.ifTouchEndTime
     const card = this.card
@@ -676,30 +651,9 @@ class CardInSelf {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
-    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawType() {
-    const { x, y, width, height } = this.option
-    const ifTouchEndTime = this.ifTouchEndTime
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
-    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -767,8 +721,7 @@ class CardInSelf {
     if (this.mouseDownPositionTime !== 0) {
       ctx.globalAlpha = this.mouseDownPositionTime
 
-      this.drawRace()
-      this.drawType()
+      this.drawRaceType()
       this.drawDescription()
     }
 

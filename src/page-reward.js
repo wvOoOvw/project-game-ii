@@ -263,7 +263,7 @@ class CardInPreview {
     ctx.fillText([card.name, card.exp].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawRace() {
+  drawRaceType() {
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -284,10 +284,10 @@ class CardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawType() {
+  drawLimit() {
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -308,7 +308,7 @@ class CardInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText('最大装载数量 ' + card.limit, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -351,8 +351,8 @@ class CardInPreview {
 
     this.drawTitle()
     this.drawName()
-    this.drawRace()
-    this.drawType()
+    this.drawRaceType()
+    this.drawLimit()
     this.drawDescription()
 
     ctx.restore()
