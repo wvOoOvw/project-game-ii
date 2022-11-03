@@ -8,7 +8,7 @@ const list = []
 
   dirs.forEach(item => {
     if (item.includes('.DS')) return
-    list.push(`import ${item.replace('.jpg', '')} from '../media/image/${item}'`)
+    list.push(`import ${item.replace(/\.(jpeg|jpg|png)/, '')} from '../media/image/${item}'`)
   })
 }
 
@@ -19,8 +19,20 @@ list.push('')
 
   dirs.forEach(item => {
     if (item.includes('.DS')) return
-    list.push(`import ${item.replace('.jpg', '')} from '../media/image-s/${item}'`)
+    list.push(`import ${item.replace(/\.(jpeg|jpg|png)/, '')} from '../media/image-s/${item}'`)
   })
 }
+
+list.push('')
+
+{
+  const dirs = fs.readdirSync(path.join(__dirname, '../media/image-c'))
+
+  dirs.forEach(item => {
+    if (item.includes('.DS')) return
+    list.push(`import ${item.replace(/\.(jpeg|jpg|png)/, '')} from '../media/image-c/${item}'`)
+  })
+}
+
 
 fs.writeFileSync(path.join(__dirname, './output.js'), list.join('\n'))

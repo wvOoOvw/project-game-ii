@@ -104,6 +104,8 @@ class Main {
       }
     }
 
+    if (window.location.search) Imitation.state.page.current = window.location.search.replace('?', '')
+
     localStorage.removeItem('info')
     const info = localStorage.getItem('info')
 
