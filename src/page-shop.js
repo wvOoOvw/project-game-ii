@@ -353,29 +353,46 @@ class Page {
 
     ctx.clip()
 
-    parseMoney(Imitation.state.info.money).forEach((i, index) => {
-      const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+    {
+      const list = parseMoney(Imitation.state.info.money)
+      list.forEach((i, index) => {
+        const option_ = {
+          y: 12 + option.y,
+          width: (windowWidth - 32 - 12 * list.length) / list.length,
+          height: 30,
+          radius: 8,
+          font: `900 10px ${window.fontFamily}`,
+          text: i.name
+        }
+        option_.x = index * (option_.width + 12) + 24
+        option_.fillStyle = i.key === this.money ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
-      option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
+        new Button(option_).render()
 
-      new Button(option_).render()
+        const event = (e) => {
+          if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
+          this.money = i.key
+          this.init()
+        }
 
-        this.money = i.key
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
+        addEventListener('touchstart', event, option_)
+      })
+    }
 
     new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
-      const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
-
-      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      const option_ = {
+        y: 54 + option.y,
+        width: (windowWidth - 32 - 12 * 2) / 2,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        text: i[1]
+      }
+      option_.x = index * (option_.width + 12) + 24
+      option_.fillStyle = i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 

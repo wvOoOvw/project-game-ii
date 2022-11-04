@@ -56,71 +56,71 @@ class Picture {
       })
     }
 
-    this.map = {
-      'background-home': music_3fc1533a1a964121b783582911d683330,
-      'background-transition': tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
-      'background-page': tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010,
-
-      'money-1': music_0de0bd75a86a478397334aa691d060200,
-      'money-2': music_0de0bd75a86a478397334aa691d060200,
-      'money-3': music_0de0bd75a86a478397334aa691d060200,
-
-      'explore-1': music_5c3cdbd72894434e891ce792de441feb0,
-      'explore-2': music_5c3cdbd72894434e891ce792de441feb0,
-
-      'shop-1': music_2fec7f9242b44b64a914f7cc19d25abe0,
-      'shop-2': music_2fec7f9242b44b64a914f7cc19d25abe0,
-
-      'master-1': music_4d7f219082ba4d86b1543c982d1156560,
-      'master-2': music_56280e428411459c823ce172d97da20c0,
-      'master-3': music_6f3280d95d5e4b9fa1d1208a8c9b43460,
-
-      'card-1': music_88c8411d068c455099456851ec84f65c0,
-      'card-2': music_98a7a38ce58546a7841d18c96e41e3760,
-      'card-3': music_c12894d6ce644a37a16069502d98c9b80,
-      'card-4': music_cacbcd0fe27247e69c12d67f3ea1673e0,
-      'card-5': music_e68a943eab4c4a17b71a5c7f1c7928600,
-      'card-6': music_e6ebd8cf5e444600b4887df07e9db65b0,
-      'card-7': music_f1c8775faa87442a845a2865325229b60,
-      'card-8': tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd,
-      'card-9': tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219,
-    }
-
     // this.map = {
-    //   'background-home': music_a2835cfbbeea40d6971fd36c0a44870d0,
-    //   'background-transition': music_8abd849fe01a4fb68dceacc6018190fc0,
-    //   'background-page': tiku_c94086e24ae0c23ff9bb59c36a7fde3e0af70534b18e817d513188b79cca953f,
+    //   'background-home': music_3fc1533a1a964121b783582911d683330,
+    //   'background-transition': tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
+    //   'background-page': tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010,
 
-    //   'money-1': music_b40316005b55465b80ae4eecad8447960,
-    //   'money-2': music_b40316005b55465b80ae4eecad8447960,
-    //   'money-3': music_b40316005b55465b80ae4eecad8447960,
+    //   'money-1': music_0de0bd75a86a478397334aa691d060200,
+    //   'money-2': music_0de0bd75a86a478397334aa691d060200,
+    //   'money-3': music_0de0bd75a86a478397334aa691d060200,
 
-    //   'explore-1': tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
-    //   'explore-2': tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
+    //   'explore-1': music_5c3cdbd72894434e891ce792de441feb0,
+    //   'explore-2': music_5c3cdbd72894434e891ce792de441feb0,
 
-    //   'shop-1': music_c753fd717be543eaa25f4a1aa9240d7d0,
-    //   'shop-2': music_c753fd717be543eaa25f4a1aa9240d7d0,
+    //   'shop-1': music_2fec7f9242b44b64a914f7cc19d25abe0,
+    //   'shop-2': music_2fec7f9242b44b64a914f7cc19d25abe0,
 
-    //   'master-1': music_02f36cde2cb547ae99936af6f53032110,
-    //   'master-2': music_1107cbd537144759999fbd7dc0fdb6650,
-    //   'master-3': music_16193381303a4584989ac395336fd4880,
+    //   'master-1': music_4d7f219082ba4d86b1543c982d1156560,
+    //   'master-2': music_56280e428411459c823ce172d97da20c0,
+    //   'master-3': music_6f3280d95d5e4b9fa1d1208a8c9b43460,
 
-    //   'card-1': music_1c31bcc267a545ef971109512053f3e50,
-    //   'card-2': tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
-    //   'card-3': tiku_1b2d4a597dd55f78b934645604ac71d47adc47ffcea50103eefd7666e2756a52,
-    //   'card-4': music_6e9e96c75cf04411baa154b1d6a3c7360,
-    //   'card-5': music_a7e9436348e6456eb47f32a75f7392370,
-    //   'card-6': music_b6f0b1c512ad42fab204d79b85d07c140,
-    //   'card-7': tiku_2199a2a398f1ac1d07bd70a4e5e371431fba350fa04208b1dca0707055c5d977,
-    //   'card-8': tiku_3b160e3e3b8b7e57108d76c012a2b8043eb73ee8bf6baf4af6d58db0506e8274,
-    //   'card-9': tiku_559b6b86ac4d517bb1973cde45f283c6d9cc47204b9606bd054dd96552fba74e,
+    //   'card-1': music_88c8411d068c455099456851ec84f65c0,
+    //   'card-2': music_98a7a38ce58546a7841d18c96e41e3760,
+    //   'card-3': music_c12894d6ce644a37a16069502d98c9b80,
+    //   'card-4': music_cacbcd0fe27247e69c12d67f3ea1673e0,
+    //   'card-5': music_e68a943eab4c4a17b71a5c7f1c7928600,
+    //   'card-6': music_e6ebd8cf5e444600b4887df07e9db65b0,
+    //   'card-7': music_f1c8775faa87442a845a2865325229b60,
+    //   'card-8': tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd,
+    //   'card-9': tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219,
     // }
+
+    this.map = {
+      'background-home': music_a2835cfbbeea40d6971fd36c0a44870d0,
+      'background-transition': music_8abd849fe01a4fb68dceacc6018190fc0,
+      'background-page': tiku_c94086e24ae0c23ff9bb59c36a7fde3e0af70534b18e817d513188b79cca953f,
+
+      'money-1': music_b40316005b55465b80ae4eecad8447960,
+      'money-2': music_b40316005b55465b80ae4eecad8447960,
+      'money-3': music_b40316005b55465b80ae4eecad8447960,
+
+      'explore-1': tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
+      'explore-2': tiku_2e150939d1e635d0b03b06dfcd2f414885dd8724662bcd88687fb1e9ce46fa0e,
+
+      'shop-1': music_c753fd717be543eaa25f4a1aa9240d7d0,
+      'shop-2': music_c753fd717be543eaa25f4a1aa9240d7d0,
+
+      'master-1': music_02f36cde2cb547ae99936af6f53032110,
+      'master-2': music_1107cbd537144759999fbd7dc0fdb6650,
+      'master-3': music_16193381303a4584989ac395336fd4880,
+
+      'card-1': music_1c31bcc267a545ef971109512053f3e50,
+      'card-2': tiku_7758d073971ffb4a8d1ec164c2a88e73bf9b29048cbe9c971c0c3d8e8ab6afea,
+      'card-3': tiku_1b2d4a597dd55f78b934645604ac71d47adc47ffcea50103eefd7666e2756a52,
+      'card-4': music_6e9e96c75cf04411baa154b1d6a3c7360,
+      'card-5': music_a7e9436348e6456eb47f32a75f7392370,
+      'card-6': music_b6f0b1c512ad42fab204d79b85d07c140,
+      'card-7': tiku_2199a2a398f1ac1d07bd70a4e5e371431fba350fa04208b1dca0707055c5d977,
+      'card-8': tiku_3b160e3e3b8b7e57108d76c012a2b8043eb73ee8bf6baf4af6d58db0506e8274,
+      'card-9': tiku_559b6b86ac4d517bb1973cde45f283c6d9cc47204b9606bd054dd96552fba74e,
+    }
 
     this.map = {
       ...this.map,
 
-      'button-home': button_bg_2,
-      'icon-back': back
+      // 'button-home': button_bg_2,
+      // 'icon-back': back
     }
 
     parse(this.map)

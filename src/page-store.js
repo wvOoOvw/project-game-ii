@@ -552,7 +552,6 @@ class Page {
     this.preview = null
 
     this.type = 'team'
-    this.sort = 'name'
 
     this.master
     this.card
@@ -567,7 +566,7 @@ class Page {
   }
 
   get bannerHeight() {
-    return 138
+    return 96
   }
 
   get masterHeight() {
@@ -588,16 +587,16 @@ class Page {
       this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
       this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
       this.card = this.card.sort((a, b) => {
-        const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+        const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+        const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
         return b_ - a_
       })
     }
     if (this.type === 'library-card') {
       this.card = parseCard(Imitation.state.info.library.card)
       this.card = this.card.sort((a, b) => {
-        const a_ = String(a[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        const b_ = String(b[this.sort]).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+        const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+        const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
         return b_ - a_
       })
     }
@@ -705,15 +704,15 @@ class Page {
 
     new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
       const option_ = {
-        x: 24 + index * 72,
         y: 12 + option.y,
-        width: 60,
+        width: (windowWidth - 32 - 12 * Imitation.state.info.team.length) / Imitation.state.info.team.length,
         height: 30,
         radius: 8,
         font: `900 10px ${window.fontFamily}`,
-        fillStyle: index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
         text: `队伍 ${index + 1}`
       }
+      option_.x = index * (option_.width + 12) + 24
+      option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -723,50 +722,23 @@ class Page {
         if (!ifTouchCover(e, this.InstanceScroll.option)) return
 
         Imitation.state.info.teamIndex = index
-        this.type = 'team'
         this.init()
       }
 
       addEventListener('touchstart', event, option_)
     })
 
-    new Array(['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']).forEach((i, index) => {
+    new Array(['team', '队伍'], ['library-card', '卡牌'], ['library-master', '队长']).forEach((i, index) => {
       const option_ = {
-        x: 24 + index * 72,
         y: 54 + option.y,
-        width: 60,
+        width: (windowWidth - 32 - 12 * 3) / 3,
         height: 30,
         radius: 8,
         font: `900 10px ${window.fontFamily}`,
-        fillStyle: i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        fillStyle: i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
         text: i[1]
       }
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-        this.sort = i[0]
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
-
-    new Array(['team', '队伍'], ['library-card', '卡牌仓库'], ['library-master', '队长仓库']).forEach((i, index) => {
-      const option_ = {
-        x: 24 + index * 72,
-        y: 96 + option.y,
-        width: 60,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        fillStyle: i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        text: i[1]
-      }
+      option_.x = index * (option_.width + 12) + 24
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -879,7 +851,7 @@ class Page {
         }
         option.x = (windowWidth - option.width) / 2
 
-        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5

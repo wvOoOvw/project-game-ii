@@ -12,6 +12,17 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
+const numberAnimation = (number, time, callback) => {
+  const list = new Array(time).fill(number / time)
+  const event = () => {
+    requestAnimationFrame(() => {
+      callback(list.shift())
+      if (list[0]) event()
+    })
+  }
+  event()
+}
+
 class RoleMessage {
   constructor() {
     this.queqe = []
@@ -289,8 +300,6 @@ class Modal {
     this.preview = null
 
     this.card = []
-    this.title = ''
-    this.sort = 'name'
 
     this.back = props.back
 
@@ -302,13 +311,9 @@ class Modal {
     this.instanceCardPreview()
   }
 
-  get bannerHeight() {
-    return 96
-  }
-
   get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
-    return row === 0 ? 0 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return row === 0 ? 0 : (((windowWidth - 84) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -328,7 +333,7 @@ class Modal {
       x: 12,
       y: 60 + safeTop,
       width: windowWidth - 24,
-      height: windowHeight - 72 - safeTop,
+      height: windowHeight - 120 - safeTop,
       radius: 12,
     }
 
@@ -338,15 +343,15 @@ class Modal {
   instanceCardList() {
     this.InstanceCardList = this.card.map((card, index) => {
       const option = {
-        width: (windowWidth - 60) / 4,
+        width: (windowWidth - 84) / 4,
         card: card,
         touchAble: true,
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = card,
       }
       option.height = option.width * 1.35
-      option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
+      option.x = 24 + parseInt(index % 4) * (option.width + 12)
+      option.y = this.InstanceScroll.y + parseInt(index / 4) * (option.height + 12)
 
       return new ModalCardInList(option)
     })
@@ -365,77 +370,18 @@ class Modal {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.drawBanner(offsetY)
-      this.drawCard(offsetY)
-    }
 
-    this.InstanceScroll.render(event)
-  }
-
-  drawBanner(offsetY) {
-    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
-
-    if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-    ctx.save()
-
-    drawRadius(option)
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-    ctx.fill()
-
-    ctx.clip()
-
-    {
-      const option_ = {
-        x: 24,
-        y: 12 + option.y,
-        width: windowWidth - 48,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'],
-        text: this.title
-      }
-
-      new Button(option_).render()
-    }
-
-    {
-      new Array(['name', '名称'], ['level', '等级'], ['type', '类型'], ['race', '种类']).forEach((i, index) => {
-        const option_ = {
-          x: 24 + index * 72,
-          y: 54 + option.y,
-          width: 60,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          fillStyle: i[0] === this.sort ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: i[1]
-        }
-
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-        new Button(option_).render()
-
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-          this.sort = i[0]
-          this.init()
-        }
-
-        addEventListener('touchstart', event, option_)
+      this.InstanceCardList.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
       })
     }
 
-    ctx.restore()
-  }
+    drawRadius({ ...this.InstanceScroll.option, radius: 8, y: this.InstanceScroll.option.y - 12, height: this.InstanceScroll.option.height + 24 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+    ctx.fill()
 
-  drawCard(offsetY) {
-    this.InstanceCardList.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
+    this.InstanceScroll.render(event)
   }
 
   drawPreview() {
@@ -450,33 +396,17 @@ class Modal {
     addEventListenerPure('touchstart', close)
   }
 
-  drawButtonHome() {
-    const option = {
-      x: 12,
-      y: 12 + safeTop,
-      width: 72,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '返回'
-    }
-
-    new Button(option).render()
-
-    addEventListener('touchstart', this.back, option)
-  }
-
   render() {
-    this.InstanceScroll.scrollY = this.bannerHeight + this.cardHeight - this.InstanceScroll.height + 12
+    this.InstanceScroll.scrollY = this.cardHeight - this.InstanceScroll.height
 
     if (this.preview) {
       this.drawPreview()
     }
 
     if (!this.preview) {
-      this.drawButtonHome()
       this.drawScroll()
+
+      addEventListenerPure('touchstart', e => ifTouchCover(e, this.InstanceScroll.option) ? null : this.back())
     }
   }
 }
@@ -796,39 +726,59 @@ class Role {
   drawHM() {
     const { x, y, width, height, information } = this
 
-    const option = {
-      width: Math.min(width * 0.7, windowWidth / 2 - 24),
-      height: width * 0.12,
-    }
-
-    option.y = y + height - option.height - width * 0.02
-    option.radius = option.height / 2
-
-    option.x = x + width / 2 - option.width - width * 0.02
-
-    drawRadius(option)
-
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.04}px ${window.fontFamily}`
 
+    const option = {
+      width: Math.min(width * 0.7, windowWidth / 2 - 24),
+      height: width * 0.12,
+    }
+    option.x = x + width / 2 - option.width - width * 0.02
+    option.y = y + height - option.height - width * 0.02
+    option.radius = option.height / 2
+
+    ctx.save()
+
+    drawRadius(option)
+
+    ctx.clip()
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fill()
+
+    drawRect({ ...option, width: information.master.HP / information.master.HP_ * option.width })
+
     ctx.fillStyle = `rgba(185, 0, 0, 1)`
     ctx.fill()
 
+    ctx.restore()
+
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`HP ${information.master.HP} / ${information.master.HP_}`, option.x + option.width / 2, option.y + option.height / 2)
+    ctx.fillText(`HP ${Math.floor(information.master.HP)} / ${information.master.HP_}`, option.x + option.width / 2, option.y + option.height / 2)
 
     option.x = x + width / 2 + width * 0.02
 
+    ctx.save()
+
     drawRadius(option)
+
+    ctx.clip()
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fill()
+
+    drawRect({ ...option, width: information.master.MP / information.master.MP_ * option.width })
 
     ctx.fillStyle = `rgba(0, 0, 185, 1)`
     ctx.fill()
 
+    ctx.restore()
+
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`MP ${information.master.MP} / ${information.master.MP_}`, option.x + option.width / 2, option.y + option.height / 2)
+    ctx.fillText(`MP ${Math.floor(information.master.MP)} / ${information.master.MP_}`, option.x + option.width / 2, option.y + option.height / 2)
   }
 
   drawBuff() {
@@ -1103,13 +1053,11 @@ class Page {
       roundOver: this.roundOver,
       watchStore: () => {
         this.modal = true
-        this.InstanceModal.title = '牌库'
         this.InstanceModal.card = this.InstanceRoleSelf.information.card.store
         this.InstanceModal.init()
       },
       watchCemetery: () => {
         this.modal = true
-        this.InstanceModal.title = '墓地'
         this.InstanceModal.card = this.InstanceRoleSelf.information.card.cemetery
         this.InstanceModal.init()
       }
@@ -1227,27 +1175,25 @@ class Page {
       if (current.effect) {
         if (current.effect === 'cost-mp') {
           if (current.target === 'self') {
-            self.information.master.MP = self.information.master.MP - current.value
+            numberAnimation(-current.value, 32, i => self.information.master.MP = self.information.master.MP + i)
           }
         }
 
         if (current.effect === 'cost-hp') {
           if (current.target === 'opposite') {
-            opposite.information.master.HP = opposite.information.master.HP - current.value
+            numberAnimation(-current.value, 32, i => opposite.information.master.HP = opposite.information.master.HP + i)
           }
         }
 
         if (current.effect === 'cure-hp') {
           if (current.target === 'self') {
-            self.information.master.HP = self.information.master.HP + current.value
-            self.information.master.HP = Math.min(self.information.master.HP, self.information.master.HP_)
+            numberAnimation(current.value, 32, i => self.information.master.HP = Math.min(self.information.master.HP + i, self.information.master.HP_))
           }
         }
 
         if (current.effect === 'cure-mp') {
           if (current.target === 'self') {
-            self.information.master.MP = self.information.master.MP + current.value
-            self.information.master.MP = Math.min(self.information.master.MP, self.information.master.MP_)
+            numberAnimation(current.value, 32, i => self.information.master.MP = Math.min(self.information.master.MP + i, self.information.master.MP_))
           }
         }
 
@@ -1319,24 +1265,25 @@ class Page {
         }
       }
     }
-
-    this.battlerOver()
   }
 
   roundStart = async () => {
+    const currentRole = this.env.current
+
     new Array(1).fill().forEach(i => {
-      const card = this.env.current.information.card.store.shift()
+      const card = currentRole.information.card.store.shift()
       if (!card) return
-      this.pumpCard(card, this.env.current)
+      this.pumpCard(card, currentRole)
     })
 
-    this.env.current.information.master.MP = this.env.current.information.master.MP_
 
-    if (this.env.current === this.InstanceRoleSelf) {
+    numberAnimation(currentRole.information.master.MP_ - currentRole.information.master.MP, 16, i => currentRole.information.master.MP = currentRole.information.master.MP + i)
+
+    if (currentRole === this.InstanceRoleSelf) {
       this.env.round = this.env.round + 1
     }
 
-    if (this.env.current === this.InstanceRoleOpposite) {
+    if (currentRole === this.InstanceRoleOpposite) {
       const result = this.InstanceRoleOpposite.information.AI(this.InstanceRoleOpposite.information, this.InstanceRoleSelf.information, this.env)
 
       while (result.length) {
@@ -1396,6 +1343,8 @@ class Page {
       this.drawRoleSelf()
       this.InstanceRoleMessage.render()
     }
+
+    this.battlerOver()
   }
 }
 

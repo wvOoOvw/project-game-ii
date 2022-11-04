@@ -347,9 +347,17 @@ class Page {
     ctx.clip()
 
     new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
-      const option_ = { x: 24 + index * 72, y: 12 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
+      const option_ = {
+        y: 12 + option.y,
+        width: (windowWidth - 32 - 12 * 2) / 2,
+        height: 30,
+        radius: 8,
+        font: `900 10px ${window.fontFamily}`,
+        text: i[1]
+      }
+      option_.x = index * (option_.width + 12) + 24
 
-      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      option_.fillStyle = i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
