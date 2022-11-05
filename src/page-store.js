@@ -713,7 +713,7 @@ class Page {
       }
       option_.x = index * (option_.width + 12) + 24
       option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-      
+
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
       new Button(option_).render()
@@ -899,24 +899,22 @@ class Page {
   }
 
   drawButtonHome() {
-    const option = {
-      x: 12,
-      y: 12 + safeTop,
-      width: 72,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '返回'
-    }
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 12px ${window.fontFamily}`
 
-    new Button(option).render()
+    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: [4, 18, 18, 4] }
+
+    drawRadius(option)
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('返回', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
       Imitation.state.page.current = 'transition'
       Imitation.state.page.next = 'home'
     }
-
     addEventListener('touchstart', event, option)
   }
 
@@ -929,7 +927,6 @@ class Page {
       Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
-
     if (team.filter(i => i.key === card.key).reduce((t, i) => t + i.number, 0) >= card.limit) {
       Imitation.state.function.message('超出卡牌数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
@@ -938,7 +935,6 @@ class Page {
     if (findInTeam) {
       findInTeam.number = findInTeam.number + 1
     }
-
     if (!findInTeam) {
       team.push({ key: card.key, level: card.level, number: 1 })
     }
