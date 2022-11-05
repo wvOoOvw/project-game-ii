@@ -806,7 +806,7 @@ class Page {
     ctx.clip()
 
     {
-      const option_ = { x: 24, y: 12 + option.y, width: windowWidth - 48, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'], text: Imitation.state.reward.title }
+      const option_ = { x: 24, y: 12 + option.y, width: windowWidth - 48, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: Imitation.state.reward.title }
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -817,7 +817,7 @@ class Page {
       new Array(['card', '卡牌'], ['master', '队长'], ['money', '资源']).forEach((i, index) => {
         const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
 
-        option_.fillStyle = i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -874,7 +874,7 @@ class Page {
       this.preview.skill.forEach((i, index) => {
         const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
 
-        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5

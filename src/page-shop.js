@@ -365,7 +365,7 @@ class Page {
           text: i.name
         }
         option_.x = index * (option_.width + 12) + 24
-        option_.fillStyle = i.key === this.money ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
@@ -392,7 +392,7 @@ class Page {
         text: i[1]
       }
       option_.x = index * (option_.width + 12) + 24
-      option_.fillStyle = i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 

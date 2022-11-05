@@ -712,8 +712,8 @@ class Page {
         text: `队伍 ${index + 1}`
       }
       option_.x = index * (option_.width + 12) + 24
-      option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
+      option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+      
       if (!ifScreenCover(option_, this.InstanceScroll.option)) return
 
       new Button(option_).render()
@@ -735,7 +735,7 @@ class Page {
         height: 30,
         radius: 8,
         font: `900 10px ${window.fontFamily}`,
-        fillStyle: i[0] === this.type ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
+        fillStyle: i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
         text: i[1]
       }
       option_.x = index * (option_.width + 12) + 24
@@ -851,7 +851,7 @@ class Page {
         }
         option.x = (windowWidth - option.width) / 2
 
-        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 49, 83, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5
