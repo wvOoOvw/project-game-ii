@@ -588,8 +588,6 @@ class Page {
 
     var result = card.function(card, self.information, opposite.information, this.env)
 
-    self.information.card.hand = self.information.card.hand.filter(i => i !== card)
-
     self.information.master.skill.forEach(skill => skill.function(card, skill, result, self.information, opposite.information, this.env))
 
     var roleMessageTime = 0
@@ -694,6 +692,9 @@ class Page {
       }
     }
 
+    self.information.card.hand = self.information.card.hand.filter(i => i !== card)
+    currentRole.information.master._ACTION = currentRole.information.master._ACTION - 1
+
     await wait(1000)
 
     this.roundContinue()
@@ -718,8 +719,6 @@ class Page {
 
   roundContinue = async () => {
     const currentRole = this.currentRole
-
-    currentRole.information.master._ACTION = currentRole.information.master._ACTION - 1
 
     if (currentRole.information.master._ACTION > 0) {
       currentRole.information.card.hand = arrayRandom(currentRole.information.card.team, 2)
