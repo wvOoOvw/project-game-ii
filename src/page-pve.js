@@ -25,34 +25,36 @@ const numberAnimation = (number, time, callback) => {
 class RoleMessage {
   constructor() {
     this.queqe = []
+    this.time = 60
   }
 
   play(option) {
-    this.queqe.push({ ...option, time: 60 })
+    this.queqe.push({ ...option, time: this.time })
   }
 
   render() {
     this.queqe.forEach(i => {
       const fontSize = i.fontSize
+      const text = i.text
 
-      const offsetX = (i.time - 60) / 4
-      const offsetY = (i.time - 60) / 2
+      const offsetX = (i.time - this.time) / 4
+      const offsetY = (i.time - this.time) / 2
 
       ctx.save()
 
-      ctx.globalAlpha = i.time / 60
+      ctx.globalAlpha = i.time / this.time
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.font = `900 ${fontSize}px ${window.fontFamily}`
 
-      const width = ctx.measureText(i.text).width + 48
+      const width = ctx.measureText(text).width + 48
 
       drawRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.5 })
       ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
       ctx.fill()
 
       ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-      ctx.fillText(i.text, i.x + offsetX, i.y + offsetY)
+      ctx.fillText(text, i.x + offsetX, i.y + offsetY)
 
       ctx.restore()
 
@@ -538,8 +540,8 @@ class Page {
     const boxHeight = (windowHeight - (this.InstanceNavigation.height + 12) - safeTop) / 2
 
     const option = {
-      width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.35),
-      height: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.35),
+      width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
+      height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       type: 'self',
       information: Imitation.state.battle.self,
       useCard: this.useCard,
@@ -554,8 +556,8 @@ class Page {
     const boxHeight = (windowHeight - (this.InstanceNavigation.height + 12) - safeTop) / 2
 
     const option = {
-      width: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.35),
-      height: Math.min(windowWidth - 24, boxHeight - 24, windowHeight * 0.35),
+      width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
+      height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       type: 'opposite',
       information: Imitation.state.battle.opposite,
       useCard: this.useCard
