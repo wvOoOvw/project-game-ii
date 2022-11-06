@@ -2,7 +2,7 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Button } from './ui-button'
+import { Navigation } from './ui-navigation'
 
 import { Picture } from './utils-picture'
 
@@ -28,7 +28,7 @@ class MoneyInList {
   get option() {
     return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
-  
+
   drawTitle() {
     const { x, y, width, height } = this.option
     const money = this.money
@@ -287,30 +287,6 @@ class CardInPreview {
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawLimit() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText('最大装载数量 ' + card.limit, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
   drawDescription() {
     const { x, y, width, height } = this.option
     const card = this.card
@@ -352,7 +328,6 @@ class CardInPreview {
     this.drawTitle()
     this.drawName()
     this.drawRaceType()
-    this.drawLimit()
     this.drawDescription()
 
     ctx.restore()
@@ -553,7 +528,7 @@ class MasterInPreview {
     ctx.fillText('HP ' + master.HP, x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawMP() {
+  drawATTACT() {
     const { x, y, width, height } = this.option
     const master = this.master
 
@@ -574,7 +549,7 @@ class MasterInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText('MP ' + master.MP, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText('ATTACT ' + master.ATTACT, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -618,7 +593,7 @@ class MasterInPreview {
     this.drawTitle()
     this.drawName()
     this.drawHP()
-    this.drawMP()
+    this.drawATTACT()
     this.drawDescription()
 
     ctx.restore()
@@ -635,6 +610,7 @@ class Page {
     this.master = []
     this.money = []
 
+    this.InstanceNavigation
     this.InstanceScroll
     this.InstanceCard
     this.InstanceCardPreview
@@ -644,10 +620,6 @@ class Page {
 
     this.init()
     this.compute()
-  }
-
-  get bannerHeight() {
-    return 96
   }
 
   get masterHeight() {
@@ -680,6 +652,7 @@ class Page {
       this.money = parseMoney(Imitation.state.reward.value.filter(i => i.money))
     }
 
+    this.instanceNavigation()
     this.instanceScroll()
     this.instanceCard()
     this.instanceMaster()
@@ -688,15 +661,45 @@ class Page {
     this.instanceMasterPreview()
   }
 
-  instanceScroll() {
+  instanceNavigation() {
     const option = {
-      x: 12,
-      y: 60 + safeTop,
-      width: windowWidth - 24,
-      height: windowHeight - 72 - safeTop,
-      radius: 12,
+      content: [
+        [
+          {
+            justifyContent: 'left',
+            text: '返回',
+            event: () => {
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = Imitation.state.reward.back
+            }
+          },
+          {
+            justifyContent: 'right',
+            text: Imitation.state.reward.title,
+          },
+        ],
+        [
+          ...new Array(['card', '卡牌'], ['master', '队长'], ['money', '资源']).map((i, index) => {
+            return {
+              active: i[0] === this.type,
+              justifyContent: 'left',
+              text: i[1],
+              event: () => {
+                this.type = i[0]
+                this.init()
+              }
+            }
+          })
+        ]
+      ]
     }
-    option.scrollY = this.bannerHeight + this.masterHeight + this.cardHeight + this.moneyHeight - option.height + 12
+
+    this.InstanceNavigation = new Navigation(option)
+  }
+
+  instanceScroll() {
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
+    option.scrollY = this.masterHeight + this.cardHeight + this.moneyHeight - option.height + 12
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -713,7 +716,7 @@ class Page {
 
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + index * (option.height + 12) + safeTop
 
       return new MasterInList(option)
     })
@@ -731,7 +734,7 @@ class Page {
 
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 72 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + parseInt(index / 4) * (option.height + 12) + safeTop
 
       return new CardInList(option)
     })
@@ -746,7 +749,7 @@ class Page {
 
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + index * (option.height + 12) + safeTop
 
       return new MoneyInList(option)
     })
@@ -781,87 +784,26 @@ class Page {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.drawBanner(offsetY)
-      this.drawMaster(offsetY)
-      this.drawCard(offsetY)
-      this.drawMoney(offsetY)
+
+      this.InstanceMaster.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
+      this.InstanceCard.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
+      this.InstanceMoney.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
     }
 
     this.InstanceScroll.render(event)
   }
 
-  drawBanner(offsetY) {
-    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
-
-    if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-    ctx.save()
-
-    drawRadius(option)
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-
-    ctx.fill()
-
-    ctx.clip()
-
-    {
-      const option_ = { x: 24, y: 12 + option.y, width: windowWidth - 48, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'], text: Imitation.state.reward.title }
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-    }
-
-    {
-      new Array(['card', '卡牌'], ['master', '队长'], ['money', '资源']).forEach((i, index) => {
-        const option_ = { x: 24 + index * 72, y: 54 + option.y, width: 60, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, text: i[1] }
-
-        option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-        new Button(option_).render()
-
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-          this.type = i[0]
-          this.init()
-        }
-
-        addEventListener('touchstart', event, option_)
-      })
-    }
-
-    ctx.restore()
-  }
-
-  drawCard(offsetY) {
-    this.InstanceCard.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
-  drawMaster(offsetY) {
-    this.InstanceMaster.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
-  drawMoney(offsetY) {
-    this.InstanceMoney.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
   drawPreview() {
     var closeCover = []
-
-    const buttonY = this.InstanceMasterPreview.y + this.InstanceMasterPreview.height
 
     if (this.InstanceCard.find(i => i.card === this.preview)) {
       this.InstanceCardPreview.card = this.preview
@@ -872,18 +814,23 @@ class Page {
       this.InstanceMasterPreview.render()
 
       this.preview.skill.forEach((i, index) => {
-        const option = { x: windowWidth / 2 - 40, y: buttonY + 20, width: 80, height: 32, radius: 8, font: `900 10px ${window.fontFamily}`, text: i.name }
+        const option = { x: windowWidth / 2 - 40, y: this.InstanceMasterPreview.y - 42, width: 72, height: 30, radius: 8 }
 
-        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `900 10px ${window.fontFamily}`
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5
-
         const diff = (index - centerIndex) * option.width * 1.1
 
         option.x = option.x + diff
 
-        new Button(option).render()
+        drawRadius(option)
+        ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
+        ctx.fillText(i.name, option.x + option.width / 2, option.y + option.height / 2)
 
         const event = (e) => {
           this.InstanceMasterPreview.skillIndex = index
@@ -905,28 +852,6 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
-  drawButtonHome() {
-    const option = {
-      x: 12,
-      y: 12 + safeTop,
-      width: 72,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '返回'
-    }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = Imitation.state.reward.back
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
   compute() {
     const library = Imitation.state.info.library
     const reward = Imitation.state.reward.value
@@ -938,11 +863,12 @@ class Page {
           findInLibrary.exp = findInLibrary.exp + i.exp
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: 1, exp: i.exp })
+          library.card.push({ key: i.key, level: 1, exp: i.exp })
         }
-        while (findInLibrary.exp >= 100 * Math.pow(2, findInLibrary.level - 1)) {
-          findInLibrary.exp = findInLibrary.exp - 100 * Math.pow(2, findInLibrary.level - 1)
-          findInLibrary.level = findInLibrary.level + 1
+        const findInLibrary_ = library.card.find(i_ => i_.key === i.key)
+        while (findInLibrary_.exp >= 100 * Math.pow(2, findInLibrary_.level - 1)) {
+          findInLibrary_.exp = findInLibrary_.exp - 100 * Math.pow(2, findInLibrary_.level - 1)
+          findInLibrary_.level = findInLibrary_.level + 1
         }
       }
       if (i.master) {
@@ -951,11 +877,12 @@ class Page {
           findInLibrary.exp = findInLibrary.exp + i.exp
         }
         if (!findInLibrary) {
-          library.push({ key: i.key, level: 1, exp: i.exp })
+          library.master.push({ key: i.key, level: 1, exp: i.exp })
         }
-        while (findInLibrary.exp >= 100 * Math.pow(2, findInLibrary.level - 1)) {
-          findInLibrary.exp = findInLibrary.exp - 100 * Math.pow(2, findInLibrary.level - 1)
-          findInLibrary.level = findInLibrary.level + 1
+        const findInLibrary_ = library.card.find(i_ => i_.key === i.key)
+        while (findInLibrary_.exp >= 100 * Math.pow(2, findInLibrary_.level - 1)) {
+          findInLibrary_.exp = findInLibrary_.exp - 100 * Math.pow(2, findInLibrary_.level - 1)
+          findInLibrary_.level = findInLibrary_.level + 1
         }
       }
     })
@@ -965,13 +892,13 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    this.InstanceNavigation.render()
 
     if (this.preview) {
       this.drawPreview()
     }
 
     if (!this.preview) {
-      this.drawButtonHome()
       this.drawScroll()
     }
   }

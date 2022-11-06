@@ -122,19 +122,19 @@ class Main {
         team: [
           {
             master: { key: 3 },
-            card: originCard.map(i => ({ key: i.key, number: i.limit }))
+            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: []
+            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: []
+            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: []
+            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
           },
         ],
         teamIndex: 0,
@@ -158,10 +158,7 @@ class Main {
           },
           card: {
             team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
-            store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
             hand: [],
-            cemetery: [],
-            consume: []
           },
         },
         opposite: {
@@ -171,10 +168,7 @@ class Main {
           },
           card: {
             team: parseCard(originExplore[0].boss.card),
-            store: setArrayRandom(parseCard(originExplore[0].boss.card)),
             hand: [],
-            cemetery: [],
-            consume: []
           },
           AI: originExplore[0].AI
         },

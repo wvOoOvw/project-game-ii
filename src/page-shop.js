@@ -2,7 +2,7 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Button } from './ui-button'
+import { Navigation } from './ui-navigation'
 
 import { Picture } from './utils-picture'
 
@@ -261,15 +261,12 @@ class Page {
 
     this.shop
 
+    this.InstanceNavigation
     this.InstanceScroll
     this.InstanceShop
     this.InstanceShopPreview
 
     this.init()
-  }
-
-  get bannerHeight() {
-    return 96
   }
 
   get shopHeight() {
@@ -280,20 +277,65 @@ class Page {
   init() {
     this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.money.key === this.money)
 
+    this.instanceNavigation()
     this.instanceScroll()
     this.instanceShop()
     this.instanceShopPreview()
   }
 
-  instanceScroll() {
+  instanceNavigation() {
     const option = {
-      x: 12,
-      y: 60 + safeTop,
-      width: windowWidth - 24,
-      height: windowHeight - 72 - safeTop,
-      radius: 12,
+      content: [
+        [
+          {
+            justifyContent: 'left',
+            text: '返回',
+            event: () => {
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'home'
+            }
+          },
+          {
+            justifyContent: 'right',
+            text: '商店',
+          }
+        ],
+        [
+          ...new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).map((i, index) => {
+            return {
+              active: i[0] === this.type,
+              justifyContent: 'left',
+              text: i[1],
+              event: () => {
+                this.type = i[0]
+                this.init()
+              }
+            }
+          })
+        ],
+        [
+          ...parseMoney(Imitation.state.info.money).map((i, index) => {
+            return {
+              active: i.key === this.money,
+              justifyContent: 'left',
+              text: `${i.name} ¥${i.number}`,
+              width: (windowWidth - 12 * 6) / 3,
+              event: () => {
+                this.money = i.key
+                this.init()
+              }
+            }
+          })
+        ],
+      ]
     }
-    option.scrollY = this.bannerHeight + this.shopHeight - option.height + 24
+
+    this.InstanceNavigation = new Navigation(option)
+  }
+
+  instanceScroll() {
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
+    option.scrollY = this.shopHeight - option.height + 24
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -309,7 +351,7 @@ class Page {
       }
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + index * (option.height + 12) + safeTop
 
       return new ShopInList(option)
     })
@@ -331,114 +373,35 @@ class Page {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.drawBanner(offsetY)
-      this.drawShop(offsetY)
+
+      this.InstanceShop.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
     }
 
     this.InstanceScroll.render(event)
   }
 
-  drawBanner(offsetY) {
-    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
-
-    if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-    ctx.save()
-
-    drawRadius(option)
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-
-    ctx.fill()
-
-    ctx.clip()
-
-    {
-      const list = parseMoney(Imitation.state.info.money)
-      list.forEach((i, index) => {
-        const option_ = {
-          y: 12 + option.y,
-          width: (windowWidth - 32 - 12 * list.length) / list.length,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          text: i.name
-        }
-        option_.x = index * (option_.width + 12) + 24
-        option_.fillStyle = i.key === this.money ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-        if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-        new Button(option_).render()
-
-        const event = (e) => {
-          if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-          this.money = i.key
-          this.init()
-        }
-
-        addEventListener('touchstart', event, option_)
-      })
-    }
-
-    new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
-      const option_ = {
-        y: 54 + option.y,
-        width: (windowWidth - 32 - 12 * 2) / 2,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        text: i[1]
-      }
-      option_.x = index * (option_.width + 12) + 24
-      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-        this.type = i[0]
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
-
-    ctx.restore()
-  }
-
-  drawShop(offsetY) {
-    this.InstanceShop.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
   drawPreview() {
     var closeCover = []
-
-    const buttonY = this.InstanceShopPreview.y + this.InstanceShopPreview.height
 
     this.InstanceShopPreview.shop = this.preview
 
     this.InstanceShopPreview.render()
 
-    const option = {
-      y: buttonY + 24,
-      width: 108,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '购买'
-    }
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 12px ${window.fontFamily}`
+
+    const option = { width: 108, height: 36, radius: 8, y: this.InstanceShopPreview.y + this.InstanceShopPreview.height + 24 }
     option.x = (windowWidth - option.width) / 2
 
-    new Button(option).render()
+    drawRadius(option)
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('购买', option.x + option.width / 2, option.y + option.height / 2)
 
     const buy = () => {
       this.buy(this.preview)
@@ -457,44 +420,6 @@ class Page {
     }
 
     addEventListenerPure('touchstart', close)
-  }
-
-  drawButtonHome() {
-    const option = {
-      x: 12,
-      y: 12 + safeTop,
-      width: 72,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '返回'
-    }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-
-    addEventListener('touchstart', event, option)
-  }
-
-  drawInfo() {
-    const array = parseMoney(Imitation.state.info.money)
-
-    array.forEach((i, index) => {
-      const maxIndex = array.length
-      const centerIndex = maxIndex / 2 - 0.5
-      const diff = index - centerIndex
-
-      const option = { y: windowHeight - 48, width: 90, height: 30, radius: 8, font: `900 10px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 0.75)', 'rgba(0, 0, 0, 1)'], text: `${i.name} ¥${i.number}` }
-
-      option.x = (windowWidth - option.width) / 2 + diff * (option.width + 8)
-
-      new Button(option).render()
-    })
   }
 
   buy(shop) {
@@ -517,16 +442,14 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    this.InstanceNavigation.render()
 
     if (!this.preview) {
-      this.drawButtonHome()
       this.drawScroll()
-      this.drawInfo()
     }
 
     if (this.preview) {
       this.drawPreview()
-      this.drawInfo()
     }
   }
 }

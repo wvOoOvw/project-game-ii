@@ -2,7 +2,7 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Button } from './ui-button'
+import { Navigation } from './ui-navigation'
 
 import { Picture } from './utils-picture'
 
@@ -263,15 +263,12 @@ class Page {
 
     this.explore
 
+    this.InstanceNavigation
     this.InstanceScroll
     this.InstanceExplore
     this.InstanceExplorePreview
 
     this.init()
-  }
-
-  get bannerHeight() {
-    return 54
   }
 
   get exploreHeight() {
@@ -282,17 +279,53 @@ class Page {
   init() {
     this.explore = Imitation.state.explore.filter(i => i.type === this.type)
 
+    this.instanceNavigation()
     this.instanceScroll()
     this.instanceExplore()
     this.instanceExplorePreview()
   }
 
+  instanceNavigation() {
+    const option = {
+      content: [
+        [
+          {
+            justifyContent: 'left',
+            text: '返回',
+            event: () => {
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'home'
+            }
+          },
+          {
+            justifyContent: 'right',
+            text: '探索',
+          }
+        ],
+        [
+          ...new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).map((i, index) => {
+            return {
+              active: i[0] === this.type,
+              justifyContent: 'left',
+              text: i[1],
+              event: () => {
+                this.type = i[0]
+                this.init()
+              }
+            }
+          })
+        ]
+      ]
+    }
+
+    this.InstanceNavigation = new Navigation(option)
+  }
+
   instanceScroll() {
-    const scrollOption = { x: 12, y: 60 + safeTop, width: windowWidth - 24, height: windowHeight - 72 - safeTop, radius: 12 }
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
+    option.scrollY = this.exploreHeight - option.height
 
-    this.InstanceScroll = new Scroll(scrollOption)
-
-    this.InstanceScroll.scrollY = this.bannerHeight - this.InstanceScroll.height + 24
+    this.InstanceScroll = new Scroll(option)
   }
 
   instanceExplore() {
@@ -304,10 +337,9 @@ class Page {
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = explore,
       }
-
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + index * (option.height + 12) + safeTop
 
       return new ExploreInList(option)
     })
@@ -326,84 +358,34 @@ class Page {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.drawBanner(offsetY)
-      this.drawExplore(offsetY)
+
+      this.InstanceExplore.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
     }
 
     this.InstanceScroll.render(event)
   }
 
-  drawBanner(offsetY) {
-    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
-
-    if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-    ctx.save()
-
-    drawRadius(option)
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-    ctx.fill()
-
-    ctx.clip()
-
-    new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).forEach((i, index) => {
-      const option_ = {
-        y: 12 + option.y,
-        width: (windowWidth - 32 - 12 * 2) / 2,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        text: i[1]
-      }
-      option_.x = index * (option_.width + 12) + 24
-
-      option_.fillStyle = i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-        this.type = i[0]
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
-
-    ctx.restore()
-  }
-
-  drawExplore(offsetY) {
-    this.InstanceExplore.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
   drawPreview() {
     var closeCover = []
 
-    const buttonY = this.InstanceExplorePreview.y + this.InstanceExplorePreview.height
-
     this.InstanceExplorePreview.explore = this.preview
-
     this.InstanceExplorePreview.render()
 
-    const option = {
-      y: buttonY + 24,
-      width: 108,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '进入'
-    }
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 12px ${window.fontFamily}`
+
+    const option = { width: 108, height: 36, radius: 8, y: this.InstanceExplorePreview.y + this.InstanceExplorePreview.height + 24 }
     option.x = (windowWidth - option.width) / 2
 
-    new Button(option).render()
+    drawRadius(option)
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('进入', option.x + option.width / 2, option.y + option.height / 2)
 
     const enter = () => this.enter(this.preview)
 
@@ -418,28 +400,6 @@ class Page {
     }
 
     addEventListenerPure('touchstart', close)
-  }
-
-  drawButtonHome() {
-    const option = {
-      x: 12,
-      y: 12 + safeTop,
-      width: 72,
-      height: 36,
-      radius: 8,
-      font: `900 12px ${window.fontFamily}`,
-      fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-      text: '返回'
-    }
-
-    new Button(option).render()
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-
-    addEventListener('touchstart', event, option)
   }
 
   enter(explore) {
@@ -474,8 +434,8 @@ class Page {
       reward: explore.reward
     }
 
-    if (Imitation.state.battle.self.card.team.length < 20 || Imitation.state.battle.self.card.team.length > 40) {
-      Imitation.state.function.message('卡组数量必须在20-40内', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    if (Imitation.state.battle.self.card.team.length < 8) {
+      Imitation.state.function.message('卡组数量满足8张', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -485,13 +445,13 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    this.InstanceNavigation.render()
 
     if (this.preview) {
       this.drawPreview()
     }
 
     if (!this.preview) {
-      this.drawButtonHome()
       this.drawScroll()
     }
   }

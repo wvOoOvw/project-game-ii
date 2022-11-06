@@ -3,6 +3,7 @@ import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canv
 
 import { Scroll } from './ui-scroll'
 import { Button } from './ui-button'
+import { Navigation } from './ui-navigation'
 
 import { Picture } from './utils-picture'
 
@@ -205,30 +206,6 @@ class CardInPreview {
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawLimit() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText('最大装载数量 ' + card.limit, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
   drawDescription() {
     const { x, y, width, height } = this.option
     const card = this.card
@@ -272,7 +249,6 @@ class CardInPreview {
     this.drawTitle()
     this.drawName()
     this.drawRaceType()
-    this.drawLimit()
     this.drawDescription()
 
     ctx.restore()
@@ -473,7 +449,7 @@ class MasterInPreview {
     ctx.fillText('HP ' + master.HP, x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawMP() {
+  drawATTACT() {
     const { x, y, width, height } = this.option
     const master = this.master
 
@@ -494,7 +470,7 @@ class MasterInPreview {
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText('MP ' + master.MP, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText('ATTACT ' + master.ATTACT, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -540,7 +516,7 @@ class MasterInPreview {
     this.drawTitle()
     this.drawName()
     this.drawHP()
-    this.drawMP()
+    this.drawATTACT()
     this.drawDescription()
 
     ctx.restore()
@@ -556,6 +532,7 @@ class Page {
     this.master
     this.card
 
+    this.InstanceNavigation
     this.InstanceScroll
     this.InstanceMasterList
     this.InstanceMasterPreview
@@ -563,10 +540,6 @@ class Page {
     this.InstanceCardPreview
 
     this.init()
-  }
-
-  get bannerHeight() {
-    return 96
   }
 
   get masterHeight() {
@@ -604,6 +577,7 @@ class Page {
       this.master = parseMaster(Imitation.state.info.library.master)
     }
 
+    this.instanceNavigation()
     this.instanceScroll()
     this.instanceMasterList()
     this.instanceCardList()
@@ -611,15 +585,58 @@ class Page {
     this.instanceMasterPreview()
   }
 
-  instanceScroll() {
+  instanceNavigation() {
     const option = {
-      x: 12,
-      y: 60 + safeTop,
-      width: windowWidth - 24,
-      height: windowHeight - 72 - safeTop,
-      radius: 12,
+      content: [
+        [
+          {
+            justifyContent: 'left',
+            text: '返回',
+            event: () => {
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'home'
+            }
+          },
+          {
+            justifyContent: 'right',
+            text: '编队',
+          }
+        ],
+        [
+          ...new Array(['team', '队伍'], ['library-card', '卡牌'], ['library-master', '队长']).map((i, index) => {
+            return {
+              active: i[0] === this.type,
+              justifyContent: 'left',
+              text: i[1],
+              event: () => {
+                this.type = i[0]
+                this.init()
+              }
+            }
+          })
+        ],
+        [
+          ...new Array(Imitation.state.info.team.length).fill().map((i, index) => {
+            return {
+              active: index === Imitation.state.info.teamIndex,
+              justifyContent: 'left',
+              text: `队伍 ${index + 1}`,
+              event: () => {
+                Imitation.state.info.teamIndex = index
+                this.init()
+              }
+            }
+          })
+        ],
+      ]
     }
-    option.scrollY = this.bannerHeight + this.masterHeight + this.cardHeight - option.height + 24
+
+    this.InstanceNavigation = new Navigation(option)
+  }
+
+  instanceScroll() {
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
+    option.scrollY = this.masterHeight + this.cardHeight - option.height + 24
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -635,7 +652,7 @@ class Page {
       }
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 72 + index * (option.height + 12) + this.bannerHeight + safeTop
+      option.y = 12 + index * (option.height + 12) + safeTop
 
       return new MasterInList(option)
     })
@@ -652,7 +669,7 @@ class Page {
       }
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 84 + parseInt(index / 4) * (option.height + 12) + this.bannerHeight + this.masterHeight + safeTop
+      option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight + safeTop
 
       return new CardInList(option)
     })
@@ -681,94 +698,17 @@ class Page {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.drawBanner(offsetY)
-      this.drawMaster(offsetY)
-      this.drawCard(offsetY)
+      this.InstanceMasterList.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
+      this.InstanceCardList.forEach((i) => {
+        i.offsetY = 0 - offsetY
+        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+      })
     }
 
     this.InstanceScroll.render(event)
-  }
-
-  drawBanner(offsetY) {
-    const option = { x: 12, y: 60 - offsetY + safeTop, width: windowWidth - 24, height: this.bannerHeight, radius: 12 }
-
-    if (!ifScreenCover(option, this.InstanceScroll.option)) return
-
-    ctx.save()
-
-    drawRadius(option)
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
-    ctx.fill()
-
-    ctx.clip()
-
-    new Array(Imitation.state.info.team.length).fill().forEach((i, index) => {
-      const option_ = {
-        y: 12 + option.y,
-        width: (windowWidth - 32 - 12 * Imitation.state.info.team.length) / Imitation.state.info.team.length,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        text: `队伍 ${index + 1}`
-      }
-      option_.x = index * (option_.width + 12) + 24
-      option_.fillStyle = index === Imitation.state.info.teamIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-        Imitation.state.info.teamIndex = index
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
-
-    new Array(['team', '队伍'], ['library-card', '卡牌'], ['library-master', '队长']).forEach((i, index) => {
-      const option_ = {
-        y: 54 + option.y,
-        width: (windowWidth - 32 - 12 * 3) / 3,
-        height: 30,
-        radius: 8,
-        font: `900 10px ${window.fontFamily}`,
-        fillStyle: i[0] === this.type ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        text: i[1]
-      }
-      option_.x = index * (option_.width + 12) + 24
-
-      if (!ifScreenCover(option_, this.InstanceScroll.option)) return
-
-      new Button(option_).render()
-
-      const event = (e) => {
-        if (!ifTouchCover(e, this.InstanceScroll.option)) return
-
-        this.type = i[0]
-        this.init()
-      }
-
-      addEventListener('touchstart', event, option_)
-    })
-
-    ctx.restore()
-  }
-
-  drawCard(offsetY) {
-    this.InstanceCardList.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
-  }
-
-  drawMaster(offsetY) {
-    this.InstanceMasterList.forEach((i) => {
-      i.offsetY = 0 - offsetY
-      if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
-    })
   }
 
   drawPreview() {
@@ -780,57 +720,40 @@ class Page {
       this.InstanceCardPreview.card = this.preview
       this.InstanceCardPreview.render()
 
-      const count = Imitation.state.info.team[Imitation.state.info.teamIndex].card.find(i => i.key === this.preview.key) ? Imitation.state.info.team[Imitation.state.info.teamIndex].card.find(i => i.key === this.preview.key).number : 0
-
-      {
-        const option = {
-          y: buttonY + 24,
-          width: 36,
-          height: 36,
-          radius: 18,
-          font: `900 12px ${window.fontFamily}`,
-          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        }
-        option.text = count
+      if (this.type === 'team') {
+        const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
         option.x = (windowWidth - option.width) / 2
 
-        new Button(option).render()
-      }
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `900 12px ${window.fontFamily}`
 
-      {
-        const option = {
-          y: buttonY + 24,
-          width: 90,
-          height: 36,
-          radius: 8,
-          font: `900 12px ${window.fontFamily}`,
-          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        }
-        option.text = '装载'
-        option.x = (windowWidth - option.width) / 2 - (option.width / 2 + 36)
+        drawRadius(option)
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+        ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
 
-        new Button(option).render()
-
-        addEventListener('touchstart', () => this.loadCard(this.preview), option)
+        addEventListener('touchstart', () => this.unloadCard(this.preview), option)
 
         closeCover.push(option)
       }
 
-      {
-        const option = {
-          y: buttonY + 24,
-          width: 90,
-          height: 36,
-          radius: 8,
-          font: `900 12px ${window.fontFamily}`,
-          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-        }
-        option.text = '卸载'
-        option.x = (windowWidth - option.width) / 2 + (option.width / 2 + 36)
+      if (this.type === 'library-card') {
+        const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
+        option.x = (windowWidth - option.width) / 2
 
-        new Button(option).render()
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `900 12px ${window.fontFamily}`
 
-        addEventListener('touchstart', () => this.unloadCard(this.preview), option)
+        drawRadius(option)
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+        ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
+
+        addEventListener('touchstart', () => this.loadCard(this.preview), option)
 
         closeCover.push(option)
       }
@@ -841,26 +764,23 @@ class Page {
       this.InstanceMasterPreview.render()
 
       this.preview.skill.forEach((i, index) => {
-        const option = {
-          y: buttonY + 12,
-          width: 72,
-          height: 30,
-          radius: 8,
-          font: `900 10px ${window.fontFamily}`,
-          text: i.name
-        }
-        option.x = (windowWidth - option.width) / 2
+        const option = { x: windowWidth / 2 - 40, y: this.InstanceMasterPreview.y - 42, width: 72, height: 30, radius: 8 }
 
-        option.fillStyle = index === this.InstanceMasterPreview.skillIndex ? ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)'] : ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `900 10px ${window.fontFamily}`
 
         const maxIndex = this.preview.skill.length
         const centerIndex = maxIndex / 2 - 0.5
-
         const diff = (index - centerIndex) * (option.width + 12)
 
         option.x = option.x + diff
 
-        new Button(option).render()
+        drawRadius(option)
+        ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
+        ctx.fillText(i.name, option.x + option.width / 2, option.y + option.height / 2)
 
         addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, option)
 
@@ -868,18 +788,18 @@ class Page {
       })
 
       if (this.type === 'library-master') {
-        const option = {
-          y: buttonY + 66,
-          width: 108,
-          height: 36,
-          radius: 8,
-          font: `900 12px ${window.fontFamily}`,
-          fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'],
-          text: '装载'
-        }
+        const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
         option.x = (windowWidth - option.width) / 2
 
-        new Button(option).render()
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.font = `900 12px ${window.fontFamily}`
+
+        drawRadius(option)
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+        ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
 
         addEventListener('touchstart', () => this.loadMaster(this.preview), option)
 
@@ -898,45 +818,21 @@ class Page {
     addEventListenerPure('touchstart', close)
   }
 
-  drawButtonHome() {
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 12px ${window.fontFamily}`
-
-    const option = { x: 12, y: 12 + safeTop, width: 72, height: 36, radius: [4, 18, 18, 4] }
-
-    drawRadius(option)
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.fillText('返回', option.x + option.width / 2, option.y + option.height / 2)
-
-    const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'home'
-    }
-    addEventListener('touchstart', event, option)
-  }
-
   loadCard(card) {
     const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
-    if (team.reduce((t, i) => t + i.number, 0) > 40) {
+    if (team.reduce((t, i) => t + i.number, 0) > 8) {
       Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
-    if (team.filter(i => i.key === card.key).reduce((t, i) => t + i.number, 0) >= card.limit) {
-      Imitation.state.function.message('超出卡牌数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    if (findInTeam) {
+      Imitation.state.function.message('卡牌已装载', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
-
-    if (findInTeam) {
-      findInTeam.number = findInTeam.number + 1
-    }
     if (!findInTeam) {
-      team.push({ key: card.key, level: card.level, number: 1 })
+      team.push({ key: card.key })
     }
 
     this.init()
@@ -955,12 +851,8 @@ class Page {
       return
     }
 
-    findInTeam.number = findInTeam.number - 1
-
-    if (findInTeam.number === 0) {
-      const index = team.indexOf(findInTeam)
-      team.splice(index, 1)
-    }
+    const index = team.indexOf(findInTeam)
+    team.splice(index, 1)
 
     this.init()
     this.preview = null
@@ -979,13 +871,13 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    this.InstanceNavigation.render()
 
     if (this.preview) {
       this.drawPreview()
     }
 
     if (!this.preview) {
-      this.drawButtonHome()
       this.drawScroll()
     }
   }

@@ -6,16 +6,7 @@ const parseCard = (array) => {
 
     const origin = originCard.find(i_ => i.key === i_.key)
 
-    const item = { ...origin, ...i }
-
-    if (!item.number) {
-      result_.push({ ...origin, ...i })
-    }
-
-    if (item.number) {
-      delete item.number
-      result_.push(...new Array(i.number).fill().map(i => ({ ...item })))
-    }
+    result_.push({ ...origin, ...i })
 
     return result_
   }, [])
@@ -29,7 +20,7 @@ const parseMaster = (array) => {
 
     const origin = originMaster.find(i_ => i.key === i_.key)
 
-    result_.push({ ...origin, ...i, HP: origin.HP(i.level), MP: origin.MP(i.level), HP_: origin.HP(i.level), MP_: origin.MP(i.level) })
+    result_.push({ ...origin, ...i, HP: origin.HP(i.level), ATTACT: origin.ATTACT(i.level), HP_: origin.HP(i.level), ATTACT_: origin.ATTACT(i.level) })
 
     return result_
   }, [])

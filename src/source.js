@@ -39,7 +39,7 @@ var originExplore = [
       ]
     },
     AI: (self, opposite, env) => {
-      return arrayRandom(self.card.hand, 1)
+      return arrayRandom(self.card.hand, 1)[0]
     }
   },
   {
@@ -63,7 +63,7 @@ var originExplore = [
       ]
     },
     AI: (self, opposite, env) => {
-      return arrayRandom(self.card.hand, 1)
+      return arrayRandom(self.card.hand, 1)[0]
     }
   },
 ]
@@ -89,7 +89,7 @@ var originShop = [
   {
     key: 2,
     name: '火系基础礼盒II',
-    description: '可能包含: 点燃 Exp 0 - 20, 引燃 Exp 0 - 20, 火焰领主 Exp 50-100',
+    description: '可能包含: 点燃 Exp 0 - 20, 火焰领主 Exp 50-100',
     type: 'alltime',
     money: {
       key: 2,
@@ -98,7 +98,6 @@ var originShop = [
     reward: () => {
       return [
         { card: true, key: 3, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 5, exp: Math.floor(Math.random() * 20) },
         { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
       ]
     },
@@ -109,27 +108,28 @@ var originMaster = [
   {
     key: 1,
     name: '艾露恩',
-    HP: l => LevelRise(1000, l),
-    MP: l => 1000,
+    HP: l => LevelRise(10000, l),
+    ATTACT: l => LevelRise(800, l),
+    ACTION: 2,
     skill: [
       {
         name: '庇护 I',
-        description: l => `使用卡牌时, 回复 5% HP`,
+        description: l => `使用卡牌后, 回复 5% HP`,
         function: (card, skill, result, self, opposite, env) => {
           const cure = Math.floor(self.master.HP_ * 0.05)
 
-          result.push({ effect: 'cure-hp', target: 'self', value: cure })
           result.push({ roleMessage: `${skill.name} HP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          result.push({ effect: 'HP', target: 'self', value: cure })
         }
       },
       {
         name: '庇护 II',
-        description: l => `使用卡牌时, 回复 5% MP`,
+        description: l => `使用卡牌后, 提升 5% 基础ATTACT`,
         function: (card, skill, result, self, opposite, env) => {
-          const cure = Math.floor(self.master.MP_ * 0.05)
+          const value = Math.floor(self.master.ATTACT_ * 0.05)
 
-          result.push({ effect: 'cure-mp', target: 'self', value: cure })
-          result.push({ roleMessage: `${skill.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          result.push({ effect: 'ATTACT', target: 'self', value: value })
         }
       },
     ],
@@ -137,18 +137,19 @@ var originMaster = [
   {
     key: 2,
     name: '火焰领主',
-    HP: l => LevelRise(800, l),
-    MP: l => 1200,
+    HP: l => LevelRise(10000, l),
+    ATTACT: l => LevelRise(800, l),
+    ACTION: 2,
     skill: [
       {
         name: '欲火',
-        description: l => `使用火系卡牌时, 额外造成 ${LevelRise(50, l)} 伤害`,
+        description: l => `使用火系卡牌后, 给予对方 20%ATTACT 的伤害`,
         function: (card, skill, result, self, opposite, env) => {
           if (card.race === '火') {
-            const damage = LevelRise(50, self.master.level)
+            const damage = Math.floor(self.master.ATTACT * 0.2)
 
-            result.push({ effect: 'cost-hp', target: 'opposite', value: damage })
             result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            result.push({ effect: 'HP', target: 'opposite', value: -damage })
           }
         }
       }
@@ -157,28 +158,31 @@ var originMaster = [
   {
     key: 3,
     name: '炎魔',
-    HP: l => LevelRise(700, l),
-    MP: l => 1500,
+    HP: l => LevelRise(10000, l),
+    ATTACT: l => LevelRise(800, l),
+    ACTION: 2,
     skill: [
       {
         name: '火焰控制',
-        description: l => `使用火系卡牌时, 若目标的 '燃' 层数大于等于5, 从牌库抽取一张卡, 并消耗目标 1 层 '燃'`,
+        description: l => `使用火系卡牌后, 提升 5% ATTACT`,
         function: (card, skill, result, self, opposite, env) => {
-          if (card.race === '火' && opposite.master.buff.filter(i => i === '燃') >= 5) {
-            result.push({ effect: 'pump-store-positive', target: 'self', value: 1 })
-            result.push({ effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 })
+          if (card.race === '火') {
+            const value = Math.floor(self.master.ATTACT * 0.05)
+
+            result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+            result.push({ effect: 'ATTACT', target: 'self', value: value })
           }
         }
       },
       {
         name: '欲火',
-        description: l => `使用火系卡牌时, 额外造成 ${LevelRise(50, l)} 伤害`,
+        description: l => `使用火系卡牌后, 给予对方 20%ATTACT 伤害`,
         function: (card, skill, result, self, opposite, env) => {
           if (card.race === '火') {
-            const damage = LevelRise(50, self.master.level)
+            const damage = Math.floor(self.master.ATTACT * 0.2)
 
-            result.push({ effect: 'cost-hp', target: 'opposite', value: damage })
             result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            result.push({ effect: 'HP', target: 'opposite', value: -damage })
           }
         }
       }
@@ -192,17 +196,16 @@ var originCard = [
     name: '小火把',
     type: '进攻卡',
     race: '火',
-    limit: 3,
-    description: l => `造成 ${LevelRise(100, l)} 伤害, 并附加给目标 1 层 '燃'`,
+    description: l => `造成 ${100 + (l - 1) * 5}%ATTACT 伤害, 并附加给目标 1 层 '燃'`,
     function: (card, self, opposite, round) => {
-      const damage = LevelRise(100, card.level)
+      const damage = Math.floor(self.master.ATTACT * (1 + (card.level - 1) * 0.05))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
         { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: damage },
-        { effect: 'buff', target: 'opposite', value: '燃', number: 1 }
+        { effect: 'HP', target: 'opposite', value: -damage },
+        { effect: 'BUFF', target: 'opposite', name: '燃', number: 1 }
       ]
     }
   },
@@ -211,17 +214,16 @@ var originCard = [
     name: '大火把',
     type: '进攻卡',
     race: '火',
-    limit: 3,
-    description: l => `造成 ${LevelRise(50, l)} 伤害, 并附加给目标 2 层 '燃'`,
+    description: l => `造成 ${50 + (l - 1) * 2.5}%ATTACT 伤害, 并附加给目标 2 层 '燃'`,
     function: (card, self, opposite, round) => {
-      const damage = LevelRise(50, card.level)
+      const damage = Math.floor(self.master.ATTACT * (0.5 + (card.level - 1) * 0.025))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
         { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: damage },
-        { effect: 'buff', target: 'opposite', value: '燃', number: 2 }
+        { effect: 'HP', target: 'opposite', value: -damage },
+        { effect: 'BUFF', target: 'opposite', name: '燃', number: 2 }
       ]
     }
   },
@@ -230,155 +232,106 @@ var originCard = [
     name: '点燃',
     type: '魔法卡',
     race: '火',
-    limit: 3,
-    description: l => `消耗 500 MP, 造成目标 '燃' 层数 * ${LevelRise(50, l)} 伤害`,
+    description: l => `造成目标 '燃' 层数 * ${35 + (l - 1) * 2}%ATTACT 伤害`,
     function: (card, self, opposite, round) => {
-      if (self.master.MP < 500) return [{ error: 'MP 不足' }]
-
-      const damage = opposite.master.buff.filter(i => i === '燃').length * LevelRise(50, card.level)
+      const damage = Math.floor(opposite.master.buff.filter(i => i === '燃').length * self.master.ATTACT * (0.35 + (card.level - 1) * 0.02))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
         { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: 500 },
-        { effect: 'cost-hp', target: 'opposite', value: damage },
+        { effect: 'HP', target: 'opposite', value: -damage },
       ]
     }
   },
   {
     key: 4,
-    name: '火之纽带',
-    type: '魔法卡',
+    name: '火焰冲击',
+    type: '进攻卡',
     race: '火',
-    limit: 3,
-    description: l => `消耗 250 MP, 从牌库以及墓地抽取 1 张除自身外的火系卡牌`,
+    description: l => `造成 ${100 + (l - 1) * 5}%ATTACT 伤害, 若目标拥有 '燃' 则伤害 * 1.5`,
     function: (card, self, opposite, round) => {
-      if (self.master.MP < 250) return [{ error: 'MP 不足' }]
-
-      const rt = [
-        { message: [card.name, levelText(card.level)].join(' ') },
-        { animation: 'red-hit', target: 'self' },
-        { effect: 'cost-mp', target: 'self', value: 250 },
-      ]
-
-      const cardInStore = self.card.store.find(i => i.race === '火' && i.key !== card.key)
-      if (cardInStore) rt.push({ effect: 'pump-store-point', target: 'self', value: [cardInStore] })
-
-      const cardInCemetery = self.card.cemetery.find(i => i.race === '火' && i.key !== card.key)
-      if (cardInCemetery) rt.push({ effect: 'pump-cemetery-point', target: 'self', value: [cardInCemetery] })
-
-      return rt
-    }
-  },
-  {
-    key: 5,
-    name: '引燃',
-    type: '魔法卡',
-    race: '火',
-    limit: 3,
-    description: l => `消耗 200 MP, 造成 ${LevelRise(200, l)} 伤害, 并消耗目标 1 层 '燃', 目标没有 '燃' 时无法使用`,
-    function: (card, self, opposite, round) => {
-      if (self.master.MP < 200) return [{ error: 'MP 不足' }]
-      if (!opposite.master.buff.find(i => i === '燃')) return [{ error: `目标 '燃' 不足` }]
-
-      const damage = LevelRise(200, card.level)
+      const damage = Math.floor(opposite.master.buff.find(i => i === '燃') ? self.master.ATTACT * (1 + (card.level - 1) * 0.05) * 1.5 : self.master.ATTACT * (1 + (card.level - 1) * 0.05))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
         { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: 200 },
-        { effect: 'cost-hp', target: 'opposite', value: damage },
-        { effect: 'cost-buff', target: 'opposite', value: '燃', number: 1 }
+        { effect: 'HP', target: 'opposite', value: -damage },
+      ]
+    }
+  },
+  {
+    key: 5,
+    name: '火焰聚能',
+    type: '魔法卡',
+    race: '火',
+    description: l => `消耗对手的所有 '燃' , 提升自身 '燃' 层数 * ${10 + (l - 1) * 0.5} 基础ATTACT`,
+    function: (card, self, opposite, round) => {
+      const value = Math.floor(opposite.master.buff.filter(i => i === '燃').length * self.master.ATTACT_ * (0.1 + (card.level - 1) * 0.005))
+
+      return [
+        { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'ATTACT', target: 'self', value: value },
+        { effect: 'BUFF', target: 'opposite', name: '燃', number: -opposite.master.buff.filter(i => i === '燃').length }
       ]
     }
   },
   {
     key: 6,
-    name: '火焰冲击',
-    type: '进攻卡',
+    name: '火球术',
+    type: '魔法卡',
     race: '火',
-    limit: 3,
-    description: l => `造成 ${LevelRise(100, l)} 伤害, 若目标拥有 '燃' 则伤害 * 1.5`,
+    description: l => `造成 ${120 + (l - 1) * 6}%ATTACT 伤害`,
     function: (card, self, opposite, round) => {
-      const damage = opposite.master.buff.find(i => i === '燃') ? LevelRise(100, card.level) * 1.5 : LevelRise(100, card.level)
+      const damage = Math.floor(self.master.ATTACT * (1.2 + (card.level - 1) * 0.06))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
         { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-hp', target: 'opposite', value: damage },
+        { effect: 'HP', target: 'opposite', value: -damage },
       ]
     }
   },
   {
     key: 7,
-    name: '火焰聚能',
+    name: '火球燃烧',
     type: '魔法卡',
     race: '火',
-    limit: 3,
-    description: l => `消耗 200 MP, 吸收对手的所有 '燃' , 每有一层回复自身 ${LevelRise(100, l)} HP`,
+    description: l => `造成 ${60 + (l - 1) * 3} 伤害, 提升一次牌库 '火球术' 等级`,
     function: (card, self, opposite, round) => {
-      if (self.master.MP < 200) return [{ error: 'MP 不足' }]
-
-      const cure = opposite.master.buff.filter(i => i === '燃').length * LevelRise(100, card.level)
+      const damage = Math.floor(self.master.ATTACT * (0.6 + (card.level - 1) * 0.03))
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} MP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
-        { animation: 'red-hit', target: 'self' },
-        { effect: 'cost-mp', target: 'self', value: 200 },
-        { effect: 'cost-hp', target: 'self', value: cure },
-        { effect: 'cost-buff', target: 'opposite', value: '燃', number: opposite.master.buff.filter(i => i === '燃').length }
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { animation: 'red-hit', target: 'opposite' },
+        { effect: 'HP', target: 'opposite', value: -damage },
+        { effect: 'LEVEL', target: 'self', key: 6, number: 1 },
       ]
     }
   },
   {
     key: 8,
-    name: '火球术',
+    name: '自燃',
     type: '魔法卡',
     race: '火',
-    limit: 3,
-    description: l => `消耗 500 MP, 造成 ${LevelRise(150, l)} 伤害`,
+    description: l => `扣除自身当前生命值 10%, 提升 ${20 + (l - 1) * 1} 基础ATTACT`,
     function: (card, self, opposite, round) => {
-      if (self.master.MP < 500) return [{ error: 'MP 不足' }]
-
-      const damage = LevelRise(150, card.level)
+      const value = Math.floor(self.master.ATTACT_ * (0.2 + (card.level - 1) * 0.01))
+      const damage = Math.floor(self.master.HP * 0.1)
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
-        { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: 500 },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(150, card.level) },
+        { roleMessage: `${card.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
+        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'self' },
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'ATTACT', target: 'self', value: value },
+        { effect: 'HP', target: 'self', value: -damage },
       ]
-    }
-  },
-  {
-    key: 9,
-    name: '火球萌生',
-    type: '魔法卡',
-    race: '火',
-    limit: 3,
-    description: l => `消耗 250 MP, 造成 ${LevelRise(50, l)} 伤害, 从牌库抽取一张 '火球术'`,
-    function: (card, self, opposite, round) => {
-      if (self.master.MP < 250) return [{ error: 'MP 不足' }]
-
-      const damage = LevelRise(50, card.level)
-
-      const rt = [
-        { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
-        { animation: 'red-hit', target: 'opposite' },
-        { effect: 'cost-mp', target: 'self', value: 250 },
-        { effect: 'cost-hp', target: 'opposite', value: LevelRise(150, card.level) },
-      ]
-
-      const cardInStore = self.card.store.find(i => i.key === 8)
-      if (cardInStore) rt.push({ effect: 'pump-store-point', target: 'self', value: [cardInStore] })
-
-      return rt
     }
   },
 ]
