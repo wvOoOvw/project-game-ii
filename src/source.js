@@ -319,7 +319,7 @@ var originCard = [
     name: '自燃',
     type: '魔法卡',
     race: '火',
-    description: l => `扣除自身当前生命值 10%, 提升 ${20 + (l - 1) * 1} 基础ATTACT`,
+    description: l => `扣除自身当前生命值 10%, 提升 ${20 + (l - 1) * 1}% 基础ATTACT`,
     function: (card, self, opposite, round) => {
       const value = Math.floor(self.master.ATTACT_ * (0.2 + (card.level - 1) * 0.01))
       const damage = Math.floor(self.master.HP * 0.1)

@@ -2,7 +2,6 @@ import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifSc
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
-import { Button } from './ui-button'
 import { Navigation } from './ui-navigation'
 
 import { Picture } from './utils-picture'

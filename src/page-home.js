@@ -1,7 +1,5 @@
 import { addEventListener, createImage } from './utils-common'
-import { drawImage } from './utils-canvas'
-
-import { Button } from './ui-button'
+import { drawImage, drawRadius } from './utils-canvas'
 
 import { Picture } from './utils-picture'
 
@@ -16,9 +14,18 @@ class Page {
   }
 
   drawButtonExplore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight - 240, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '探索' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 240, width: 120, height: 40, radius: 8 }
 
-    new Button(option).render()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 14px ${window.fontFamily}`
+
+    drawRadius(option)
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('探索', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
       Imitation.state.page.current = 'transition'
@@ -29,9 +36,18 @@ class Page {
   }
 
   drawButtonStore() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight - 180, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '编队' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 180, width: 120, height: 40, radius: 8 }
 
-    new Button(option).render()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 14px ${window.fontFamily}`
+
+    drawRadius(option)
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('编队', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
       Imitation.state.page.current = 'transition'
@@ -42,17 +58,18 @@ class Page {
   }
 
   drawButtonShop() {
-    const option = { x: windowWidth / 2 - 60, y: windowHeight - 120, width: 120, height: 40, radius: 8, font: `900 14px ${window.fontFamily}`, fillStyle: ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)'], text: '商店' }
+    const option = { x: windowWidth / 2 - 60, y: windowHeight - 120, width: 120, height: 40, radius: 8 }
 
-    new Button(option).render()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 14px ${window.fontFamily}`
 
-    // ctx.drawImage(Picture.get('button-home'), option.x, option.y, option.width, option.height)
+    drawRadius(option)
 
-    // ctx.textAlign = 'center'
-    // ctx.textBaseline = 'middle'
-    // ctx.font = `900 14px ${window.fontFamily}`
-    // ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    // ctx.fillText('商品', option.x + option.width / 2, option.y + option.height / 2)
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillText('商店', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
       Imitation.state.page.current = 'transition'
