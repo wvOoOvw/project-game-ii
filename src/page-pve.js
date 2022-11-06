@@ -32,24 +32,33 @@ class RoleMessage {
   }
 
   render() {
-    this.queqe.forEach((i, index) => {
+    this.queqe.forEach(i => {
+      const fontSize = i.fontSize
+
+      const offsetX = (i.time - 60) / 4
+      const offsetY = (i.time - 60) / 2
+
       ctx.save()
 
       ctx.globalAlpha = i.time / 60
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.font = `900 ${14 * (i.time / 120 + 0.5)}px ${window.fontFamily}`
+      ctx.font = `900 ${fontSize}px ${window.fontFamily}`
 
-      ctx.fillStyle = i.fillStyle
-      ctx.fillText(i.text, i.x + (i.time - 60) / 9, i.y + (i.time - 60) / 3)
+      const width = ctx.measureText(i.text).width + 48
+
+      drawRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.5 })
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+      ctx.fill()
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillText(i.text, i.x + offsetX, i.y + offsetY)
 
       ctx.restore()
 
       i.time = numberFix(i.time - 1)
 
-      if (i.time === 0) {
-        this.queqe.splice(index, 1)
-      }
+      if (i.time === 0) this.queqe = this.queqe.filter(i => i.time)
     })
   }
 }
@@ -116,6 +125,10 @@ class CardInSelf {
   }
 
   get option() {
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+  }
+
+  get optionDiff() {
     const diff = {
       x: -this.width * 0.5,
       y: -this.height * 0.5,
@@ -270,6 +283,10 @@ class CardInSelf {
     const { x, y, width, height } = this.option
 
     ctx.save()
+
+    ctx.translate(x + width / 2, y + height / 2)
+    ctx.scale(this.mouseDownPositionTime + 1, this.mouseDownPositionTime + 1)
+    ctx.translate(-(x + width / 2), -(y + height / 2))
 
     ctx.globalAlpha = this.novaTime
 
@@ -501,6 +518,7 @@ class Role {
 
 class Page {
   constructor() {
+    this.currentUseCard = false
     this.currentRole
 
     this.InstanceNavigation
@@ -582,6 +600,8 @@ class Page {
   }
 
   useCard = async (card) => {
+    if (this.currentUseCard) return
+
     const currentRole = this.currentRole
 
     const [self, opposite] = currentRole === this.InstanceRoleSelf ? [this.InstanceRoleSelf, this.InstanceRoleOpposite] : [this.InstanceRoleOpposite, this.InstanceRoleSelf]
@@ -615,10 +635,10 @@ class Page {
       if (current.roleMessage) {
         setTimeout(() => {
           if (current.target === 'self') {
-            this.InstanceRoleMessage.play({ text: current.roleMessage, x: self.x + self.width / 2, y: self.y + self.height / 2, fillStyle: current.fillStyle })
+            this.InstanceRoleMessage.play({ text: current.roleMessage, x: self.x + self.width / 2, y: self.y + self.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
           }
           if (current.target === 'opposite') {
-            this.InstanceRoleMessage.play({ text: current.roleMessage, x: opposite.x + opposite.width / 2, y: opposite.y + opposite.height / 2, fillStyle: current.fillStyle })
+            this.InstanceRoleMessage.play({ text: current.roleMessage, x: opposite.x + opposite.width / 2, y: opposite.y + opposite.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
           }
         }, roleMessageTime * 500)
 
@@ -692,6 +712,7 @@ class Page {
       }
     }
 
+    this.currentUseCard = true
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
     currentRole.information.master._ACTION = currentRole.information.master._ACTION - 1
 
@@ -728,6 +749,8 @@ class Page {
     if (currentRole.information.master._ACTION === 0) {
       this.roundOver()
     }
+
+    this.currentUseCard = false
   }
 
   roundOver = async () => {

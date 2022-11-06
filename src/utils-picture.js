@@ -1,24 +1,24 @@
-import music_0de0bd75a86a478397334aa691d060200 from '../media/image/music_0de0bd75a86a478397334aa691d060200.jpg'
-import music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/image/music_2fec7f9242b44b64a914f7cc19d25abe0.jpg'
-import music_3fc1533a1a964121b783582911d683330 from '../media/image/music_3fc1533a1a964121b783582911d683330.jpg'
-import music_4d7f219082ba4d86b1543c982d1156560 from '../media/image/music_4d7f219082ba4d86b1543c982d1156560.jpg'
-import music_56280e428411459c823ce172d97da20c0 from '../media/image/music_56280e428411459c823ce172d97da20c0.jpg'
-import music_5c3cdbd72894434e891ce792de441feb0 from '../media/image/music_5c3cdbd72894434e891ce792de441feb0.jpg'
-import music_6f3280d95d5e4b9fa1d1208a8c9b43460 from '../media/image/music_6f3280d95d5e4b9fa1d1208a8c9b43460.jpg'
-import music_88c8411d068c455099456851ec84f65c0 from '../media/image/music_88c8411d068c455099456851ec84f65c0.jpg'
-import music_98a7a38ce58546a7841d18c96e41e3760 from '../media/image/music_98a7a38ce58546a7841d18c96e41e3760.jpg'
-import music_c12894d6ce644a37a16069502d98c9b80 from '../media/image/music_c12894d6ce644a37a16069502d98c9b80.jpg'
-import music_cacbcd0fe27247e69c12d67f3ea1673e0 from '../media/image/music_cacbcd0fe27247e69c12d67f3ea1673e0.jpg'
-import music_e68a943eab4c4a17b71a5c7f1c7928600 from '../media/image/music_e68a943eab4c4a17b71a5c7f1c7928600.jpg'
-import music_e6ebd8cf5e444600b4887df07e9db65b0 from '../media/image/music_e6ebd8cf5e444600b4887df07e9db65b0.jpg'
-import music_f1c8775faa87442a845a2865325229b60 from '../media/image/music_f1c8775faa87442a845a2865325229b60.jpg'
-import tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd from '../media/image/tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd.jpg'
-import tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219 from '../media/image/tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219.jpg'
-import tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4 from '../media/image/tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4.jpg'
-import tiku_cc350cf4f7080078fa25735dc7de25e5123217f1b6b2f5ab818bf22eca821e77 from '../media/image/tiku_cc350cf4f7080078fa25735dc7de25e5123217f1b6b2f5ab818bf22eca821e77.jpg'
-import tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010 from '../media/image/tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010.jpg'
-import tiku_e2cd4f29dbec9563c6a415cec238cb947e7332c74f73104325e06b926150b37a from '../media/image/tiku_e2cd4f29dbec9563c6a415cec238cb947e7332c74f73104325e06b926150b37a.jpg'
-import tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf from '../media/image/tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf.jpg'
+// import music_0de0bd75a86a478397334aa691d060200 from '../media/image/music_0de0bd75a86a478397334aa691d060200.jpg'
+// import music_2fec7f9242b44b64a914f7cc19d25abe0 from '../media/image/music_2fec7f9242b44b64a914f7cc19d25abe0.jpg'
+// import music_3fc1533a1a964121b783582911d683330 from '../media/image/music_3fc1533a1a964121b783582911d683330.jpg'
+// import music_4d7f219082ba4d86b1543c982d1156560 from '../media/image/music_4d7f219082ba4d86b1543c982d1156560.jpg'
+// import music_56280e428411459c823ce172d97da20c0 from '../media/image/music_56280e428411459c823ce172d97da20c0.jpg'
+// import music_5c3cdbd72894434e891ce792de441feb0 from '../media/image/music_5c3cdbd72894434e891ce792de441feb0.jpg'
+// import music_6f3280d95d5e4b9fa1d1208a8c9b43460 from '../media/image/music_6f3280d95d5e4b9fa1d1208a8c9b43460.jpg'
+// import music_88c8411d068c455099456851ec84f65c0 from '../media/image/music_88c8411d068c455099456851ec84f65c0.jpg'
+// import music_98a7a38ce58546a7841d18c96e41e3760 from '../media/image/music_98a7a38ce58546a7841d18c96e41e3760.jpg'
+// import music_c12894d6ce644a37a16069502d98c9b80 from '../media/image/music_c12894d6ce644a37a16069502d98c9b80.jpg'
+// import music_cacbcd0fe27247e69c12d67f3ea1673e0 from '../media/image/music_cacbcd0fe27247e69c12d67f3ea1673e0.jpg'
+// import music_e68a943eab4c4a17b71a5c7f1c7928600 from '../media/image/music_e68a943eab4c4a17b71a5c7f1c7928600.jpg'
+// import music_e6ebd8cf5e444600b4887df07e9db65b0 from '../media/image/music_e6ebd8cf5e444600b4887df07e9db65b0.jpg'
+// import music_f1c8775faa87442a845a2865325229b60 from '../media/image/music_f1c8775faa87442a845a2865325229b60.jpg'
+// import tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd from '../media/image/tiku_2370518a7d30c7bf6b02aefe4ee7713788317991416cd96a6a299a24a70273fd.jpg'
+// import tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219 from '../media/image/tiku_ad436ca62732cc95e2ab18379e0dea4b93b58b905fd890558983f0ed02a41219.jpg'
+// import tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4 from '../media/image/tiku_b264d1ca656e2db92407cf8574ac3394dc12cb193a151c0e6631f5485ce1e2a4.jpg'
+// import tiku_cc350cf4f7080078fa25735dc7de25e5123217f1b6b2f5ab818bf22eca821e77 from '../media/image/tiku_cc350cf4f7080078fa25735dc7de25e5123217f1b6b2f5ab818bf22eca821e77.jpg'
+// import tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010 from '../media/image/tiku_dd24e751b91741aaf467a05f4c250ccee7aa9076d5535935b647091f4131a010.jpg'
+// import tiku_e2cd4f29dbec9563c6a415cec238cb947e7332c74f73104325e06b926150b37a from '../media/image/tiku_e2cd4f29dbec9563c6a415cec238cb947e7332c74f73104325e06b926150b37a.jpg'
+// import tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf from '../media/image/tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf.jpg'
 
 import music_02f36cde2cb547ae99936af6f53032110 from '../media/image-s/music_02f36cde2cb547ae99936af6f53032110.jpg'
 import music_1107cbd537144759999fbd7dc0fdb6650 from '../media/image-s/music_1107cbd537144759999fbd7dc0fdb6650.jpg'
@@ -41,10 +41,6 @@ import tiku_843e01d9390494cff38d47fbba2d22ff9e5e7e16be7458d52791d4adb36c3143 fro
 import tiku_b67c7e2fdc67949f022950e1e07bd7a18a0ff2a0ce53ba71d32666c0055a15fc from '../media/image-s/tiku_b67c7e2fdc67949f022950e1e07bd7a18a0ff2a0ce53ba71d32666c0055a15fc.jpg'
 import tiku_c94086e24ae0c23ff9bb59c36a7fde3e0af70534b18e817d513188b79cca953f from '../media/image-s/tiku_c94086e24ae0c23ff9bb59c36a7fde3e0af70534b18e817d513188b79cca953f.jpg'
 import tiku_dd7578d1b0f8d2891234b50880c70cfa0e552fb0bb14b915c81c2b12132962f3 from '../media/image-s/tiku_dd7578d1b0f8d2891234b50880c70cfa0e552fb0bb14b915c81c2b12132962f3.jpg'
-
-import back from '../media/image-c/back.png'
-import button_bg_1 from '../media/image-c/button_bg_1.png'
-import button_bg_2 from '../media/image-c/button_bg_2.png'
 
 class Picture {
   constructor() {
@@ -118,9 +114,6 @@ class Picture {
 
     this.map = {
       ...this.map,
-
-      // 'button-home': button_bg_2,
-      // 'icon-back': back
     }
 
     parse(this.map)

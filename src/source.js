@@ -89,7 +89,7 @@ var originShop = [
   {
     key: 2,
     name: '火系基础礼盒II',
-    description: '可能包含: 点燃 Exp 0 - 20, 火焰领主 Exp 50-100',
+    description: '可能包含: 火焰领主 Exp 50 - 100, 炎魔 Exp 50 - 100',
     type: 'alltime',
     money: {
       key: 2,
@@ -97,8 +97,8 @@ var originShop = [
     },
     reward: () => {
       return [
-        { card: true, key: 3, exp: Math.floor(Math.random() * 20) },
         { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
+        { master: true, key: 3, exp: Math.floor(Math.random() * 50 + 50) },
       ]
     },
   },
@@ -118,7 +118,7 @@ var originMaster = [
         function: (card, skill, result, self, opposite, env) => {
           const cure = Math.floor(self.master.HP_ * 0.05)
 
-          result.push({ roleMessage: `${skill.name} HP + ${cure}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          result.push({ roleMessage: `${skill.name} HP + ${cure}`, target: 'self' })
           result.push({ effect: 'HP', target: 'self', value: cure })
         }
       },
@@ -128,7 +128,7 @@ var originMaster = [
         function: (card, skill, result, self, opposite, env) => {
           const value = Math.floor(self.master.ATTACT_ * 0.05)
 
-          result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+          result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, target: 'self' })
           result.push({ effect: 'ATTACT', target: 'self', value: value })
         }
       },
@@ -148,7 +148,7 @@ var originMaster = [
           if (card.race === '火') {
             const damage = Math.floor(self.master.ATTACT * 0.2)
 
-            result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            result.push({ roleMessage: `${skill.name} HP - ${damage}`, target: 'opposite' })
             result.push({ effect: 'HP', target: 'opposite', value: -damage })
           }
         }
@@ -169,7 +169,7 @@ var originMaster = [
           if (card.race === '火') {
             const value = Math.floor(self.master.ATTACT * 0.05)
 
-            result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' })
+            result.push({ roleMessage: `${skill.name} ATTACT + ${value}`, target: 'self' })
             result.push({ effect: 'ATTACT', target: 'self', value: value })
           }
         }
@@ -181,7 +181,7 @@ var originMaster = [
           if (card.race === '火') {
             const damage = Math.floor(self.master.ATTACT * 0.2)
 
-            result.push({ roleMessage: `${skill.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' })
+            result.push({ roleMessage: `${skill.name} HP - ${damage}`, target: 'opposite' })
             result.push({ effect: 'HP', target: 'opposite', value: -damage })
           }
         }
@@ -202,7 +202,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
         { effect: 'BUFF', target: 'opposite', name: '燃', number: 1 }
@@ -220,7 +220,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
         { effect: 'BUFF', target: 'opposite', name: '燃', number: 2 }
@@ -238,7 +238,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
       ]
@@ -255,7 +255,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
       ]
@@ -272,7 +272,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
+        { roleMessage: `${card.name} ATTACT + ${value}`, target: 'self' },
         { animation: 'red-hit', target: 'self' },
         { effect: 'ATTACT', target: 'self', value: value },
         { effect: 'BUFF', target: 'opposite', name: '燃', number: -opposite.master.buff.filter(i => i === '燃').length }
@@ -290,7 +290,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
       ]
@@ -307,7 +307,7 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'opposite' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'opposite' },
         { animation: 'red-hit', target: 'opposite' },
         { effect: 'HP', target: 'opposite', value: -damage },
         { effect: 'LEVEL', target: 'self', key: 6, number: 1 },
@@ -326,8 +326,8 @@ var originCard = [
 
       return [
         { message: [card.name, levelText(card.level)].join(' ') },
-        { roleMessage: `${card.name} ATTACT + ${value}`, fillStyle: 'rgba(0, 255, 0, 1)', target: 'self' },
-        { roleMessage: `${card.name} HP - ${damage}`, fillStyle: 'rgba(255, 0, 0, 1)', target: 'self' },
+        { roleMessage: `${card.name} ATTACT + ${value}`, target: 'self' },
+        { roleMessage: `${card.name} HP - ${damage}`, target: 'self' },
         { animation: 'red-hit', target: 'self' },
         { effect: 'ATTACT', target: 'self', value: value },
         { effect: 'HP', target: 'self', value: -damage },

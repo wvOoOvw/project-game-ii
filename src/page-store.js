@@ -48,6 +48,7 @@ class CardInList {
 
   drawTitle() {
     const { x, y, width, height } = this.option
+    const card = this.card
 
     const width_ = width * 0.5
     const height_ = width * 0.12
@@ -55,17 +56,15 @@ class CardInList {
     const y_ = y + width * 0.05
     const radius_ = width * 0.03
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = card.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+    ctx.fillStyle = card.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -298,17 +297,15 @@ class MasterInList {
     const y_ = y + width * 0.03
     const radius_ = width * 0.02
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = master.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+    ctx.fillStyle = master.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
     ctx.fillText('MASTER 队长', x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -566,14 +563,37 @@ class Page {
     }
     if (this.type === 'library-card') {
       this.card = parseCard(Imitation.state.info.library.card)
-      this.card = this.card.sort((a, b) => {
-        const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        return b_ - a_
-      })
+        .map(i => {
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          return i
+        })
+        .sort((a, b) => {
+          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+          return b_ - a_
+        })
+        .sort((a, b) => {
+          const a_ = a.inTeam ? 1 : 0
+          const b_ = b.inTeam ? 1 : 0
+          return b_ - a_
+        })
     }
     if (this.type === 'library-master') {
       this.master = parseMaster(Imitation.state.info.library.master)
+        .map(i => {
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
+          return i
+        })
+        .sort((a, b) => {
+          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+          return b_ - a_
+        })
+        .sort((a, b) => {
+          const a_ = a.inTeam ? 1 : 0
+          const b_ = b.inTeam ? 1 : 0
+          return b_ - a_
+        })
     }
 
     this.instanceNavigation()
@@ -719,43 +739,28 @@ class Page {
       this.InstanceCardPreview.card = this.preview
       this.InstanceCardPreview.render()
 
-      if (this.type === 'team') {
-        const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
-        option.x = (windowWidth - option.width) / 2
+      const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
+      option.x = (windowWidth - option.width) / 2
 
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.font = `900 12px ${window.fontFamily}`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.font = `900 12px ${window.fontFamily}`
 
-        drawRadius(option)
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-        ctx.fill()
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      drawRadius(option)
+      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+      ctx.fill()
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+      if (this.type === 'team' || this.preview.inTeam) {
         ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
-
         addEventListener('touchstart', () => this.unloadCard(this.preview), option)
-
-        closeCover.push(option)
       }
-
-      if (this.type === 'library-card') {
-        const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
-        option.x = (windowWidth - option.width) / 2
-
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.font = `900 12px ${window.fontFamily}`
-
-        drawRadius(option)
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-        ctx.fill()
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      if (this.type === 'library-card' && !this.preview.inTeam) {
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
-
         addEventListener('touchstart', () => this.loadCard(this.preview), option)
-
-        closeCover.push(option)
       }
+
+      closeCover.push(option)
     }
 
     if (this.InstanceMasterList.find(i => i.master === this.preview)) {
