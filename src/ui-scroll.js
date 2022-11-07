@@ -43,9 +43,6 @@ class Scroll {
     if (!this.mouseDownPosition) return
     if (this.scrollX <= 0 && this.scrollY <= 0) return
 
-    clearTimeout(this.scrollbarTimeout)
-    this.scrollbarTimeout = setTimeout(() => this.scrollbarTimeout = null, 1000)
-
     const changeX = (e.pageX || e.targetTouches[0].pageX) - this.mouseDownPosition[0]
     const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
     this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]

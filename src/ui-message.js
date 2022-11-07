@@ -1,5 +1,5 @@
 import { drawRadius } from './utils-canvas'
-import { numberFix } from './utils-common'
+import { numberFix, wait } from './utils-common'
 
 const ctx = canvas.getContext('2d')
 
@@ -24,7 +24,7 @@ class Message {
     this.y = windowHeight
   }
 
-  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)', timeout = 750) {
+  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
     clearTimeout(this.timeoutRef)
 
     this.message = message
@@ -32,10 +32,10 @@ class Message {
     this.textColor = textColor
     this.show = true
 
-    this.timeoutRef = setTimeout(() => {
+    this.timeoutRef = wait(30, () => {
       this.show = false
       this.timeoutRef = null
-    }, timeout)
+    })
   }
 
   render() {

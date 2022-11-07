@@ -22,6 +22,154 @@ const numberAnimation = (number, time, callback) => {
   event()
 }
 
+class CardMessage {
+  constructor() {
+    this.width = Math.min(windowWidth * 0.65, (windowHeight - safeTop) * 0.65)
+    this.height = this.width * 1.35
+    this.x = (windowWidth - this.width) / 2
+    this.y = ((windowHeight - safeTop) - this.height) / 2
+
+    this.card
+
+    this.nova = false
+    this.novaTime = 0
+    this.novaOverTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  play(card) {
+    this.card = card
+    this.nova = true
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.5
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = width * 0.03
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawRaceType() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = width * 0.03
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
+  }
+
+  render() {
+    if (this.nova && this.novaTime < 1) {
+      this.novaTime = numberFix(this.novaTime + 0.05)
+    }
+    if (this.novaTime === 1) {
+      this.novaOverTime = this.novaOverTime + 1
+      this.nova = false
+    }
+    if (!this.nova && this.novaTime > 0 && this.novaOverTime === 40) {
+      this.novaTime = numberFix(this.novaTime - 0.05)
+    }
+    if (this.novaTime === 0) {
+      this.novaOverTime = 0
+      return
+    }
+
+    const card = this.card
+    const { x, y, width, height } = this.option
+
+    ctx.save()
+
+    ctx.globalAlpha = this.novaTime
+
+    drawRadius({ x, y, width, height, radius: width * 0.08 })
+
+    ctx.clip()
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    this.drawTitle()
+    this.drawName()
+    this.drawRaceType()
+    this.drawDescription()
+
+    ctx.restore()
+  }
+}
+
 class RoleMessage {
   constructor() {
     this.queqe = []
@@ -527,6 +675,7 @@ class Page {
     this.InstanceRoleSelf
     this.InstanceRoleOpposite
     this.InstanceRoleMessage = new RoleMessage()
+    this.InstanceCardMessage = new CardMessage()
 
     this.instanceNavigation()
     this.instanceRoleSelf()
@@ -604,6 +753,10 @@ class Page {
   useCard = async (card) => {
     if (this.currentUseCard) return
 
+    this.InstanceCardMessage.play(card)
+
+    await wait(120)
+
     const currentRole = this.currentRole
 
     const [self, opposite] = currentRole === this.InstanceRoleSelf ? [this.InstanceRoleSelf, this.InstanceRoleOpposite] : [this.InstanceRoleOpposite, this.InstanceRoleSelf]
@@ -635,14 +788,14 @@ class Page {
       }
 
       if (current.roleMessage) {
-        setTimeout(() => {
+        wait(roleMessageTime * 30, () => {
           if (current.target === 'self') {
             this.InstanceRoleMessage.play({ text: current.roleMessage, x: self.x + self.width / 2, y: self.y + self.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
           }
           if (current.target === 'opposite') {
             this.InstanceRoleMessage.play({ text: current.roleMessage, x: opposite.x + opposite.width / 2, y: opposite.y + opposite.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
           }
-        }, roleMessageTime * 500)
+        })
 
         roleMessageTime = roleMessageTime + 1
       }
@@ -718,7 +871,7 @@ class Page {
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
     currentRole.information.master._ACTION = currentRole.information.master._ACTION - 1
 
-    await wait(1000)
+    await wait(120)
 
     this.roundContinue()
   }
@@ -726,9 +879,9 @@ class Page {
   oppositeAI = async () => {
     const result = this.InstanceRoleOpposite.information.AI(this.InstanceRoleOpposite.information, this.InstanceRoleSelf.information, this.env)
 
-    await wait(1000)
+    await wait(120)
     await this.useCard(result)
-    await wait(1000)
+    await wait(120)
   }
 
   roundStart = async () => {
@@ -799,6 +952,7 @@ class Page {
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()
     this.InstanceRoleSelf.render()
+    this.InstanceCardMessage.render()
     this.InstanceRoleMessage.render()
 
     this.battlerOver()
