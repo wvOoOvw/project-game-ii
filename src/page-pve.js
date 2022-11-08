@@ -24,7 +24,7 @@ const numberAnimation = (number, time, callback) => {
 
 class CardMessage {
   constructor() {
-    this.width = Math.min(windowWidth * 0.65, (windowHeight - safeTop) * 0.65)
+    this.width = Math.min(windowWidth * 0.7, (windowHeight - safeTop) * 0.5)
     this.height = this.width * 1.35
     this.x = (windowWidth - this.width) / 2
     this.y = ((windowHeight - safeTop) - this.height) / 2
@@ -154,6 +154,10 @@ class CardMessage {
     ctx.save()
 
     ctx.globalAlpha = this.novaTime
+
+    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fill()
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
@@ -753,13 +757,18 @@ class Page {
   useCard = async (card) => {
     if (this.currentUseCard) return
 
-    this.InstanceCardMessage.play(card)
-
-    await wait(120)
-
     const currentRole = this.currentRole
 
     const [self, opposite] = currentRole === this.InstanceRoleSelf ? [this.InstanceRoleSelf, this.InstanceRoleOpposite] : [this.InstanceRoleOpposite, this.InstanceRoleSelf]
+
+    this.currentUseCard = true
+
+    self.information.card.hand = self.information.card.hand.filter(i => i !== card)
+    self.information.master._ACTION = self.information.master._ACTION - 1
+    
+    this.InstanceCardMessage.play(card)
+
+    await wait(120)
 
     var result = card.function(card, self.information, opposite.information, this.env)
 
@@ -866,10 +875,6 @@ class Page {
         }
       }
     }
-
-    this.currentUseCard = true
-    self.information.card.hand = self.information.card.hand.filter(i => i !== card)
-    currentRole.information.master._ACTION = currentRole.information.master._ACTION - 1
 
     await wait(120)
 
