@@ -24,6 +24,8 @@ class CardInList {
 
     this.card = props.card
 
+    this.novaTime = 0
+
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
     this.touchTimeout
@@ -95,6 +97,8 @@ class CardInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -105,6 +109,8 @@ class CardInList {
     ctx.clip()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -265,6 +271,8 @@ class MasterInList {
 
     this.master = props.master
 
+    this.novaTime = 0
+
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
     this.touchTimeout
@@ -334,6 +342,8 @@ class MasterInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const master = this.master
 
@@ -344,6 +354,8 @@ class MasterInList {
     ctx.clip()
 
     drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -523,7 +535,7 @@ class Page {
   constructor() {
     this.preview = null
 
-    this.type = 'team'
+    this.type = 'card'
 
     this.master
     this.card
@@ -540,28 +552,25 @@ class Page {
 
   get masterHeight() {
     const row = this.master.length
-    return row === 0 ? -12 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
   }
 
   get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
-    return row === 0 ? 0 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
     this.master = []
     this.card = []
 
-    if (this.type === 'team') {
+    if (this.type === 'card') {
       this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
-      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
-      this.card = this.card.sort((a, b) => {
-        const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-        return b_ - a_
-      })
-    }
-    if (this.type === 'library-card') {
+        .map(i => {
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
+          return i
+        })
+
       this.card = parseCard(Imitation.state.info.library.card)
         .map(i => {
           i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
@@ -578,7 +587,7 @@ class Page {
           return b_ - a_
         })
     }
-    if (this.type === 'library-master') {
+    if (this.type === 'master') {
       this.master = parseMaster(Imitation.state.info.library.master)
         .map(i => {
           i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
@@ -592,6 +601,18 @@ class Page {
         .sort((a, b) => {
           const a_ = a.inTeam ? 1 : 0
           const b_ = b.inTeam ? 1 : 0
+          return b_ - a_
+        })
+
+      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card
+        .map(i => {
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          return i
+        })
+        .map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
+        .sort((a, b) => {
+          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
+          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
           return b_ - a_
         })
     }
@@ -622,30 +643,27 @@ class Page {
           }
         ],
         [
-          ...new Array(['team', '队伍'], ['library-card', '卡牌'], ['library-master', '队长']).map((i, index) => {
-            return {
-              active: i[0] === this.type,
-              justifyContent: 'left',
-              text: i[1],
-              event: () => {
-                this.type = i[0]
-                this.init()
-              }
-            }
-          })
-        ],
-        [
           ...new Array(Imitation.state.info.team.length).fill().map((i, index) => {
             return {
+              width: 48,
               active: index === Imitation.state.info.teamIndex,
               justifyContent: 'left',
-              text: `队伍 ${index + 1}`,
+              text: levelText(index + 1),
               event: () => {
                 Imitation.state.info.teamIndex = index
                 this.init()
               }
             }
-          })
+          }),
+          {
+            active: true,
+            justifyContent: 'right',
+            text: this.type === 'card' ? '卡牌' : '队长',
+            event: () => {
+              this.type = this.type === 'card' ? 'master' : 'card'
+              this.init()
+            }
+          }
         ],
       ]
     }
@@ -655,7 +673,7 @@ class Page {
 
   instanceScroll() {
     const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
-    option.scrollY = this.masterHeight + this.cardHeight - option.height + 24
+    option.scrollY = this.masterHeight + this.cardHeight - option.height + 12
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -671,7 +689,12 @@ class Page {
       }
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
-      option.y = 12 + index * (option.height + 12) + safeTop
+      if (this.type === 'master') {
+        option.y = 24 + index * (option.height + 12) + this.cardHeight + safeTop
+      }
+      if (this.type === 'card') {
+        option.y = 12 + index * (option.height + 12) + safeTop
+      }
 
       return new MasterInList(option)
     })
@@ -688,7 +711,12 @@ class Page {
       }
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight + safeTop
+      if (this.type === 'master') {
+        option.y = 12 + parseInt(index / 4) * (option.height + 12) + safeTop
+      }
+      if (this.type === 'card') {
+        option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight + safeTop
+      }
 
       return new CardInList(option)
     })
@@ -717,11 +745,12 @@ class Page {
   drawScroll() {
     const event = (scroll) => {
       const offsetY = scroll[1]
-      this.InstanceMasterList.forEach((i) => {
+
+      this.InstanceCardList.forEach((i) => {
         i.offsetY = 0 - offsetY
         if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
       })
-      this.InstanceCardList.forEach((i) => {
+      this.InstanceMasterList.forEach((i) => {
         i.offsetY = 0 - offsetY
         if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
       })
@@ -751,11 +780,11 @@ class Page {
       ctx.fill()
       ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      if (this.type === 'team' || this.preview.inTeam) {
+      if (this.preview.inTeam) {
         ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
         addEventListener('touchstart', () => this.unloadCard(this.preview), option)
       }
-      if (this.type === 'library-card' && !this.preview.inTeam) {
+      if (!this.preview.inTeam) {
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
         addEventListener('touchstart', () => this.loadCard(this.preview), option)
       }
@@ -791,7 +820,7 @@ class Page {
         closeCover.push(option)
       })
 
-      if (this.type === 'library-master') {
+      if (!this.preview.inTeam) {
         const option = { y: buttonY + 24, width: 108, height: 36, radius: 8 }
         option.x = (windowWidth - option.width) / 2
 
@@ -827,7 +856,7 @@ class Page {
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
-    if (team.reduce((t, i) => t + i.number, 0) > 8) {
+    if (team.length === 8) {
       Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
@@ -855,8 +884,7 @@ class Page {
       return
     }
 
-    const index = team.indexOf(findInTeam)
-    team.splice(index, 1)
+    team.splice(team.indexOf(findInTeam), 1)
 
     this.init()
     this.preview = null

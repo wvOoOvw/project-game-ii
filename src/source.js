@@ -230,7 +230,7 @@ var originCard = [
   {
     key: 3,
     name: '点燃',
-    type: '魔法卡',
+    type: '进攻卡',
     race: '火',
     description: l => `造成目标 '燃' 层数 * ${35 + (l - 1) * 2}%ATTACT 伤害`,
     function: (card, self, opposite, round) => {
@@ -282,7 +282,7 @@ var originCard = [
   {
     key: 6,
     name: '火球术',
-    type: '魔法卡',
+    type: '进攻卡',
     race: '火',
     description: l => `造成 ${120 + (l - 1) * 6}%ATTACT 伤害`,
     function: (card, self, opposite, round) => {
@@ -299,7 +299,7 @@ var originCard = [
   {
     key: 7,
     name: '火球燃烧',
-    type: '魔法卡',
+    type: '进攻卡',
     race: '火',
     description: l => `造成 ${60 + (l - 1) * 3} 伤害, 提升一次牌库 '火球术' 等级`,
     function: (card, self, opposite, round) => {
@@ -331,6 +331,24 @@ var originCard = [
         { animation: 'red-hit', target: 'self' },
         { effect: 'ATTACT', target: 'self', value: value },
         { effect: 'HP', target: 'self', value: -damage },
+      ]
+    }
+  },
+
+  {
+    key: 9,
+    name: '火焰蓄能',
+    type: '魔法卡',
+    race: '火',
+    description: l => `提升 ${10 + (l - 1) * 0.5}% 基础ATTACT`,
+    function: (card, self, opposite, round) => {
+      const value = Math.floor(self.master.ATTACT_ * (0.1 + (card.level - 1) * 0.005))
+
+      return [
+        { message: [card.name, levelText(card.level)].join(' ') },
+        { roleMessage: `${card.name} ATTACT + ${value}`, target: 'self' },
+        { animation: 'red-hit', target: 'self' },
+        { effect: 'ATTACT', target: 'self', value: value },
       ]
     }
   },
