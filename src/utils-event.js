@@ -1,3 +1,5 @@
+import { ifTouchCover } from './utils-common'
+
 class Event {
   constructor() {
     this.event = []
@@ -41,25 +43,4 @@ class Event {
 
 const EventInstance = new Event()
 
-const addEventListener = EventInstance.addEventListener
-
-const ifTouchCover = (e, option) => {
-  const x = option.x
-  const y = option.y
-  const width = option.width
-  const height = option.height
-
-  const x_ = e.x || e.touches[0].clientX
-  const y_ = e.y || e.touches[0].clientY
-
-  return x_ >= x && x_ <= x + width && y_ >= y && y_ <= y + height
-}
-
-const ifScreenCover = (a, b) => {
-  const { x, y, width, height } = a
-  const { x: x_, y: y_, width: width_, height: height_ } = b
-
-  return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
-}
-
-export { EventInstance as Event, addEventListener, ifTouchCover, ifScreenCover }
+export { EventInstance as Event }

@@ -81,26 +81,26 @@ class Main {
           'reward': PageReward,
         },
       },
-      removeEventListener: [],
-      info: null,
-      battle: null,
-      explore: originExplore,
-      shop: originShop,
-      reward: {
-        value: null,
-        back: null,
-      },
       function: {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
+        
         message: (...props) => this.instanceMessage.send(...props),
         animation: (...props) => this.instanceAnimation.play(...props),
         sound: (...props) => Sound.play(...props),
+        event: (...props) => Event.addEventListener(...props),
+
         saveInfo: () => {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         }
-      }
+      },
+
+      info: null,
+      battle: null,
+      explore: originExplore,
+      shop: originShop,
+      reward: null,
     }
 
     if (window.location.search) Imitation.state.page.current = window.location.search.replace('?', '')

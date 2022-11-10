@@ -1,6 +1,5 @@
-import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { ifTouchCover, ifScreenCover, createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 const ctx = canvas.getContext('2d')
 
@@ -71,7 +70,7 @@ class Navigation {
 
         ctx.fillText(option.text, option.x + option.width / 2, option.y + option.height / 2)
 
-        addEventListener('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
+        Imitation.state.function.event('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
       })
     })
   }

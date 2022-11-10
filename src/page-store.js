@@ -1,6 +1,5 @@
-import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { ifTouchCover, ifScreenCover, createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
@@ -118,9 +117,9 @@ class CardInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    addEventListener('touchmove', this.eventMove.bind(this))
-    addEventListener('touchend', this.eventUp.bind(this))
+    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -363,9 +362,9 @@ class MasterInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    addEventListener('touchmove', this.eventMove.bind(this))
-    addEventListener('touchend', this.eventUp.bind(this))
+    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -783,11 +782,11 @@ class Page {
 
       if (this.preview.inTeam) {
         ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
-        addEventListener('touchstart', () => this.unloadCard(this.preview), { ifTouchCover: option })
+        Imitation.state.function.event('touchstart', () => this.unloadCard(this.preview), { ifTouchCover: option })
       }
       if (!this.preview.inTeam) {
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
-        addEventListener('touchstart', () => this.loadCard(this.preview), { ifTouchCover: option })
+        Imitation.state.function.event('touchstart', () => this.loadCard(this.preview), { ifTouchCover: option })
       }
 
       closeCover.push(option)
@@ -816,7 +815,7 @@ class Page {
         ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
         ctx.fillText(i.name, option.x + option.width / 2, option.y + option.height / 2)
 
-        addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, { ifTouchCover: option })
+        Imitation.state.function.event('touchstart', () => this.InstanceMasterPreview.skillIndex = index, { ifTouchCover: option })
 
         closeCover.push(option)
       })
@@ -835,7 +834,7 @@ class Page {
         ctx.fillStyle = 'rgba(0, 0, 0, 1)'
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
 
-        addEventListener('touchstart', () => this.loadMaster(this.preview), { ifTouchCover: option })
+        Imitation.state.function.event('touchstart', () => this.loadMaster(this.preview), { ifTouchCover: option })
 
         closeCover.push(option)
       }
@@ -849,7 +848,7 @@ class Page {
       this.InstanceCardPreview.novaTime = 0
     }
 
-    addEventListener('touchstart', close)
+    Imitation.state.function.event('touchstart', close)
   }
 
   loadCard(card) {

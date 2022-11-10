@@ -1,6 +1,5 @@
-import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { ifTouchCover, ifScreenCover, createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 const ctx = canvas.getContext('2d')
 
@@ -74,9 +73,9 @@ class Scroll {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
-    addEventListener('touchmove', this.eventMove.bind(this))
-    addEventListener('touchend', this.eventUp.bind(this))
+    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
+    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 

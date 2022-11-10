@@ -1,6 +1,5 @@
-import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { ifTouchCover, ifScreenCover, createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
-import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
@@ -111,9 +110,9 @@ class ShopInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    addEventListener('touchmove', this.eventMove.bind(this))
-    addEventListener('touchend', this.eventUp.bind(this))
+    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -410,7 +409,7 @@ class Page {
       this.InstanceShopPreview.novaTime = 0
     }
 
-    addEventListener('touchstart', buy, { ifTouchCover: option })
+    Imitation.state.function.event('touchstart', buy, { ifTouchCover: option })
 
     closeCover.push(option)
 
@@ -420,7 +419,7 @@ class Page {
       this.InstanceShopPreview.novaTime = 0
     }
 
-    addEventListener('touchstart', close)
+    Imitation.state.function.event('touchstart', close)
   }
 
   buy(shop) {
