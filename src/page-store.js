@@ -1,5 +1,6 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, levelText, numberFix } from './utils-common'
+import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
@@ -117,9 +118,9 @@ class CardInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -362,9 +363,9 @@ class MasterInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -782,11 +783,11 @@ class Page {
 
       if (this.preview.inTeam) {
         ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
-        addEventListener('touchstart', () => this.unloadCard(this.preview), option)
+        addEventListener('touchstart', () => this.unloadCard(this.preview), { ifTouchCover: option })
       }
       if (!this.preview.inTeam) {
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
-        addEventListener('touchstart', () => this.loadCard(this.preview), option)
+        addEventListener('touchstart', () => this.loadCard(this.preview), { ifTouchCover: option })
       }
 
       closeCover.push(option)
@@ -815,7 +816,7 @@ class Page {
         ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
         ctx.fillText(i.name, option.x + option.width / 2, option.y + option.height / 2)
 
-        addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, option)
+        addEventListener('touchstart', () => this.InstanceMasterPreview.skillIndex = index, { ifTouchCover: option })
 
         closeCover.push(option)
       })
@@ -834,7 +835,7 @@ class Page {
         ctx.fillStyle = 'rgba(0, 0, 0, 1)'
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
 
-        addEventListener('touchstart', () => this.loadMaster(this.preview), option)
+        addEventListener('touchstart', () => this.loadMaster(this.preview), { ifTouchCover: option })
 
         closeCover.push(option)
       }
@@ -848,7 +849,7 @@ class Page {
       this.InstanceCardPreview.novaTime = 0
     }
 
-    addEventListenerPure('touchstart', close)
+    addEventListener('touchstart', close)
   }
 
   loadCard(card) {

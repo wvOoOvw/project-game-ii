@@ -1,5 +1,6 @@
-import { addEventListener, createImage } from './utils-common'
-import { drawImage, drawRadius } from './utils-canvas'
+import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Picture } from './utils-picture'
 
@@ -32,7 +33,7 @@ class Page {
       Imitation.state.page.next = 'explore'
     }
 
-    addEventListener('touchstart', event, option)
+    addEventListener('touchstart', event, { ifTouchCover: option })
   }
 
   drawButtonStore() {
@@ -54,7 +55,7 @@ class Page {
       Imitation.state.page.next = 'store'
     }
 
-    addEventListener('touchstart', event, option)
+    addEventListener('touchstart', event, { ifTouchCover: option })
   }
 
   drawButtonShop() {
@@ -76,7 +77,7 @@ class Page {
       Imitation.state.page.next = 'shop'
     }
 
-    addEventListener('touchstart', event, option)
+    addEventListener('touchstart', event, { ifTouchCover: option })
   }
 
   render() {

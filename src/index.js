@@ -15,8 +15,9 @@ import { Message } from './ui-message'
 import { Animation } from './ui-animation'
 
 import { Sound } from './utils-sound'
+import { Event } from './utils-event'
 
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, numberFix } from './utils-common'
+import { parseCard, parseMaster } from './utils-common'
 
 import { originMoney, originMaster, originCard, originExplore, originShop } from './source'
 
@@ -39,9 +40,7 @@ class Main {
   render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    Imitation.state.removeEventListener.forEach(i => i())
-
-    Imitation.state.removeEventListener = []
+    Event.clearEventListener()
 
     const pageClass = Imitation.state.page.map[Imitation.state.page.current]
 
@@ -122,19 +121,19 @@ class Main {
         team: [
           {
             master: { key: 3 },
-            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
+            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
+            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
+            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
           },
           {
             master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i,index) => index < 8)
+            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
           },
         ],
         teamIndex: 0,

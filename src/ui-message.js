@@ -32,7 +32,7 @@ class Message {
     this.textColor = textColor
     this.show = true
 
-    this.timeoutRef = wait(30, () => {
+    this.timeoutRef = wait(60, () => {
       this.show = false
       this.timeoutRef = null
     })

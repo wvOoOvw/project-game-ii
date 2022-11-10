@@ -1,5 +1,6 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, setArrayRandom, numberFix } from './utils-common'
+import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
@@ -113,9 +114,9 @@ class ExploreInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -389,7 +390,7 @@ class Page {
 
     const enter = () => this.enter(this.preview)
 
-    addEventListener('touchstart', enter, option)
+    addEventListener('touchstart', enter, { ifTouchCover: option })
 
     closeCover.push(option)
 
@@ -399,7 +400,7 @@ class Page {
       this.InstanceExplorePreview.novaTime = 0
     }
 
-    addEventListenerPure('touchstart', close)
+    addEventListener('touchstart', close)
   }
 
   enter(explore) {

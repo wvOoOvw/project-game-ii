@@ -1,5 +1,6 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Navigation } from './ui-navigation'
 
@@ -156,12 +157,13 @@ class CardMessage {
     ctx.globalAlpha = this.novaTime
 
     drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
     ctx.fill()
 
     drawRadius({ x, y, width, height, radius: width * 0.08 })
 
     ctx.clip()
+
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -462,9 +464,9 @@ class CardInSelf {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -765,7 +767,7 @@ class Page {
 
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
     self.information.master._ACTION = self.information.master._ACTION - 1
-    
+
     this.InstanceCardMessage.play(card)
 
     await wait(120)
@@ -774,7 +776,8 @@ class Page {
 
     self.information.master.skill.forEach(skill => skill.function(card, skill, result, self.information, opposite.information, this.env))
 
-    var roleMessageTime = 0
+    var roleMessageTimeSelf = 0
+    var roleMessageTimeOpposite = 0
 
     while (result.length) {
       const current = result.shift()
@@ -797,16 +800,18 @@ class Page {
       }
 
       if (current.roleMessage) {
-        wait(roleMessageTime * 30, () => {
-          if (current.target === 'self') {
+        if (current.target === 'self') {
+          wait(roleMessageTimeSelf * 30, () => {
             this.InstanceRoleMessage.play({ text: current.roleMessage, x: self.x + self.width / 2, y: self.y + self.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
-          }
-          if (current.target === 'opposite') {
+          })
+          roleMessageTimeSelf = roleMessageTimeSelf + 1
+        }
+        if (current.target === 'opposite') {
+          wait(roleMessageTimeOpposite * 30, () => {
             this.InstanceRoleMessage.play({ text: current.roleMessage, x: opposite.x + opposite.width / 2, y: opposite.y + opposite.height / 2, fontSize: this.InstanceRoleSelf.width * 0.04 })
-          }
-        })
-
-        roleMessageTime = roleMessageTime + 1
+          })
+          roleMessageTimeOpposite = roleMessageTimeOpposite + 1
+        }
       }
 
       if (current.effect) {
@@ -914,6 +919,7 @@ class Page {
   }
 
   roundOver = async () => {
+    console.log(2)
     const currentRole = this.currentRole
 
     currentRole.information.master._ACTION = 0
@@ -953,6 +959,9 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+    ctx.fill()
 
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()

@@ -1,5 +1,6 @@
-import { addEventListener, addEventListenerPure, createImage, ifTouchCover, ifScreenCover, parseCard, parseMaster, levelText, numberFix, parseMoney } from './utils-common'
+import { createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { addEventListener, ifTouchCover, ifScreenCover } from './utils-event'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
@@ -194,9 +195,9 @@ class CardInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -433,9 +434,9 @@ class MasterInList {
 
     ctx.restore()
 
-    addEventListener('touchstart', this.eventDown.bind(this), { x, y, width, height })
-    addEventListenerPure('touchmove', this.eventMove.bind(this))
-    addEventListenerPure('touchend', this.eventUp.bind(this))
+    addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    addEventListener('touchmove', this.eventMove.bind(this))
+    addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -836,7 +837,7 @@ class Page {
           this.InstanceMasterPreview.skillIndex = index
         }
 
-        addEventListener('touchstart', event, option)
+        addEventListener('touchstart', event, { ifTouchCover: option })
 
         closeCover.push(option)
       })
@@ -849,7 +850,7 @@ class Page {
       this.InstanceCardPreview.novaTime = 0
     }
 
-    addEventListenerPure('touchstart', close)
+    addEventListener('touchstart', close)
   }
 
   compute() {
