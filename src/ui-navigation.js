@@ -1,4 +1,3 @@
-import { ifTouchCover, ifScreenCover, createImage, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
