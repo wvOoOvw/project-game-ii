@@ -9,23 +9,28 @@ const ctx = canvas.getContext('2d')
 
 class Animation {
   constructor() {
-    const createImage = (src) => {
-      const image = new Image()
-      image.src = src
-  
-      return image
+    const parse = (origin) => {
+      Object.entries(origin).forEach(i => {
+        i[1].forEach((i_, index_) => {
+          const image = new Image()
+          image.src = i[1][index_]
+          i[1][index_] = image
+        })
+      })
     }
 
     this.map = {
-      'red-hit': [red_hit_0, red_hit_0, red_hit_1, red_hit_1, red_hit_2, red_hit_2, red_hit_3, red_hit_3, red_hit_4, red_hit_4, red_hit_5, red_hit_5].map(i => createImage(i))
+      'red-hit': [red_hit_0, red_hit_0, red_hit_1, red_hit_1, red_hit_2, red_hit_2, red_hit_3, red_hit_3, red_hit_4, red_hit_4, red_hit_5, red_hit_5]
     }
 
     this.queqe = []
+
+    parse(this.map)
   }
 
   play(key, option) {
     if (!this.map[key]) return
-    
+
     this.queqe.push({
       index: 0,
       imgs: this.map[key],

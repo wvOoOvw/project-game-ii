@@ -90,7 +90,9 @@ const hash = (n = 12, l = 1) => {
   return new Array(l).fill(undefined).map(i => Array.from(Array(n), () => Math.floor(Math.random() * 36).toString(36)).join('')).join('-').toUpperCase()
 }
 
-const numberFix = (n) => Number(Number(n).toFixed(4))
+const numberFix = (n) => {
+  return Number(Number(n).toFixed(4))
+}
 
 const arrayRandom = (array, number) => {
   var r = []
@@ -123,15 +125,6 @@ const setArrayRandom = (array) => {
 }
 
 export { wait, hash, numberFix, arrayRandom, setArrayRandom }
-
-const createImage = (src) => {
-  const image = new Image()
-  image.src = src
-
-  return image
-}
-
-export { createImage }
 
 const ifTouchCover = (e, option) => {
   const x = option.x
