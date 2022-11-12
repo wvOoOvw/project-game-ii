@@ -1,5 +1,5 @@
-// import S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt from '../media/_storages_386a-audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt.mp3'
-// import S_5c88acd3ccdc817369 from '../media/5c88acd3ccdc817369.mp3'
+// import S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt from '../static/_storages_386a-audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt.mp3'
+// import S_5c88acd3ccdc817369 from '../static/5c88acd3ccdc817369.mp3'
 
 class Sound {
   constructor() {

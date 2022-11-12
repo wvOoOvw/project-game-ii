@@ -4,11 +4,11 @@ const path = require('path')
 const list = []
 
 {
-  const dirs = fs.readdirSync(path.join(__dirname, '../media/image'))
+  const dirs = fs.readdirSync(path.join(__dirname, '../static/image'))
 
   dirs.forEach(item => {
     if (item.includes('.DS')) return
-    list.push(`import I_${item.replace(/\.(jpeg|jpg|png)/, '')} from '../media/image/${item}'`)
+    list.push(`import I_${item.replace(/\.(jpeg|jpg|png)/, '')} from '../static/image/${item}'`)
   })
 }
 

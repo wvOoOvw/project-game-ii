@@ -13,7 +13,7 @@ const config = Object.assign({}, common, {
   plugins: [
     new CleanWebpackPlugin({ currentAssets: [] }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../static/prod.html')
+      template: path.resolve(__dirname, './webpack.prod.html')
     }),
     new webpack.DefinePlugin({ process: { env: JSON.stringify('prod') } }),
   ]

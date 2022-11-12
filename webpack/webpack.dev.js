@@ -8,7 +8,7 @@ const config = Object.assign({}, common, {
   devtool: 'source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../static/dev.html')
+      template: path.resolve(__dirname, './webpack.dev.html')
     }),
     new webpack.DefinePlugin({ process: { env: JSON.stringify('dev') } })
   ]
