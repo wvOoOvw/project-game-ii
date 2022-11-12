@@ -194,9 +194,9 @@ class CardInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -433,9 +433,9 @@ class MasterInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -643,13 +643,13 @@ class Page {
     this.money = []
 
     if (this.type === 'card') {
-      this.card = parseCard(Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
+      this.card = parseCard(window.Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
     }
     if (this.type === 'master') {
-      this.master = parseMaster(Imitation.state.reward.value.filter(i => i.master).map(i => ({ ...i, level: 1 })))
+      this.master = parseMaster(window.Imitation.state.reward.value.filter(i => i.master).map(i => ({ ...i, level: 1 })))
     }
     if (this.type === 'money') {
-      this.money = parseMoney(Imitation.state.reward.value.filter(i => i.money))
+      this.money = parseMoney(window.Imitation.state.reward.value.filter(i => i.money))
     }
 
     this.instanceNavigation()
@@ -669,13 +669,13 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              Imitation.state.page.current = 'transition'
-              Imitation.state.page.next = Imitation.state.reward.back
+              window.Imitation.state.page.current = 'transition'
+              window.Imitation.state.page.next = window.Imitation.state.reward.back
             }
           },
           {
             justifyContent: 'right',
-            text: Imitation.state.reward.title,
+            text: window.Imitation.state.reward.title,
           },
         ],
         [
@@ -836,7 +836,7 @@ class Page {
           this.InstanceMasterPreview.skillIndex = index
         }
 
-        Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
 
         closeCover.push(option)
       })
@@ -849,12 +849,12 @@ class Page {
       this.InstanceCardPreview.novaTime = 0
     }
 
-    Imitation.state.function.event('touchstart', close)
+    window.Imitation.state.function.event('touchstart', close)
   }
 
   compute() {
-    const library = Imitation.state.info.library
-    const reward = Imitation.state.reward.value
+    const library = window.Imitation.state.info.library
+    const reward = window.Imitation.state.reward.value
 
     reward.forEach(i => {
       if (i.card) {
@@ -887,7 +887,7 @@ class Page {
       }
     })
 
-    Imitation.state.function.saveInfo()
+    window.Imitation.state.function.saveInfo()
   }
 
   render() {

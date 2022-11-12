@@ -1,5 +1,9 @@
 (function () {
-  if (!wx) return
+  try {
+    if (wx) void 0
+  } catch {
+    return
+  }
 
 /** *** */ (function (modules) { // webpackBootstrap
 /** *** */ 	// The module cache
@@ -17,7 +21,7 @@
       /** *** */ 			id: moduleId,
       /** *** */ 			loaded: false
         /** *** */
-}
+      }
 
     /** *** */ 		// Execute the module function
     /** *** */ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__)
@@ -28,7 +32,7 @@
     /** *** */ 		// Return the exports of the module
     /** *** */ 		return module.exports
       /** *** */
-}
+    }
 
 
   /** *** */ 	// expose the modules object (__webpack_modules__)
@@ -43,7 +47,7 @@
   /** *** */ 	// Load entry module and return exports
   /** *** */ 	return __webpack_require__(0)
     /** *** */
-}([
+  }([
 /* 0 */
 /***/ (function (module, exports, __webpack_require__) {
       const _window2 = __webpack_require__(1)
@@ -104,7 +108,7 @@
         inject()
       }
       /***/
-}),
+    }),
 /* 1 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -205,7 +209,7 @@
       exports.requestAnimationFrame = requestAnimationFrame
       exports.cancelAnimationFrame = cancelAnimationFrame
       /***/
-}),
+    }),
 /* 2 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -233,7 +237,7 @@
       const ontouchmove = exports.ontouchmove = null
       const ontouchend = exports.ontouchend = null
       /***/
-}),
+    }),
 /* 3 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -283,7 +287,7 @@
         return HTMLCanvasElement
       }(_HTMLElement4.default))
       /***/
-}),
+    }),
 /* 4 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -381,7 +385,7 @@
 
       exports.default = HTMLElement
       /***/
-}),
+    }),
 /* 5 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -424,7 +428,7 @@
 
       exports.default = ELement
       /***/
-}),
+    }),
 /* 6 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -499,7 +503,7 @@
 
       exports.default = Node
       /***/
-}),
+    }),
 /* 7 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -579,7 +583,7 @@
 
       exports.default = EventTarget
       /***/
-}),
+    }),
 /* 8 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -588,7 +592,7 @@
       exports.noop = noop
       function noop() { }
       /***/
-}),
+    }),
 /* 9 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -634,7 +638,7 @@
         return canvas
       }
       /***/
-}),
+    }),
 /* 10 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -763,7 +767,7 @@
 
       exports.default = document
       /***/
-}),
+    }),
 /* 11 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -776,7 +780,7 @@
         return image
       }
       /***/
-}),
+    }),
 /* 12 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -947,7 +951,7 @@
 
       exports.default = Audio
       /***/
-}),
+    }),
 /* 13 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -986,7 +990,7 @@
 
       exports.default = HTMLAudioElement
       /***/
-}),
+    }),
 /* 14 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -1047,12 +1051,12 @@
 
       exports.default = HTMLMediaElement
       /***/
-}),
+    }),
 /* 15 */
 /***/ (function (module, exports, __webpack_require__) {
       __webpack_require__(16)
       /***/
-}),
+    }),
 /* 16 */
 /***/ (function (module, exports, __webpack_require__) {
       const _window = __webpack_require__(1)
@@ -1102,7 +1106,7 @@
       wx.onTouchEnd(touchEventHandlerFactory('touchend'))
       wx.onTouchCancel(touchEventHandlerFactory('touchcancel'))
       /***/
-}),
+    }),
 /* 17 */
 /***/ (function (module, exports, __webpack_require__) {
       Object.defineProperty(exports, '__esModule', {
@@ -1132,7 +1136,7 @@
 
       exports.default = navigator
       /***/
-}),
+    }),
 /* 18 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -1317,7 +1321,7 @@
       XMLHttpRequest.DONE = 4
       exports.default = XMLHttpRequest
       /***/
-}),
+    }),
 /* 19 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -1434,7 +1438,7 @@
       WebSocket.CLOSED = 3
       exports.default = WebSocket
       /***/
-}),
+    }),
 /* 20 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -1452,7 +1456,7 @@
 
       exports.default = FileReader
       /***/
-}),
+    }),
 /* 21 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -1488,7 +1492,7 @@
 
       exports.default = localStorage
       /***/
-}),
+    }),
 /* 22 */
 /***/ (function (module, exports) {
       Object.defineProperty(exports, '__esModule', {
@@ -1501,7 +1505,7 @@
 
       exports.default = location
       /***/
-})
+    })
 /** *** */]))
 
 })()

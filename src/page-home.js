@@ -27,11 +27,11 @@ class Page {
     ctx.fillText('探索', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'explore'
+      window.Imitation.state.page.current = 'transition'
+      window.Imitation.state.page.next = 'explore'
     }
 
-    Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+    window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
   }
 
   drawButtonStore() {
@@ -49,11 +49,11 @@ class Page {
     ctx.fillText('编队', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'store'
+      window.Imitation.state.page.current = 'transition'
+      window.Imitation.state.page.next = 'store'
     }
 
-    Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+    window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
   }
 
   drawButtonShop() {
@@ -71,11 +71,11 @@ class Page {
     ctx.fillText('商店', option.x + option.width / 2, option.y + option.height / 2)
 
     const event = () => {
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'shop'
+      window.Imitation.state.page.current = 'transition'
+      window.Imitation.state.page.next = 'shop'
     }
 
-    Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+    window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
   }
 
   render() {

@@ -110,9 +110,9 @@ class ShopInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -275,7 +275,7 @@ class Page {
   }
 
   init() {
-    this.shop = Imitation.state.shop.filter(i => i.type === this.type && i.money.key === this.money)
+    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type && i.money.key === this.money)
 
     this.instanceNavigation()
     this.instanceScroll()
@@ -291,8 +291,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              Imitation.state.page.current = 'transition'
-              Imitation.state.page.next = 'home'
+              window.Imitation.state.page.current = 'transition'
+              window.Imitation.state.page.next = 'home'
             }
           },
           {
@@ -314,7 +314,7 @@ class Page {
           })
         ],
         [
-          ...parseMoney(Imitation.state.info.money).map((i, index) => {
+          ...parseMoney(window.Imitation.state.info.money).map((i, index) => {
             return {
               active: i.key === this.money,
               justifyContent: 'left',
@@ -409,7 +409,7 @@ class Page {
       this.InstanceShopPreview.novaTime = 0
     }
 
-    Imitation.state.function.event('touchstart', buy, { ifTouchCover: option })
+    window.Imitation.state.function.event('touchstart', buy, { ifTouchCover: option })
 
     closeCover.push(option)
 
@@ -419,14 +419,14 @@ class Page {
       this.InstanceShopPreview.novaTime = 0
     }
 
-    Imitation.state.function.event('touchstart', close)
+    window.Imitation.state.function.event('touchstart', close)
   }
 
   buy(shop) {
-    const findInMoney = Imitation.state.info.money.find(i => i.key === shop.money.key)
+    const findInMoney = window.Imitation.state.info.money.find(i => i.key === shop.money.key)
 
     if (findInMoney.number < shop.money.number) {
-      Imitation.state.function.message('货币不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.function.message('货币不足', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -434,10 +434,10 @@ class Page {
 
     const reward = shop.reward()
 
-    Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.reward = { value: reward, back: 'shop', title: '购买获得' }
-    Imitation.state.page.current = 'transition'
-    Imitation.state.page.next = 'reward'
+    window.Imitation.state.function.message('购买成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    window.Imitation.state.reward = { value: reward, back: 'shop', title: '购买获得' }
+    window.Imitation.state.page.current = 'transition'
+    window.Imitation.state.page.next = 'reward'
   }
 
   render() {

@@ -72,9 +72,9 @@ class Scroll {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 

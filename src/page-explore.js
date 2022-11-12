@@ -113,9 +113,9 @@ class ExploreInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -277,7 +277,7 @@ class Page {
   }
 
   init() {
-    this.explore = Imitation.state.explore.filter(i => i.type === this.type)
+    this.explore = window.Imitation.state.explore.filter(i => i.type === this.type)
 
     this.instanceNavigation()
     this.instanceScroll()
@@ -293,8 +293,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              Imitation.state.page.current = 'transition'
-              Imitation.state.page.next = 'home'
+              window.Imitation.state.page.current = 'transition'
+              window.Imitation.state.page.next = 'home'
             }
           },
           {
@@ -389,7 +389,7 @@ class Page {
 
     const enter = () => this.enter(this.preview)
 
-    Imitation.state.function.event('touchstart', enter, { ifTouchCover: option })
+    window.Imitation.state.function.event('touchstart', enter, { ifTouchCover: option })
 
     closeCover.push(option)
 
@@ -399,19 +399,19 @@ class Page {
       this.InstanceExplorePreview.novaTime = 0
     }
 
-    Imitation.state.function.event('touchstart', close)
+    window.Imitation.state.function.event('touchstart', close)
   }
 
   enter(explore) {
-    Imitation.state.battle = {
+    window.Imitation.state.battle = {
       self: {
         master: {
-          ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
+          ...parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])[0],
           buff: []
         },
         card: {
-          team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
-          store: setArrayRandom(parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
+          team: parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+          store: setArrayRandom(parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
           hand: [],
           cemetery: [],
           consume: []
@@ -434,13 +434,13 @@ class Page {
       reward: explore.reward
     }
 
-    if (Imitation.state.battle.self.card.team.length < 8) {
-      Imitation.state.function.message('卡组数量满足8张', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    if (window.Imitation.state.battle.self.card.team.length < 8) {
+      window.Imitation.state.function.message('卡组数量满足8张', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    Imitation.state.page.current = 'transition'
-    Imitation.state.page.next = 'pve'
+    window.Imitation.state.page.current = 'transition'
+    window.Imitation.state.page.next = 'pve'
   }
 
   render() {

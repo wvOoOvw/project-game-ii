@@ -463,9 +463,9 @@ class CardInSelf {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -697,7 +697,7 @@ class Page {
       width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       type: 'self',
-      information: Imitation.state.battle.self,
+      information: window.Imitation.state.battle.self,
       useCard: this.useCard,
     }
     option.x = (windowWidth - option.width) / 2
@@ -713,7 +713,7 @@ class Page {
       width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
       type: 'opposite',
-      information: Imitation.state.battle.opposite,
+      information: window.Imitation.state.battle.opposite,
       useCard: this.useCard
     }
     option.x = (windowWidth - option.width) / 2
@@ -730,8 +730,8 @@ class Page {
             justifyContent: 'left',
             text: '退出战斗',
             event: () => {
-              Imitation.state.page.current = 'transition'
-              Imitation.state.page.next = 'explore'
+              window.Imitation.state.page.current = 'transition'
+              window.Imitation.state.page.next = 'explore'
             }
           },
           {
@@ -786,15 +786,15 @@ class Page {
       }
 
       if (current.message) {
-        Imitation.state.function.message(current.message, 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+        window.Imitation.state.function.message(current.message, 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
       }
 
       if (current.animation) {
         if (current.target === 'self') {
-          Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
+          window.Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
         }
         if (current.target === 'opposite') {
-          Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
+          window.Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
         }
       }
 
@@ -938,19 +938,19 @@ class Page {
 
   battlerOver = () => {
     if (this.InstanceRoleOpposite.information.master.HP <= 0) {
-      const reward = Imitation.state.battle.reward()
+      const reward = window.Imitation.state.battle.reward()
 
-      Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-      Imitation.state.reward = { value: reward, back: 'explore', title: '战斗胜利' }
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'reward'
+      window.Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.reward = { value: reward, back: 'explore', title: '战斗胜利' }
+      window.Imitation.state.page.current = 'transition'
+      window.Imitation.state.page.next = 'reward'
       return
     }
     if (this.InstanceRoleSelf.information.master.HP <= 0) {
-      Imitation.state.function.message('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-      Imitation.state.reward = { value: [], back: 'explore', title: '战斗失败' }
-      Imitation.state.page.current = 'transition'
-      Imitation.state.page.next = 'reward'
+      window.Imitation.state.function.message('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.reward = { value: [], back: 'explore', title: '战斗失败' }
+      window.Imitation.state.page.current = 'transition'
+      window.Imitation.state.page.next = 'reward'
       return
     }
   }

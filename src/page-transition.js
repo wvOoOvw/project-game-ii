@@ -30,8 +30,8 @@ class PageTransition {
     }
 
     if (this.count > 60) {
-      Imitation.state.page.current = Imitation.state.page.next
-      Imitation.state.page.next = ''
+      window.Imitation.state.page.current = window.Imitation.state.page.next
+      window.Imitation.state.page.next = ''
       return
     }
 

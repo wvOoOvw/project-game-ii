@@ -43,7 +43,7 @@ class Main {
 
     Event.clearEventListener()
 
-    const pageClass = Imitation.state.page.map[Imitation.state.page.current]
+    const pageClass = window.Imitation.state.page.map[window.Imitation.state.page.current]
 
     const ifCurrent = this.instance instanceof pageClass
 
@@ -68,7 +68,7 @@ class Main {
   }
 
   ImitationInit() {    
-    Imitation.state = {
+    window.Imitation.state = {
       page: {
         current: 'home',
         next: '',
@@ -93,7 +93,7 @@ class Main {
         event: (...props) => Event.addEventListener(...props),
 
         saveInfo: () => {
-          localStorage.setItem('info', JSON.stringify(Imitation.state.info))
+          localStorage.setItem('info', JSON.stringify(window.Imitation.state.info))
         }
       },
 
@@ -104,13 +104,13 @@ class Main {
       reward: null,
     }
 
-    if (window.location.search && !window.wx) Imitation.state.page.current = window.location.search.replace('?', '')
+    if (window.location.search && !window.wx) window.Imitation.state.page.current = window.location.search.replace('?', '')
 
     localStorage.removeItem('info')
     const info = localStorage.getItem('info')
 
     if (info) {
-      Imitation.state.info = JSON.parse(info)
+      window.Imitation.state.info = JSON.parse(info)
     }
 
     if (!info) {
@@ -145,19 +145,19 @@ class Main {
         ]
       }
 
-      Imitation.state.info = responseHTTP
-      Imitation.state.function.saveInfo()
+      window.Imitation.state.info = responseHTTP
+      window.Imitation.state.function.saveInfo()
     }
 
-    if (Imitation.state.page.current === 'pve') {
-      Imitation.state.battle = {
+    if (window.Imitation.state.page.current === 'pve') {
+      window.Imitation.state.battle = {
         self: {
           master: {
-            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
+            ...parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])[0],
             buff: []
           },
           card: {
-            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+            team: parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
             hand: [],
           },
         },

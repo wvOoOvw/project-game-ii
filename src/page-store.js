@@ -117,9 +117,9 @@ class CardInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -362,9 +362,9 @@ class MasterInList {
 
     ctx.restore()
 
-    Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -565,15 +565,15 @@ class Page {
     this.card = []
 
     if (this.type === 'card') {
-      this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
+      this.master = parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])
         .map(i => {
-          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
+          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key === i.key
           return i
         })
 
-      this.card = parseCard(Imitation.state.info.library.card)
+      this.card = parseCard(window.Imitation.state.info.library.card)
         .map(i => {
-          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
           return i
         })
         .sort((a, b) => {
@@ -588,9 +588,9 @@ class Page {
         })
     }
     if (this.type === 'master') {
-      this.master = parseMaster(Imitation.state.info.library.master)
+      this.master = parseMaster(window.Imitation.state.info.library.master)
         .map(i => {
-          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
+          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key === i.key
           return i
         })
         .sort((a, b) => {
@@ -604,12 +604,12 @@ class Page {
           return b_ - a_
         })
 
-      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card
+      this.card = parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
         .map(i => {
-          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
           return i
         })
-        .map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
+        .map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
         .sort((a, b) => {
           const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
           const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
@@ -633,8 +633,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              Imitation.state.page.current = 'transition'
-              Imitation.state.page.next = 'home'
+              window.Imitation.state.page.current = 'transition'
+              window.Imitation.state.page.next = 'home'
             }
           },
           {
@@ -643,14 +643,14 @@ class Page {
           }
         ],
         [
-          ...new Array(Imitation.state.info.team.length).fill().map((i, index) => {
+          ...new Array(window.Imitation.state.info.team.length).fill().map((i, index) => {
             return {
               width: 48,
-              active: index === Imitation.state.info.teamIndex,
+              active: index === window.Imitation.state.info.teamIndex,
               justifyContent: 'left',
               text: levelText(index + 1),
               event: () => {
-                Imitation.state.info.teamIndex = index
+                window.Imitation.state.info.teamIndex = index
                 this.init()
               }
             }
@@ -782,11 +782,11 @@ class Page {
 
       if (this.preview.inTeam) {
         ctx.fillText('卸载', option.x + option.width / 2, option.y + option.height / 2)
-        Imitation.state.function.event('touchstart', () => this.unloadCard(this.preview), { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', () => this.unloadCard(this.preview), { ifTouchCover: option })
       }
       if (!this.preview.inTeam) {
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
-        Imitation.state.function.event('touchstart', () => this.loadCard(this.preview), { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', () => this.loadCard(this.preview), { ifTouchCover: option })
       }
 
       closeCover.push(option)
@@ -815,7 +815,7 @@ class Page {
         ctx.fillStyle = index === this.InstanceMasterPreview.skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
         ctx.fillText(i.name, option.x + option.width / 2, option.y + option.height / 2)
 
-        Imitation.state.function.event('touchstart', () => this.InstanceMasterPreview.skillIndex = index, { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', () => this.InstanceMasterPreview.skillIndex = index, { ifTouchCover: option })
 
         closeCover.push(option)
       })
@@ -834,7 +834,7 @@ class Page {
         ctx.fillStyle = 'rgba(0, 0, 0, 1)'
         ctx.fillText('装载', option.x + option.width / 2, option.y + option.height / 2)
 
-        Imitation.state.function.event('touchstart', () => this.loadMaster(this.preview), { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', () => this.loadMaster(this.preview), { ifTouchCover: option })
 
         closeCover.push(option)
       }
@@ -848,20 +848,20 @@ class Page {
       this.InstanceCardPreview.novaTime = 0
     }
 
-    Imitation.state.function.event('touchstart', close)
+    window.Imitation.state.function.event('touchstart', close)
   }
 
   loadCard(card) {
-    const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
+    const team = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
     if (team.length === 8) {
-      Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
     if (findInTeam) {
-      Imitation.state.function.message('卡牌已装载', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.function.message('卡牌已装载', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
     if (!findInTeam) {
@@ -870,17 +870,17 @@ class Page {
 
     this.init()
     this.preview = null
-    Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.function.saveInfo()
+    window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    window.Imitation.state.function.saveInfo()
   }
 
   unloadCard(card) {
-    const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
+    const team = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
     if (!findInTeam) {
-      Imitation.state.function.message('未装载当前卡牌', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      window.Imitation.state.function.message('未装载当前卡牌', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -888,17 +888,17 @@ class Page {
 
     this.init()
     this.preview = null
-    Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.function.saveInfo()
+    window.Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    window.Imitation.state.function.saveInfo()
   }
 
   loadMaster(master) {
-    Imitation.state.info.team[Imitation.state.info.teamIndex].master.key = master.key
+    window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key = master.key
 
     this.init()
     this.preview = null
-    Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    Imitation.state.function.saveInfo()
+    window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    window.Imitation.state.function.saveInfo()
   }
 
   render() {

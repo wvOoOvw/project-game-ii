@@ -69,7 +69,7 @@ class Navigation {
 
         ctx.fillText(option.text, option.x + option.width / 2, option.y + option.height / 2)
 
-        Imitation.state.function.event('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
+        window.Imitation.state.function.event('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
       })
     })
   }
