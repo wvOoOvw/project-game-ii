@@ -1,9 +1,5 @@
 (function () {
-  try {
-    if (wx) void 0
-  } catch {
-    return
-  }
+  try { wx } catch { return }
 
 /** *** */ (function (modules) { // webpackBootstrap
 /** *** */ 	// The module cache
