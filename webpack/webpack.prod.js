@@ -6,6 +6,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const config = Object.assign({}, common, {
   mode: 'production',
+  output: {
+    filename: 'game.js',
+    path: path.resolve(__dirname, '../build')
+  },
   plugins: [
     new CleanWebpackPlugin({ currentAssets: [] }),
     new HtmlWebpackPlugin({
@@ -16,7 +20,7 @@ const config = Object.assign({}, common, {
 })
 
 if (process.argv.includes('--wx')) {
-  config.module.rules.forEach(i => i.use.forEach(i => i.loader === 'file-loader' ? i.options.publicPath = 'build/' : null))
+  config.module.rules.forEach(i => i.use.forEach(i => i.loader === 'file-loader' ? i.options.publicPath = 'static' : null))
   config.plugins = config.plugins.filter(i => i instanceof HtmlWebpackPlugin ? false : true)
 }
 

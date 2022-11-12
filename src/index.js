@@ -1,3 +1,4 @@
+import './adapter-weapp'
 import './adapter-web'
 import './adapter-dpr'
 import './adapter-font-family'
@@ -66,7 +67,7 @@ class Main {
     cancelAnimationFrame(this.animationFrameId)
   }
 
-  ImitationInit() {
+  ImitationInit() {    
     Imitation.state = {
       page: {
         current: 'home',
@@ -103,7 +104,7 @@ class Main {
       reward: null,
     }
 
-    if (window.location.search) Imitation.state.page.current = window.location.search.replace('?', '')
+    if (window.location.search && !window.wx) Imitation.state.page.current = window.location.search.replace('?', '')
 
     localStorage.removeItem('info')
     const info = localStorage.getItem('info')
