@@ -11,7 +11,7 @@ class Navigation {
 
     this.itemWidth = props.itemWidth || 72
     this.itemHeight = props.itemHeight || 30
-    this.itemRadius = props.itemRadius || 8
+    this.itemRadius = props.itemRadius || 6
     this.itemBackgroundColor = props.itemBackgroundColor || ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
     this.itemTextColor = props.itemTextColor || ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)']
   }

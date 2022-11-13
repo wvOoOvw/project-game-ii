@@ -140,7 +140,7 @@ class Main {
         teamIndex: 0,
         money: [
           { key: 1, number: 100000 },
-          { key: 2, number: 100000 },
+          { key: 2, number: 1000 },
         ]
       }
 

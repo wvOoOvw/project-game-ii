@@ -281,6 +281,7 @@ class Page {
   constructor() {
     this.preview = null
 
+    this.money = 1
     this.type = 'alltime'
 
     this.shop
@@ -335,22 +336,28 @@ class Page {
                 this.init()
               }
             }
+          }),
+          ...parseMoney(window.Imitation.state.info.money).filter(i => i.key === this.money).map(i => {
+            return {
+              active: true,
+              justifyContent: 'right',
+              text: `${i.name} ¥${i.number}`,
+              width: ctx.measureText(`${i.name} ¥${i.number}`).width + 48,
+              event: () => {
+                if(this.money === 1) {
+                  this.money = 2
+                  this.init()
+                  return
+                }
+                if(this.money === 2) {
+                  this.money = 1
+                  this.init()
+                  return
+                }
+              }
+            }
           })
         ],
-        // [
-        //   ...parseMoney(window.Imitation.state.info.money).map((i, index) => {
-        //     return {
-        //       active: i.key === this.money,
-        //       justifyContent: 'left',
-        //       text: `${i.name} ¥${i.number}`,
-        //       width: (windowWidth - 12 * 6) / 3,
-        //       event: () => {
-        //         this.money = i.key
-        //         this.init()
-        //       }
-        //     }
-        //   })
-        // ],
       ]
     }
 
