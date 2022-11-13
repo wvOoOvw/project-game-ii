@@ -3,7 +3,7 @@ const path = require('path')
 const common = require('./webpack.common.js')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const CopyWebpackPlugin = require("copy-webpack-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 
 const config = Object.assign({}, common, {
   mode: 'production',
@@ -25,14 +25,14 @@ const config = Object.assign({}, common, {
 if (process.argv.includes('--wx')) {
   config.module.rules.forEach(i => i.use.forEach(i => i.loader === 'file-loader' ? i.options.publicPath = 'static' : null))
   config.plugins = config.plugins.filter(i => i instanceof HtmlWebpackPlugin ? false : true)
-  // config.plugins.push(
-  //   new CopyWebpackPlugin(
-  //     [
-  //       { from: path.join(__dirname, '../static/wx-config/game.json'), to: webpackConfig.output.path + '/game.json' },
-  //       { from: path.join(__dirname, '../static/wx-config/project.config.json'), to: webpackConfig.output.path + '/project.config.json' }
-  //     ]
-  //   )
-  // )
+  config.plugins.push(
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: path.join(__dirname, '../static/wx-config/game.json'), to: config.output.path + '/game.json' },
+        { from: path.join(__dirname, '../static/wx-config/project.config.json'), to: config.output.path + '/project.config.json' }
+      ]
+    })
+  )
 }
 
 module.exports = config

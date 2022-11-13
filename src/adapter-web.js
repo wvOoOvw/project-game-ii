@@ -1,5 +1,5 @@
 (function () {
-  if (window.wx) return
+  try { if (wx) return } catch { }
 
   window.wx = {
     getSystemInfoSync: () => {

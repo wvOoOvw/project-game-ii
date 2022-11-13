@@ -1,6 +1,4 @@
 const webpack = require('webpack')
-const fs = require('fs')
-const path = require('path')
 
 if (process.argv.includes('--dev')) {
   const webpackConfig = require('./webpack.dev')
@@ -22,10 +20,5 @@ if (process.argv.includes('--prod')) {
   webpack(webpackConfig, (err, stats) => {
     if (err) throw err
     console.log(stats.toString({ colors: true, modules: true, children: true, chunks: true, chunkModules: true }))
-
-    if (process.argv.includes('--wx')) {
-      fs.copyFileSync(path.join(__dirname, '../static/wx-config/game.json') ,webpackConfig.output.path + '/game.json')
-      fs.copyFileSync(path.join(__dirname, '../static/wx-config/project.config.json') ,webpackConfig.output.path + '/project.config.json')
-    }
   })
 }
