@@ -342,7 +342,7 @@ class Page {
               active: true,
               justifyContent: 'right',
               text: `${i.name} ¥${i.number}`,
-              width: ctx.measureText(`${i.name} ¥${i.number}`).width + 48,
+              width: 90,
               event: () => {
                 if(this.money === 1) {
                   this.money = 2
