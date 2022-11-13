@@ -299,6 +299,17 @@ class CardInSelf {
     return { x, y, width, height }
   }
 
+  get color() {
+    const ifTouchEndTime = this.ifTouchEndTime
+
+    const active = [0, 0, 0]
+
+    return [
+      `rgba(${Math.floor(255 - ifTouchEndTime * (255 - active[0]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[1]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[2]))}, 0.75)`,
+      `rgba(${Math.floor(ifTouchEndTime * (255 - active[0]) + active[0])}, ${Math.floor(ifTouchEndTime * (255 - active[1]) + active[1])}, ${Math.floor(ifTouchEndTime * (255 - active[2]) + active[2])}, 1)`
+    ]
+  }
+
   eventDown(e) {
     try {
       this.mouseDownPosition = [e.x || e.touches[0].clientX, e.y || e.touches[0].clientY]
@@ -328,7 +339,7 @@ class CardInSelf {
 
   drawTitle() {
     const { x, y, width, height } = this.option
-    const ifTouchEndTime = this.ifTouchEndTime
+    const color = this.color
 
     const width_ = width * 0.5
     const height_ = width * 0.12
@@ -337,19 +348,19 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
+    ctx.fillStyle = color[0]
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
+    ctx.fillStyle = color[1]
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
     const { x, y, width, height } = this.option
-    const ifTouchEndTime = this.ifTouchEndTime
+    const color = this.color
     const card = this.card
 
     const width_ = width * 0.5
@@ -363,19 +374,19 @@ class CardInSelf {
     if (card.number) text.push('x' + card.number)
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
+    ctx.fillStyle = color[0]
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
+    ctx.fillStyle = color[1]
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRaceType() {
     const { x, y, width, height } = this.option
-    const ifTouchEndTime = this.ifTouchEndTime
+    const color = this.color
     const card = this.card
 
     const width_ = width * 0.9
@@ -385,19 +396,19 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
+    ctx.fillStyle = color[0]
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
+    ctx.fillStyle = color[1]
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
     const { x, y, width, height } = this.option
-    const ifTouchEndTime = this.ifTouchEndTime
+    const color = this.color
     const card = this.card
 
     const width_ = width * 0.9
@@ -407,13 +418,13 @@ class CardInSelf {
     const radius_ = width * 0.03
 
     drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, ${Math.floor(255 - ifTouchEndTime * 255)}, 0.75)`
+    ctx.fillStyle = color[0]
     ctx.fill()
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
+    ctx.fillStyle = color[1]
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
