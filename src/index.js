@@ -18,7 +18,7 @@ import { Animation } from './ui-animation'
 import { Sound } from './utils-sound'
 import { Event } from './utils-event'
 
-import { parseCard, parseMaster } from './utils-common'
+import { parseMoney, parseCard, parseMaster } from './utils-common'
 
 import { originMoney, originMaster, originCard, originExplore, originShop } from './source'
 
@@ -67,7 +67,7 @@ class Main {
     cancelAnimationFrame(this.animationFrameId)
   }
 
-  ImitationInit() {    
+  ImitationInit() {
     window.Imitation.state = {
       page: {
         current: 'home',
@@ -86,7 +86,7 @@ class Main {
         render: this.render,
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
-        
+
         message: (...props) => this.instanceMessage.send(...props),
         animation: (...props) => this.instanceAnimation.play(...props),
         sound: (...props) => Sound.play(...props),
@@ -100,11 +100,11 @@ class Main {
       info: null,
       battle: null,
       explore: originExplore,
-      shop: originShop,
+      shop: originShop.map(i => { i.money = parseMoney([i.money])[0]; return i }),
       reward: null,
     }
 
-    if (window.location.search && !window.wx) window.Imitation.state.page.current = window.location.search.replace('?', '')
+    if (window.wx._web && window.location.search) window.Imitation.state.page.current = window.location.search.replace('?', '')
 
     localStorage.removeItem('info')
     const info = localStorage.getItem('info')
@@ -141,7 +141,6 @@ class Main {
         money: [
           { key: 1, number: 100000 },
           { key: 2, number: 100000 },
-          { key: 3, number: 100000 },
         ]
       }
 

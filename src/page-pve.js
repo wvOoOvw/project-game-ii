@@ -60,7 +60,7 @@ class CardMessage {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(0, 0, 0, 1)`
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -85,7 +85,7 @@ class CardMessage {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(0, 0, 0, 1)`
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -106,7 +106,7 @@ class CardMessage {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(0, 0, 0, 1)`
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -127,7 +127,7 @@ class CardMessage {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(0, 0, 0, 1)`
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
@@ -342,7 +342,7 @@ class CardInSelf {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -368,7 +368,7 @@ class CardInSelf {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -390,7 +390,7 @@ class CardInSelf {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
@@ -412,7 +412,7 @@ class CardInSelf {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, ${Math.floor(ifTouchEndTime * 255)}, 1)`
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
@@ -957,9 +957,6 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
-    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
-    ctx.fill()
 
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()

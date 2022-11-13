@@ -90,7 +90,31 @@ class ShopInList {
     ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([shop.name, '¥' + shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawExtra() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    const width_ = width * 0.35
+    const height_ = width * 0.07
+    const x_ = x + width - width_ - width * 0.03
+    const y_ = y + height - height_ - width * 0.13
+    const radius_ = width * 0.02
+
+    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+
+    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+
+    ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -107,6 +131,7 @@ class ShopInList {
 
     this.drawTitle()
     this.drawName()
+    this.drawExtra()
 
     ctx.restore()
 
@@ -149,7 +174,7 @@ class ShopInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
@@ -173,7 +198,7 @@ class ShopInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
@@ -197,10 +222,10 @@ class ShopInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText('¥' + shop.money.number, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -221,7 +246,7 @@ class ShopInPreview {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: shop.description })
@@ -256,7 +281,6 @@ class Page {
   constructor() {
     this.preview = null
 
-    this.money = 1
     this.type = 'alltime'
 
     this.shop
@@ -275,7 +299,7 @@ class Page {
   }
 
   init() {
-    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type && i.money.key === this.money)
+    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type)
 
     this.instanceNavigation()
     this.instanceScroll()
@@ -313,20 +337,20 @@ class Page {
             }
           })
         ],
-        [
-          ...parseMoney(window.Imitation.state.info.money).map((i, index) => {
-            return {
-              active: i.key === this.money,
-              justifyContent: 'left',
-              text: `${i.name} ¥${i.number}`,
-              width: (windowWidth - 12 * 6) / 3,
-              event: () => {
-                this.money = i.key
-                this.init()
-              }
-            }
-          })
-        ],
+        // [
+        //   ...parseMoney(window.Imitation.state.info.money).map((i, index) => {
+        //     return {
+        //       active: i.key === this.money,
+        //       justifyContent: 'left',
+        //       text: `${i.name} ¥${i.number}`,
+        //       width: (windowWidth - 12 * 6) / 3,
+        //       event: () => {
+        //         this.money = i.key
+        //         this.init()
+        //       }
+        //     }
+        //   })
+        // ],
       ]
     }
 

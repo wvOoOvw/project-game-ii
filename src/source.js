@@ -13,10 +13,6 @@ var originMoney = [
     key: 2,
     name: '钻石',
   },
-  {
-    key: 3,
-    name: '碎片',
-  },
 ]
 
 var originExplore = [

@@ -152,7 +152,7 @@ class ExploreInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
@@ -176,7 +176,7 @@ class ExploreInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
@@ -200,7 +200,7 @@ class ExploreInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(`难度 ${explore.difficulty}`, x_ + width_ / 2, y_ + height_ / 2)
@@ -224,7 +224,7 @@ class ExploreInPreview {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: explore.description })

@@ -147,7 +147,7 @@ class CardInList {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
@@ -171,7 +171,7 @@ class CardInList {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(card.name, x_ + width_ / 2, y_ + height_ / 2)
@@ -233,7 +233,7 @@ class CardInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
@@ -257,7 +257,7 @@ class CardInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText([card.name, card.exp].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -281,7 +281,7 @@ class CardInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
@@ -305,7 +305,7 @@ class CardInPreview {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
@@ -474,7 +474,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('MASTER 队长', x_ + width_ / 2, y_ + height_ / 2)
@@ -498,7 +498,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText([master.name, master.exp].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -522,7 +522,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('HP ' + master.HP, x_ + width_ / 2, y_ + height_ / 2)
@@ -546,7 +546,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     ctx.fillText('ATTACT ' + master.ATTACT, x_ + width_ / 2, y_ + height_ / 2)
@@ -570,7 +570,7 @@ class MasterInPreview {
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.05}px ${window.fontFamily}`
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: master.skill[this.skillIndex].description(master.level) })

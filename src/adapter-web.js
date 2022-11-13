@@ -2,6 +2,7 @@
   try { if (wx) return } catch { }
 
   window.wx = {
+    _web: true,
     getSystemInfoSync: () => {
       return {
         safeArea: {
