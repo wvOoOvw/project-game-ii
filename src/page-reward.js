@@ -23,6 +23,8 @@ class MoneyInList {
     this.offsetY = props.offsetY || 0
 
     this.money = props.money
+
+    this.novaTime = 0
   }
 
   get option() {
@@ -78,6 +80,8 @@ class MoneyInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const money = this.money
 
@@ -88,6 +92,8 @@ class MoneyInList {
     ctx.clip()
 
     drawImage(money.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -107,6 +113,8 @@ class CardInList {
     this.offsetY = props.offsetY || 0
 
     this.card = props.card
+
+    this.novaTime = 0
 
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
@@ -178,6 +186,8 @@ class CardInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -188,6 +198,8 @@ class CardInList {
     ctx.clip()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -346,6 +358,8 @@ class MasterInList {
 
     this.master = props.master
 
+    this.novaTime = 0
+
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
     this.touchTimeout
@@ -417,6 +431,8 @@ class MasterInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const master = this.master
 
@@ -427,6 +443,8 @@ class MasterInList {
     ctx.clip()
 
     drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
@@ -604,7 +622,7 @@ class Page {
   constructor() {
     this.preview = null
 
-    this.type = 'card'
+    this.type
 
     this.card = []
     this.master = []
@@ -641,6 +659,16 @@ class Page {
     this.card = []
     this.master = []
     this.money = []
+
+    if (!this.type && window.Imitation.state.reward.value.some(i => i.card)) {
+      this.type = 'card'
+    }
+    if (!this.type && window.Imitation.state.reward.value.some(i => i.master)) {
+      this.type = 'master'
+    }
+    if (!this.type && window.Imitation.state.reward.value.some(i => i.money)) {
+      this.type = 'money'
+    }
 
     if (this.type === 'card') {
       this.card = parseCard(window.Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
@@ -679,17 +707,19 @@ class Page {
           },
         ],
         [
-          ...new Array(['card', '卡牌'], ['master', '队长'], ['money', '资源']).map((i, index) => {
-            return {
-              active: i[0] === this.type,
-              justifyContent: 'left',
-              text: i[1],
-              event: () => {
-                this.type = i[0]
-                this.init()
+          ...new Array(['card', '卡牌'], ['master', '队长'], ['money', '资源'])
+            .filter(i => window.Imitation.state.reward.value.some(i_ => i_[i[0]]))
+            .map((i, index) => {
+              return {
+                active: i[0] === this.type,
+                justifyContent: 'left',
+                text: i[1],
+                event: () => {
+                  this.type = i[0]
+                  this.init()
+                }
               }
-            }
-          })
+            })
         ]
       ]
     }

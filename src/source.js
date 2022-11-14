@@ -31,7 +31,7 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { money: true, key: 1, number: Math.floor(Math.random() * 30) + 20 },
+        { money: true, key: 1, number: Math.floor(Math.random() * 31) + 20 },
       ]
     },
     // AI: (self, opposite) => {
@@ -54,8 +54,8 @@ var originExplore = [
     },
     reward: () => {
       return [
-        { card: true, key: 1, exp: Math.floor(Math.random() * 15) + 5 },
-        { card: true, key: 2, exp: Math.floor(Math.random() * 15) + 5 },
+        { card: true, key: 1, exp: Math.floor(Math.random() * 16) + 5 },
+        { card: true, key: 2, exp: Math.floor(Math.random() * 16) + 5 },
       ]
     },
     // AI: (self, opposite) => {
@@ -76,8 +76,8 @@ var originShop = [
     },
     reward: () => {
       return [
-        { card: true, key: 1, exp: Math.floor(Math.random() * 20) },
-        { card: true, key: 2, exp: Math.floor(Math.random() * 20) },
+        { card: true, key: 1, exp: Math.floor(Math.random() * 21) },
+        { card: true, key: 2, exp: Math.floor(Math.random() * 21) },
 
       ]
     },
@@ -93,8 +93,8 @@ var originShop = [
     },
     reward: () => {
       return [
-        { master: true, key: 2, exp: Math.floor(Math.random() * 50 + 50) },
-        { master: true, key: 3, exp: Math.floor(Math.random() * 50 + 50) },
+        { master: true, key: 2, exp: Math.floor(Math.random() * 51 + 50) },
+        { master: true, key: 3, exp: Math.floor(Math.random() * 51 + 50) },
       ]
     },
   },

@@ -24,6 +24,8 @@ class ExploreInList {
 
     this.explore = props.explore
 
+    this.novaTime = 0
+
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
     this.touchTimeout
@@ -94,10 +96,9 @@ class ExploreInList {
   }
 
   render() {
-    const x = this.x + this.offsetX
-    const y = this.y + this.offsetY
-    const width = this.width
-    const height = this.height
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    const { x, y, width, height } = this.option
     const explore = this.explore
 
     ctx.save()
@@ -106,7 +107,9 @@ class ExploreInList {
 
     ctx.clip()
 
-    drawImage(this.explore.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(explore.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()

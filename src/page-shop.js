@@ -24,6 +24,8 @@ class ShopInList {
 
     this.shop = props.shop
 
+    this.novaTime = 0
+
     this.touchEvent = props.touchEvent
     this.touchArea = props.touchArea
     this.touchTimeout
@@ -118,6 +120,8 @@ class ShopInList {
   }
 
   render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
     const { x, y, width, height } = this.option
     const shop = this.shop
 
@@ -128,6 +132,8 @@ class ShopInList {
     ctx.clip()
 
     drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
+
+    ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
