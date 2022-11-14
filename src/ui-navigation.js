@@ -25,7 +25,7 @@ class Navigation {
   }
 
   drawBackground() {
-    drawRadius({ x: 12, y: windowHeight - this.height - 12, width: windowWidth - 24, height: this.height, radius: 12 })
+    drawRadius({ x: 12, y: windowHeight - this.height - 12, width: windowWidth - 24, height: this.height, radius: 4 })
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
     ctx.fill()
   }

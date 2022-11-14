@@ -686,6 +686,8 @@ class Page {
   constructor() {
     this.currentUseCard = false
     this.currentRole
+    this.round = 0.5
+    this.auto = false
 
     this.InstanceNavigation
     this.InstanceRoleSelf
@@ -702,7 +704,7 @@ class Page {
   }
 
   instanceRoleSelf() {
-    const boxHeight = (windowHeight - (this.InstanceNavigation.height + 12) - safeTop) / 2
+    const boxHeight = (windowHeight - this.InstanceNavigation.height - 36 - safeTop) / 2
 
     const option = {
       width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
@@ -712,13 +714,13 @@ class Page {
       useCard: this.useCard,
     }
     option.x = (windowWidth - option.width) / 2
-    option.y = windowHeight - (this.InstanceNavigation.height + 12) - boxHeight + (boxHeight - option.height) / 2
+    option.y = windowHeight - this.InstanceNavigation.height - 24 - boxHeight + (boxHeight - option.height) / 2
 
     this.InstanceRoleSelf = new Role(option)
   }
 
   instanceRoleOpposite() {
-    const boxHeight = (windowHeight - (this.InstanceNavigation.height + 12) - safeTop) / 2
+    const boxHeight = (windowHeight - this.InstanceNavigation.height - 36 - safeTop) / 2
 
     const option = {
       width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
@@ -728,7 +730,7 @@ class Page {
       useCard: this.useCard
     }
     option.x = (windowWidth - option.width) / 2
-    option.y = (boxHeight - option.height) / 2 + safeTop
+    option.y = (boxHeight - option.height) / 2 + 24 + safeTop
 
     this.InstanceRoleOpposite = new Role(option)
   }
@@ -746,6 +748,16 @@ class Page {
             }
           },
           {
+            justifyContent: 'left',
+            text: '自动战斗',
+            active: this.auto,
+            event: () => {
+              this.auto = !this.auto
+              this.instanceNavigation()
+              this.oppositeAI()
+            }
+          },
+          {
             justifyContent: 'right',
             text: '结束回合',
             event: this.roundOver
@@ -755,6 +767,26 @@ class Page {
     }
 
     this.InstanceNavigation = new Navigation(option)
+  }
+
+  drawRound() {
+    const option = {}
+
+    option.width = 120
+    option.height = 12
+    option.y = 12
+    option.x = (windowWidth - option.width) / 2
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.font = `900 24px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillText('ROUND', option.x + option.width / 2, option.y + option.height / 2)
+
+    ctx.font = `900 14px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fillText(`${Math.floor(this.round)}/99`, option.x + option.width / 2, option.y + option.height / 2 + 2)
   }
 
   pumpCard = (card, role) => {
@@ -782,9 +814,9 @@ class Page {
 
     await wait(120)
 
-    var result = card.function(card, self.information, opposite.information, this.env)
+    var result = card.function(card, self.information, opposite.information)
 
-    self.information.master.skill.forEach(skill => skill.function(card, skill, result, self.information, opposite.information, this.env))
+    self.information.master.skill.forEach(skill => skill.function(card, skill, result, self.information, opposite.information))
 
     var roleMessageTimeSelf = 0
     var roleMessageTimeOpposite = 0
@@ -793,7 +825,7 @@ class Page {
       const current = result.shift()
 
       if (current.custom) {
-        current.custom(card, result, self.information, opposite.information, this.env)
+        current.custom(card, result, self.information, opposite.information)
       }
 
       if (current.message) {
@@ -897,20 +929,33 @@ class Page {
   }
 
   oppositeAI = async () => {
-    const result = this.InstanceRoleOpposite.information.AI(this.InstanceRoleOpposite.information, this.InstanceRoleSelf.information, this.env)
+    const currentRole = this.currentRole
 
-    await wait(120)
+    var result
+
+    if (currentRole.information.AI) {
+      result = currentRole.information.AI(currentRole.information, this.InstanceRoleSelf.information)
+    }
+
+    if (!currentRole.information.AI) {
+      result = arrayRandom(currentRole.information.card.hand, 1)[0]
+    }
+
+    await wait(60)
     await this.useCard(result)
-    await wait(120)
+    await wait(60)
   }
 
   roundStart = async () => {
+    this.round = this.round + 0.5
+
     const currentRole = this.currentRole
 
+    currentRole.information.roundCache = null
     currentRole.information.master._ACTION = currentRole.information.master.ACTION
     currentRole.information.card.hand = arrayRandom(currentRole.information.card.team, 2)
 
-    if (currentRole === this.InstanceRoleOpposite) this.oppositeAI()
+    if (currentRole === this.InstanceRoleOpposite || this.auto) this.oppositeAI()
   }
 
   roundContinue = async () => {
@@ -918,7 +963,7 @@ class Page {
 
     if (currentRole.information.master._ACTION > 0) {
       currentRole.information.card.hand = arrayRandom(currentRole.information.card.team, 2)
-      if (currentRole === this.InstanceRoleOpposite) this.oppositeAI()
+      if (currentRole === this.InstanceRoleOpposite || this.auto) this.oppositeAI()
     }
 
     if (currentRole.information.master._ACTION === 0) {
@@ -968,6 +1013,8 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+
+    this.drawRound()
 
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()

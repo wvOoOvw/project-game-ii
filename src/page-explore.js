@@ -411,10 +411,7 @@ class Page {
         },
         card: {
           team: parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
-          store: setArrayRandom(parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))),
           hand: [],
-          cemetery: [],
-          consume: []
         },
       },
       opposite: {
@@ -424,10 +421,7 @@ class Page {
         },
         card: {
           team: parseCard(explore.boss.card),
-          store: setArrayRandom(parseCard(explore.boss.card)),
           hand: [],
-          cemetery: [],
-          consume: []
         },
         AI: explore.AI
       },

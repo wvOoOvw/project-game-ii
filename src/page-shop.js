@@ -342,7 +342,7 @@ class Page {
               active: true,
               justifyContent: 'right',
               text: `${i.name} ¥${i.number}`,
-              width: 90,
+              width: 108,
               event: () => {
                 if(this.money === 1) {
                   this.money = 2

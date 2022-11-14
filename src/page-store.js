@@ -577,9 +577,7 @@ class Page {
           return i
         })
         .sort((a, b) => {
-          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          return b_ - a_
+          return a.key - b.key
         })
         .sort((a, b) => {
           const a_ = a.inTeam ? 1 : 0
@@ -594,9 +592,7 @@ class Page {
           return i
         })
         .sort((a, b) => {
-          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          return b_ - a_
+          return a.key - b.key
         })
         .sort((a, b) => {
           const a_ = a.inTeam ? 1 : 0
@@ -611,6 +607,7 @@ class Page {
         })
         .map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
         .sort((a, b) => {
+          return a.key - b.key
           const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
           const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
           return b_ - a_
