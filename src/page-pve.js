@@ -159,7 +159,7 @@ class CardMessage {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
     ctx.fill()
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: width * 0.04 })
 
     ctx.clip()
 
@@ -242,7 +242,7 @@ class CardInOpposite {
 
     ctx.globalAlpha = this.novaTime
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: width * 0.04 })
 
     ctx.clip()
 
@@ -456,7 +456,7 @@ class CardInSelf {
 
     ctx.globalAlpha = this.novaTime
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: width * 0.04 })
 
     ctx.clip()
 

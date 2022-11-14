@@ -242,7 +242,7 @@ class CardInPreview {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: width * 0.04 })
 
     ctx.clip()
 
@@ -349,7 +349,7 @@ class MasterInList {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: 12 })
+    drawRadius({ x, y, width, height, radius: 8 })
 
     ctx.clip()
 
@@ -513,7 +513,7 @@ class MasterInPreview {
 
     ctx.save()
 
-    drawRadius({ x, y, width, height, radius: width * 0.08 })
+    drawRadius({ x, y, width, height, radius: width * 0.04 })
 
     ctx.clip()
 
@@ -669,7 +669,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 12 }
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 8 }
     option.scrollY = this.masterHeight + this.cardHeight - option.height + 12
 
     this.InstanceScroll = new Scroll(option)
