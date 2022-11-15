@@ -25,8 +25,8 @@
   body.style.position = 'absolute'
   body.style.width = '100%'
   body.style.height = '100%'
-  // body.style.background = 'black'
-  // body.style['max-width'] = '425px'
+  body.style.background = 'black'
+  if (window.ontouchstart === undefined) body.style['max-width'] = window.document.documentElement.clientHeight * 0.5 + 'px'
 
   const canvas = document.createElement('canvas')
 

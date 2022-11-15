@@ -132,8 +132,16 @@ const ifTouchCover = (e, option) => {
   const width = option.width
   const height = option.height
 
-  const x_ = e.x || e.touches[0].clientX
-  const y_ = e.y || e.touches[0].clientY
+  var x_ = e.x || e.touches[0].clientX
+  var y_ = e.y || e.touches[0].clientY
+
+  try {
+    const boundingClientRect = canvas.getBoundingClientRect()
+
+    x_ = x_ - boundingClientRect.left
+    y_ = y_ - boundingClientRect.top
+
+  } catch { }
 
   return x_ >= x && x_ <= x + width && y_ >= y && y_ <= y + height
 }

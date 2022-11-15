@@ -774,7 +774,7 @@ class Page {
 
     option.width = 120
     option.height = 12
-    option.y = 12
+    option.y = 12 + safeTop
     option.x = (windowWidth - option.width) / 2
 
     ctx.textAlign = 'center'

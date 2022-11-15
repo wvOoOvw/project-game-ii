@@ -8,27 +8,31 @@ class Event {
   }
 
   init = () => {
-    const list = ['touchstart', 'touchmove', 'touchend']
-
     const event = (e, type) => {
-      const list = this.event
+      const exe = this.event
         .filter(i => i.type === type)
         .sort((a, b) => b.priority - a.priority)
         .reduce((t, i) => i.option && i.option.stop ? null : [...t, i], [])
 
-      list.forEach(i => {
+      exe.forEach(i => {
         if (i.option && i.option.ifTouchCover && !ifTouchCover(e, i.option.ifTouchCover)) return
 
         i.callback(e)
       })
     }
 
-    list.forEach(type => {
+    new Array('touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup').forEach(type => {
       canvas.addEventListener(type, e => event(e, type), { passive: true })
     })
   }
 
   addEventListener = (type, callback, option) => {
+    try {
+      if (window.wx._web && window.ontouchstart === undefined && type === 'touchstart') type = 'mousedown'
+      if (window.wx._web && window.ontouchmove === undefined && type === 'touchmove') type = 'mousemove'
+      if (window.wx._web && window.ontouchend === undefined && type === 'touchend') type = 'mouseup'
+    } catch { }
+
     this.event.push({ type, callback, option })
   }
 
