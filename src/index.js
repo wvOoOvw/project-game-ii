@@ -161,7 +161,7 @@ class Main {
     window.Imitation.state.page.current = 'transition'
     window.Imitation.state.page.next = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
 
-    if (window.Imitation.state.page.current === 'pve') {
+    if (searchParams('path') === 'pve') {
       window.Imitation.state.battle = {
         self: {
           master: {

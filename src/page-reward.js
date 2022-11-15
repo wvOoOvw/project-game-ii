@@ -882,6 +882,9 @@ class Page {
       this.InstanceMasterPreview.skillIndex = 0
       this.InstanceMasterPreview.novaTime = 0
       this.InstanceCardPreview.novaTime = 0
+      this.InstanceCard.forEach(i => i.novaTime = 0)
+      this.InstanceMaster.forEach(i => i.novaTime = 0)
+      this.InstanceMoney.forEach(i => i.novaTime = 0)
     }
 
     window.Imitation.state.function.event('touchstart', close)

@@ -401,6 +401,7 @@ class Page {
       if (closeCover.some(i => ifTouchCover(e, i))) return
       this.preview = null
       this.InstanceExplorePreview.novaTime = 0
+      this.InstanceExplore.forEach(i => i.novaTime = 0)
     }
 
     window.Imitation.state.function.event('touchstart', close)
