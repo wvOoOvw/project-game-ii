@@ -77,6 +77,7 @@ class Picture {
 
   get(key) {
     if (!this.map[key]) console.error(key)
+    
     return this.map[key]
   }
 }

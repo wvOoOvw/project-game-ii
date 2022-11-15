@@ -306,7 +306,7 @@ class Page {
   }
 
   init() {
-    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type)
+    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type).map(i => { i.money = parseMoney([i.money])[0]; return i }),
 
     this.instanceNavigation()
     this.instanceScroll()

@@ -20,9 +20,9 @@ import { Sound } from './utils-sound'
 import { Event } from './utils-event'
 import { Picture } from './utils-picture'
 
-import { parseMoney, parseCard, parseMaster, wait } from './utils-common'
+import { parseMoney, parseCard, parseMaster, wait, searchParams } from './utils-common'
 
-import { originMoney, originMaster, originCard, originExplore, originShop } from './source'
+import { originMoney, originMaster, originCard, originExplore, originShop, loadPicture } from './source'
 
 const ctx = canvas.getContext('2d')
 
@@ -36,7 +36,7 @@ class Main {
     this.instanceMessage = new Message()
     this.instanceAnimation = new Animation()
 
-    this.ImitationInit()
+    this.init()
     this.loopStart()
   }
 
@@ -71,7 +71,7 @@ class Main {
     cancelAnimationFrame(this.animationFrameId)
   }
 
-  async ImitationInit() {
+  async init() {
     window.Imitation.state = {
       page: {
         current: '',
@@ -97,61 +97,69 @@ class Main {
         sound: (...props) => Sound.play(...props),
         event: (...props) => Event.addEventListener(...props),
 
-        saveInfo: () => {
+        setInfo: async () => {
           localStorage.setItem('info', JSON.stringify(window.Imitation.state.info))
+        },
+        getInfo: async () => {
+          localStorage.removeItem('info')
+          const info = localStorage.getItem('info')
+          if (info) {
+            window.Imitation.state.info = JSON.parse(info)
+          }
+          if (!info) {
+            window.Imitation.state.function.initInfo()
+          }
+        },
+        initInfo: async () => {
+          const info = {
+            library: {
+              master: originMaster.map(i => ({ key: i.key, level: 1, exp: 0 })),
+              card: originCard.map(i => ({ key: i.key, level: 1, exp: 0 }))
+            },
+            team: [
+              {
+                master: { key: 3 },
+                card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
+              },
+              {
+                master: { key: 1 },
+                card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
+              },
+              {
+                master: { key: 1 },
+                card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
+              },
+              {
+                master: { key: 1 },
+                card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
+              },
+            ],
+            teamIndex: 0,
+            money: [
+              { key: 1, number: 88888 },
+              { key: 2, number: 12888 },
+            ]
+          }
+
+          window.Imitation.state.info = info
         }
       },
 
       info: null,
       battle: null,
       explore: originExplore,
-      shop: originShop.map(i => { i.money = parseMoney([i.money])[0]; return i }),
+      shop: originShop,
       reward: null,
     }
 
-    if (window.wx._web && window.location.search) window.Imitation.state.page.current = window.location.search.replace('?', '')
+    window.Imitation.state.function.getInfo()
 
-    localStorage.removeItem('info')
-    const info = localStorage.getItem('info')
-
-    if (info) {
-      window.Imitation.state.info = JSON.parse(info)
-    }
-
-    if (!info) {
-      const responseHTTP = {
-        library: {
-          master: originMaster.map(i => ({ key: i.key, level: 1, exp: 0 })),
-          card: originCard.map(i => ({ key: i.key, level: 1, exp: 0 }))
-        },
-        team: [
-          {
-            master: { key: 3 },
-            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
-          },
-          {
-            master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
-          },
-          {
-            master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
-          },
-          {
-            master: { key: 1 },
-            card: originCard.map(i => ({ key: i.key })).filter((i, index) => index < 8)
-          },
-        ],
-        teamIndex: 0,
-        money: [
-          { key: 1, number: 88888 },
-          { key: 2, number: 12888 },
-        ]
-      }
-
-      window.Imitation.state.info = responseHTTP
-      window.Imitation.state.function.saveInfo()
-    }
+    window.Imitation.state.page.current = 'loading'
+    await Picture.load()
+    await wait(60)
+    loadPicture()
+    window.Imitation.state.page.current = 'transition'
+    window.Imitation.state.page.next = searchParams('path') ? searchParams('path') : 'home'
 
     if (window.Imitation.state.page.current === 'pve') {
       window.Imitation.state.battle = {
@@ -179,12 +187,6 @@ class Main {
         reward: originExplore[0].reward
       }
     }
-
-    window.Imitation.state.page.current = 'loading'
-    await Picture.load()
-    await wait(60)
-    window.Imitation.state.page.current = 'transition'
-    window.Imitation.state.page.next = 'home'
   }
 }
 

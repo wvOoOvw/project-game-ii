@@ -922,7 +922,7 @@ class Page {
       }
     })
 
-    window.Imitation.state.function.saveInfo()
+    window.Imitation.state.function.setInfo()
   }
 
   render() {

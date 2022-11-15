@@ -871,7 +871,7 @@ class Page {
     this.init()
     this.preview = null
     window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.saveInfo()
+    window.Imitation.state.function.setInfo()
   }
 
   unloadCard(card) {
@@ -889,7 +889,7 @@ class Page {
     this.init()
     this.preview = null
     window.Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.saveInfo()
+    window.Imitation.state.function.setInfo()
   }
 
   loadMaster(master) {
@@ -898,7 +898,7 @@ class Page {
     this.init()
     this.preview = null
     window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.saveInfo()
+    window.Imitation.state.function.setInfo()
   }
 
   render() {

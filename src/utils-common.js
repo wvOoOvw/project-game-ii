@@ -65,6 +65,8 @@ const levelText = (level) => {
 
 export { levelText }
 
+const searchParams = n => new URL(location.href).searchParams.get(n)
+
 const wait = async (time, callback) => {
   var current = 0
 
@@ -124,7 +126,7 @@ const setArrayRandom = (array) => {
   return result
 }
 
-export { wait, hash, numberFix, arrayRandom, setArrayRandom }
+export { wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams }
 
 const ifTouchCover = (e, option) => {
   const x = option.x
