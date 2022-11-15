@@ -5,6 +5,7 @@ import './adapter-font-family'
 import './data-imitation'
 
 import PageTransition from './page-transition'
+import PageLoading from './page-loading'
 import PageHome from './page-home'
 import PageExplore from './page-explore'
 import PagePve from './page-pve'
@@ -17,8 +18,9 @@ import { Animation } from './ui-animation'
 
 import { Sound } from './utils-sound'
 import { Event } from './utils-event'
+import { Picture } from './utils-picture'
 
-import { parseMoney, parseCard, parseMaster } from './utils-common'
+import { parseMoney, parseCard, parseMaster, wait } from './utils-common'
 
 import { originMoney, originMaster, originCard, originExplore, originShop } from './source'
 
@@ -45,6 +47,8 @@ class Main {
 
     const pageClass = window.Imitation.state.page.map[window.Imitation.state.page.current]
 
+    if (!pageClass) return
+
     const ifCurrent = this.instance instanceof pageClass
 
     if (!ifCurrent) this.instance = new pageClass()
@@ -67,13 +71,14 @@ class Main {
     cancelAnimationFrame(this.animationFrameId)
   }
 
-  ImitationInit() {
+  async ImitationInit() {
     window.Imitation.state = {
       page: {
-        current: 'home',
+        current: '',
         next: '',
         map: {
           'transition': PageTransition,
+          'loading': PageLoading,
           'home': PageHome,
           'explore': PageExplore,
           'pve': PagePve,
@@ -175,6 +180,11 @@ class Main {
       }
     }
 
+    window.Imitation.state.page.current = 'loading'
+    await Picture.load()
+    await wait(60)
+    window.Imitation.state.page.current = 'transition'
+    window.Imitation.state.page.next = 'home'
   }
 }
 

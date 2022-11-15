@@ -25,14 +25,6 @@ import I_tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf f
 
 class Picture {
   constructor() {
-    const parse = (origin) => {
-      Object.entries(origin).forEach(i => {
-        const image = new Image()
-        image.src = origin[i[0]]
-        origin[i[0]] = image
-      })
-    }
-
     this.map = {
       'background-home': I_music_3fc1533a1a964121b783582911d683330,
       'background-transition': I_music_5c3cdbd72894434e891ce792de441feb0,
@@ -70,8 +62,17 @@ class Picture {
       'card-11': I_tiku_e2cd4f29dbec9563c6a415cec238cb947e7332c74f73104325e06b926150b37a,
       'card-12': I_tiku_faa32e072f102bc653036b6f46fb58c34aa0fea084ec672919a43c9d40821dcf,
     }
+  }
 
-    parse(this.map)
+  load() {
+    return Promise.all(Object.entries(this.map).map(i => {
+      return new Promise(r => {
+        const image = new Image()
+        image.src = this.map[i[0]]
+        image.onload = r
+        this.map[i[0]] = image
+      })
+    }))
   }
 
   get(key) {
