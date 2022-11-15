@@ -552,12 +552,12 @@ class Page {
 
   get masterHeight() {
     const row = this.master.length
-    return (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
-    return (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -669,8 +669,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 8 }
-    option.scrollY = this.masterHeight + this.cardHeight - option.height + 12
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, contentHeight: this.masterHeight + this.cardHeight + 12 }
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -745,11 +744,15 @@ class Page {
 
       this.InstanceCardList.forEach((i) => {
         i.offsetY = 0 - offsetY
-        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+        const cover = ifScreenCover(i.option, this.InstanceScroll.option)
+        if (cover) i.render()
+        if (!cover) i.novaTime = 0
       })
       this.InstanceMasterList.forEach((i) => {
         i.offsetY = 0 - offsetY
-        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+        const cover = ifScreenCover(i.option, this.InstanceScroll.option)
+        if (cover) i.render()
+        if (!cover) i.novaTime = 0
       })
     }
 

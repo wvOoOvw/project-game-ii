@@ -139,8 +139,8 @@ class Main {
         ],
         teamIndex: 0,
         money: [
-          { key: 1, number: 100000 },
-          { key: 2, number: 1000 },
+          { key: 1, number: 88888 },
+          { key: 2, number: 12888 },
         ]
       }
 

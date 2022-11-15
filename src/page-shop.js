@@ -302,7 +302,7 @@ class Page {
 
   get shopHeight() {
     const row = this.shop.length
-    return row === 0 ? -12 : (((windowWidth - 60) / 4 * 1.35) * row) + (row ? 12 * (row - 1) : 0)
+    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -350,12 +350,12 @@ class Page {
               text: `${i.name} ¥${i.number}`,
               width: 108,
               event: () => {
-                if(this.money === 1) {
+                if (this.money === 1) {
                   this.money = 2
                   this.init()
                   return
                 }
-                if(this.money === 2) {
+                if (this.money === 2) {
                   this.money = 1
                   this.init()
                   return
@@ -371,8 +371,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, radius: 8 }
-    option.scrollY = this.shopHeight - option.height + 24
+    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, contentHeight: this.shopHeight }
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -413,7 +412,9 @@ class Page {
 
       this.InstanceShop.forEach((i) => {
         i.offsetY = 0 - offsetY
-        if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
+        const cover = ifScreenCover(i.option, this.InstanceScroll.option)
+        if (cover) i.render()
+        if (!cover) i.novaTime = 0
       })
     }
 

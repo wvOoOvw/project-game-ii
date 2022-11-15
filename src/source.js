@@ -72,7 +72,7 @@ var originShop = [
     type: 'alltime',
     money: {
       key: 1,
-      number: 1000
+      number: 388
     },
     reward: () => {
       return [
@@ -88,13 +88,28 @@ var originShop = [
     description: '可能包含: 火焰领主 Exp 50 - 100, 炎魔 Exp 50 - 100',
     type: 'alltime',
     money: {
-      key: 2,
-      number: 1000
+      key: 1,
+      number: 388
     },
     reward: () => {
       return [
         { master: true, key: 2, exp: Math.floor(Math.random() * 51 + 50) },
         { master: true, key: 3, exp: Math.floor(Math.random() * 51 + 50) },
+      ]
+    },
+  },
+  {
+    key: 3,
+    name: '新手礼盒I',
+    description: '可能包含: 祭司 Exp 50 - 150',
+    type: 'alltime',
+    money: {
+      key: 1,
+      number: 188
+    },
+    reward: () => {
+      return [
+        { master: true, key: 1, exp: Math.floor(Math.random() * 101 + 50) },
       ]
     },
   },

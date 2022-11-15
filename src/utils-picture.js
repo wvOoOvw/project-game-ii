@@ -47,6 +47,9 @@ class Picture {
 
       'shop-1': I_music_98a7a38ce58546a7841d18c96e41e3760,
       'shop-2': I_music_98a7a38ce58546a7841d18c96e41e3760,
+      'shop-3': I_music_98a7a38ce58546a7841d18c96e41e3760,
+      'shop-4': I_music_98a7a38ce58546a7841d18c96e41e3760,
+      'shop-5': I_music_98a7a38ce58546a7841d18c96e41e3760,
 
       'master-1': I_music_b58bc7e6350d4e65ae6c082cb02b39e30,
       'master-2': I_music_e53de317c5b14c4699320ad8d5119e0f0,
