@@ -23,6 +23,7 @@ const config = Object.assign({}, common, {
 })
 
 if (process.argv.includes('--wx')) {
+  config.output.path = path.resolve(__dirname, '../build-wx')
   config.module.rules.forEach(i => i.use.forEach(i => i.loader === 'file-loader' ? i.options.publicPath = 'static' : null))
   config.plugins = config.plugins.filter(i => i instanceof HtmlWebpackPlugin ? false : true)
   config.plugins.push(
