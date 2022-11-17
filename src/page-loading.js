@@ -5,7 +5,7 @@ const ctx = canvas.getContext('2d')
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class PageTransition {
+class Page {
   constructor() {
     this.time = 0
   }
@@ -13,7 +13,7 @@ class PageTransition {
   render() {
     this.time = this.time + 1 / 32
 
-    drawRect({x:0, y:0, width: windowWidth, height: windowHeight})
+    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.fill()
 
@@ -25,4 +25,4 @@ class PageTransition {
   }
 }
 
-export default PageTransition
+export default Page

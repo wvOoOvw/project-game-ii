@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d')
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
-class PageTransition {
+class Page {
   constructor() {
     this.opacity = 0
     this.count = 0
@@ -43,4 +43,4 @@ class PageTransition {
   }
 }
 
-export default PageTransition
+export default Page

@@ -156,11 +156,10 @@ class Main {
 
     window.Imitation.state.page.current = 'loading'
     await Picture.load()
-    // await wait(60)
+    await wait(60)
     loadPicture()
     window.Imitation.state.page.current = 'transition'
     window.Imitation.state.page.next = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
-    window.Imitation.state.page.current = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
 
     if (searchParams('path') === 'pve') {
       window.Imitation.state.battle = {

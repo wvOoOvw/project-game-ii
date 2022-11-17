@@ -152,7 +152,7 @@ class ExploreInList {
     ctx.fillStyle = explore.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
     ctx.fill()
     ctx.fillStyle = explore.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
-    ctx.fillText('EXPLORE 礼盒', x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -593,7 +593,7 @@ class ExploreInPreview {
     ctx.font = `900 ${height * 0.014}px ${window.fontFamily}`
 
     const list = [
-      'explore 礼盒',
+      'EXPLORE 探索',
       explore.name,
       ['难度', explore.difficulty].join(' '),
     ]
