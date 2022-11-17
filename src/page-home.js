@@ -1,4 +1,4 @@
-import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
 
 import { Picture } from './utils-picture'
 
@@ -19,7 +19,7 @@ class Page {
     ctx.textBaseline = 'middle'
     ctx.font = `900 14px ${window.fontFamily}`
 
-    drawRadius(option)
+    drawRectRadius(option)
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     ctx.fill()
@@ -41,7 +41,7 @@ class Page {
     ctx.textBaseline = 'middle'
     ctx.font = `900 14px ${window.fontFamily}`
 
-    drawRadius(option)
+    drawRectRadius(option)
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     ctx.fill()
@@ -63,7 +63,7 @@ class Page {
     ctx.textBaseline = 'middle'
     ctx.font = `900 14px ${window.fontFamily}`
 
-    drawRadius(option)
+    drawRectRadius(option)
 
     ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     ctx.fill()

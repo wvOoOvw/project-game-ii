@@ -1,4 +1,4 @@
-import { drawRadius } from './utils-canvas'
+import { drawRectRadius } from './utils-canvas'
 import { numberFix, wait } from './utils-common'
 
 const ctx = canvas.getContext('2d')
@@ -66,7 +66,7 @@ class Message {
     ctx.font = `900 10px ${window.fontFamily}`
     ctx.fillStyle = this.backgroundColor
 
-    drawRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 8 })
+    drawRectRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 8 })
 
     ctx.fill()
 

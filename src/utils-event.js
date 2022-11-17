@@ -12,12 +12,16 @@ class Event {
       const exe = this.event
         .filter(i => i.type === type)
         .sort((a, b) => b.priority - a.priority)
-        .reduce((t, i) => i.option && i.option.stop ? null : [...t, i], [])
+
+      var stop = false
 
       exe.forEach(i => {
+        if (stop) return
         if (i.option && i.option.ifTouchCover && !ifTouchCover(e, i.option.ifTouchCover)) return
 
-        i.callback(e)
+        if (i.option && i.option.stop) stop = true
+
+        if (typeof i.callback === 'function') i.callback(e)
       })
     }
 

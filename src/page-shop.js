@@ -1,8 +1,9 @@
 import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
+import { ShopInList, ShopInPreview } from './ui-source'
 
 import { Picture } from './utils-picture'
 
@@ -11,277 +12,6 @@ const ctx = canvas.getContext('2d')
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
-
-class ShopInList {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-
-    this.shop = props.shop
-
-    this.novaTime = 0
-
-    this.touchEvent = props.touchEvent
-    this.touchArea = props.touchArea
-    this.touchTimeout
-  }
-
-  get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
-  }
-
-  eventDown(e) {
-    if (!this.touchArea || ifTouchCover(e, this.touchArea)) this.touchTimeout = true
-  }
-
-  eventUp(e) {
-    if (this.touchTimeout === true) this.touchEvent()
-    this.touchTimeout = false
-  }
-
-  eventMove(e) {
-    this.touchTimeout = false
-  }
-
-  drawTitle() {
-    const { x, y, width, height } = this.option
-
-    const width_ = width * 0.35
-    const height_ = width * 0.07
-    const x_ = x + width * 0.03
-    const y_ = y + width * 0.03
-    const radius_ = width * 0.02
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawName() {
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    const width_ = width * 0.35
-    const height_ = width * 0.07
-    const x_ = x + width - width_ - width * 0.03
-    const y_ = y + height - height_ - width * 0.03
-    const radius_ = width * 0.02
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawExtra() {
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    const width_ = width * 0.35
-    const height_ = width * 0.07
-    const x_ = x + width - width_ - width * 0.03
-    const y_ = y + height - height_ - width * 0.13
-    const radius_ = width * 0.02
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.025}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    ctx.save()
-
-    drawRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
-
-    ctx.globalAlpha = this.novaTime
-
-    this.drawTitle()
-    this.drawName()
-    this.drawExtra()
-
-    ctx.restore()
-
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
-  }
-}
-
-class ShopInPreview {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.shop = props.shop
-
-    this.novaTime = 0
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  drawTitle() {
-    const { x, y, width, height } = this.option
-
-    const width_ = width * 0.5
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.05
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawName() {
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    const width_ = width * 0.5
-    const height_ = width * 0.12
-    const x_ = x + width - width_ - width * 0.05
-    const y_ = y + height - height_ - width * 0.05
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawMoney() {
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.22
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawDescription() {
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    const width_ = width * 0.9
-    const height_ = width * 0.57
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.56
-    const radius_ = width * 0.03
-
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
-
-    ctx.fill()
-
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: shop.description })
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
-    ctx.save()
-
-    drawRadius({ x, y, width, height, radius: width * 0.04 })
-
-    ctx.clip()
-
-    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
-
-    ctx.globalAlpha = this.novaTime
-
-    this.drawTitle()
-    this.drawName()
-    this.drawMoney()
-    this.drawDescription()
-
-    ctx.restore()
-  }
-}
 
 class Page {
   constructor() {
@@ -306,7 +36,7 @@ class Page {
   }
 
   init() {
-    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type).map(i => { i.money = parseMoney([i.money])[0]; return i }),
+    this.shop = window.Imitation.state.shop.filter(i => i.type === this.type).map(i => { i.money = parseMoney([i.money])[0]; return i })
 
     this.instanceNavigation()
     this.instanceScroll()
@@ -327,42 +57,21 @@ class Page {
             }
           },
           {
+            active: true,
+            justifyContent: 'left',
+            text: new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).find(i => i[0] === this.type)[1],
+            event: () => {
+              var r
+              if (!r && this.type === 'alltime') r = 'week_' + new Date().getDay()
+              if (!r && this.type === 'week_' + new Date().getDay()) r = 'alltime'
+              this.type = r
+              this.init()
+            }
+          },
+          {
             justifyContent: 'right',
             text: '商店',
           }
-        ],
-        [
-          ...new Array(['alltime', '常驻'], ['week_' + new Date().getDay(), '周活动']).map((i, index) => {
-            return {
-              active: i[0] === this.type,
-              justifyContent: 'left',
-              text: i[1],
-              event: () => {
-                this.type = i[0]
-                this.init()
-              }
-            }
-          }),
-          ...parseMoney(window.Imitation.state.info.money).filter(i => i.key === this.money).map(i => {
-            return {
-              active: true,
-              justifyContent: 'right',
-              text: `${i.name} ¥${i.number}`,
-              width: 108,
-              event: () => {
-                if (this.money === 1) {
-                  this.money = 2
-                  this.init()
-                  return
-                }
-                if (this.money === 2) {
-                  this.money = 1
-                  this.init()
-                  return
-                }
-              }
-            }
-          })
         ],
       ]
     }
@@ -394,16 +103,7 @@ class Page {
   }
 
   instanceShopPreview() {
-    const option = {
-      width: windowWidth * 0.7,
-      shop: this.preview,
-    }
-
-    option.height = option.width * 1.35
-    option.x = windowWidth * 0.15
-    option.y = (windowHeight - option.width * 1.5) / 2 - 60
-
-    this.InstanceShopPreview = new ShopInPreview(option)
+    this.InstanceShopPreview = new ShopInPreview()
   }
 
   drawScroll() {
@@ -422,24 +122,11 @@ class Page {
   }
 
   drawPreview() {
-    var closeCover = []
-
-    this.InstanceShopPreview.shop = this.preview
-
-    this.InstanceShopPreview.render()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 12px ${window.fontFamily}`
-
-    const option = { width: 108, height: 36, radius: 8, y: this.InstanceShopPreview.y + this.InstanceShopPreview.height + 24 }
-    option.x = (windowWidth - option.width) / 2
-
-    drawRadius(option)
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.fillText('购买', option.x + option.width / 2, option.y + option.height / 2)
+    const close = (e) => {
+      this.preview = null
+      this.InstanceShopPreview.novaTime = 0
+      this.InstanceShop.forEach(i => i.novaTime = 0)
+    }
 
     const buy = () => {
       this.buy(this.preview)
@@ -447,18 +134,17 @@ class Page {
       this.InstanceShopPreview.novaTime = 0
     }
 
-    window.Imitation.state.function.event('touchstart', buy, { ifTouchCover: option })
-
-    closeCover.push(option)
-
-    const close = (e) => {
-      if (closeCover.some(i => ifTouchCover(e, i))) return
-      this.preview = null
-      this.InstanceShopPreview.novaTime = 0
-      this.InstanceShop.forEach(i => i.novaTime = 0)
+    if (!this.preview.inTeam) {
+      this.InstanceShopPreview.extra = [
+        {
+          name: '购买',
+          event: () => buy()
+        }
+      ]
     }
-
-    window.Imitation.state.function.event('touchstart', close)
+    this.InstanceShopPreview.close = close
+    this.InstanceShopPreview.shop = this.preview
+    this.InstanceShopPreview.render()
   }
 
   buy(shop) {
@@ -481,14 +167,14 @@ class Page {
 
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
-    this.InstanceNavigation.render()
-
-    if (!this.preview) {
-      this.drawScroll()
-    }
 
     if (this.preview) {
       this.drawPreview()
+    }
+
+    if (!this.preview) {
+      this.InstanceNavigation.render()
+      this.drawScroll()
     }
   }
 }

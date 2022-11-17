@@ -44,7 +44,22 @@ const drawImage = (image, option) => {
   ctx.drawImage(image, sx, sy, swidth, sheight, x, y, width, height)
 }
 
-const drawRadius = (option) => {
+const drawImageFullHeight = (image, option) => {
+  var x = option.x
+  var y = option.y
+  var width = option.width
+  var height = option.height
+
+  const ratio = height / image.height
+
+  const realWidth = image.width * ratio
+
+  x = x + (width - realWidth) / 2
+
+  ctx.drawImage(image, x, y, realWidth, height)
+}
+
+const drawRectRadius = (option) => {
   const x = option.x
   const y = option.y
   const width = option.width
@@ -60,6 +75,25 @@ const drawRadius = (option) => {
   ctx.arcTo(x + width, y + height, x + width - radius[2], y + height, radius[2])
   ctx.lineTo(x + radius[3], y + height)
   ctx.arcTo(x, y + height, x, y + height - radius[3], radius[3])
+  ctx.closePath()
+}
+
+const drawRectAngle = (option) => {
+  const x = option.x
+  const y = option.y
+  const width = option.width
+  const height = option.height
+  const radius = Array.isArray(option.radius) ? option.radius : new Array(4).fill(option.radius)
+
+  ctx.beginPath()
+  ctx.moveTo(x, y + radius[0])
+  ctx.lineTo(x + radius[0], y)
+  ctx.lineTo(x + width - radius[1], y)
+  ctx.lineTo(x + width, y + radius[1])
+  ctx.lineTo(x + width, y + height - radius[2])
+  ctx.lineTo(x + width - radius[1], y + height)
+  ctx.lineTo(x + radius[3], y + height)
+  ctx.lineTo(x, y + height - radius[3])
   ctx.closePath()
 }
 
@@ -101,4 +135,4 @@ const drawMultilineText = (option) => {
   })
 }
 
-export { drawImage, drawRect, drawRadius, drawMultilineText }
+export { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText }

@@ -1,4 +1,4 @@
-import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
@@ -9,9 +9,9 @@ class Navigation {
   constructor(props) {
     this.content = props.content
 
-    this.itemWidth = props.itemWidth || 72
+    this.itemWidth = props.itemWidth || 64
     this.itemHeight = props.itemHeight || 30
-    this.itemRadius = props.itemRadius || 6
+    this.itemRadius = props.itemRadius || 4
     this.itemBackgroundColor = props.itemBackgroundColor || ['rgba(255, 255, 255, 1)', 'rgba(0, 0, 0, 1)']
     this.itemTextColor = props.itemTextColor || ['rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)']
   }
@@ -25,7 +25,7 @@ class Navigation {
   }
 
   drawBackground() {
-    drawRadius({ x: 12, y: windowHeight - this.height - 12, width: windowWidth - 24, height: this.height, radius: 4 })
+    drawRectRadius({ x: 12, y: windowHeight - this.height - 12, width: windowWidth - 24, height: this.height, radius: 4 })
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
     ctx.fill()
   }
@@ -35,12 +35,12 @@ class Navigation {
     ctx.textBaseline = 'middle'
     ctx.font = `900 10px ${window.fontFamily}`
 
-    this.content.forEach((row, rowIndex) => {
+    this.content.forEach((row, contentIndex) => {
       const justifyContentIndex = { left: 0, right: 0 }
 
-      row.forEach((item) => {
+      row.forEach((item, rowIndex) => {
         var option = {}
-        option.y = windowHeight - 36 - this.itemHeight - rowIndex * this.itemHeight - (rowIndex - 1) * 12
+        option.y = windowHeight - 36 - this.itemHeight - contentIndex * this.itemHeight - (contentIndex - 1) * 12
         option.width = item.width || this.itemWidth
         option.height = item.height || this.itemHeight
         option.radius = item.radius || this.itemRadius
@@ -53,6 +53,15 @@ class Navigation {
         if (item.justifyContent === 'right') {
           option.x = windowWidth - 24 - justifyContentIndex[item.justifyContent] * (option.width + 12) - option.width
         }
+        if (item.justifyContent === 'center') {
+          option.x = (windowWidth - option.width) / 2
+
+          const maxIndex = row.length
+          const centerIndex = maxIndex / 2 - 0.5
+          const diff = (rowIndex - centerIndex) * (option.width + 12)
+
+          option.x = option.x + diff
+        }
         justifyContentIndex[item.justifyContent] = justifyContentIndex[item.justifyContent] + 1
 
         option.x = item.x || option.x
@@ -61,7 +70,7 @@ class Navigation {
 
         ctx.fillStyle = option.active ? option.backgroundColor[1] : option.backgroundColor[0]
 
-        drawRadius(option)
+        drawRectRadius(option)
 
         ctx.fill()
 

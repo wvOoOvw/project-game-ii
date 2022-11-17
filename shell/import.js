@@ -8,7 +8,7 @@ const list = []
 
   dirs.forEach(item => {
     if (item.includes('.DS')) return
-    list.push(`import I_${item.replace(/\.(jpeg|jpg|png)/, '')} from '../static/image/${item}'`)
+    list.push(`import I_${item.replace(/\.(jpeg|jpg|png|)/, '').replaceAll('.', '').replaceAll('-', '')} from '../static/image/${item}'`)
   })
 }
 

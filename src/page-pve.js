@@ -1,5 +1,5 @@
 import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawRect, drawRadius } from './utils-canvas'
+import { drawMultilineText, drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
 
 import { Navigation } from './ui-navigation'
 
@@ -48,20 +48,20 @@ class CardMessage {
   drawTitle() {
     const { x, y, width, height } = this.option
 
-    const width_ = width * 0.5
+    const width_ = width * 0.7
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.05
-    const radius_ = width * 0.03
+    const radius_ = height_ / 2
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
     ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -69,24 +69,24 @@ class CardMessage {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    const width_ = width * 0.5
+    const width_ = width * 0.7
     const height_ = width * 0.12
     const x_ = x + width - width_ - width * 0.05
     const y_ = y + height - height_ - width * 0.05
-    const radius_ = width * 0.03
+    const radius_ = height_ / 2
 
     const text = [card.name, levelText(card.level)]
 
     if (card.number) text.push('x' + card.number)
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -98,16 +98,16 @@ class CardMessage {
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.22
-    const radius_ = width * 0.03
+    const radius_ = 4
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
     ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
@@ -119,16 +119,16 @@ class CardMessage {
     const height_ = width * 0.57
     const x_ = x + width * 0.05
     const y_ = y + width * 0.56
-    const radius_ = width * 0.03
+    const radius_ = 4
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
     ctx.fill()
 
     ctx.textAlign = 'start'
     ctx.textBaseline = 'top'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(0, 0, 0, 1)`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
@@ -156,13 +156,12 @@ class CardMessage {
     ctx.globalAlpha = this.novaTime
 
     drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
     ctx.fill()
 
-    drawRadius({ x, y, width, height, radius: width * 0.04 })
-
-    ctx.clip()
-
+    drawRectAngle({ x, y, width, height, radius: 16 })
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -202,7 +201,7 @@ class RoleMessage {
 
       const width = ctx.measureText(text).width + 48
 
-      drawRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.5 })
+      drawRectRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.5 })
       ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
       ctx.fill()
 
@@ -242,7 +241,7 @@ class CardInOpposite {
 
     ctx.globalAlpha = this.novaTime
 
-    drawRadius({ x, y, width, height, radius: width * 0.04 })
+    drawRectAngle({ x, y, width, height, radius: 8 })
 
     ctx.clip()
 
@@ -341,13 +340,13 @@ class CardInSelf {
     const { x, y, width, height } = this.option
     const color = this.color
 
-    const width_ = width * 0.5
+    const width_ = width * 0.7
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.05
-    const radius_ = width * 0.03
+    const radius_ = height_ / 2
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     ctx.fillStyle = color[0]
     ctx.fill()
 
@@ -363,17 +362,17 @@ class CardInSelf {
     const color = this.color
     const card = this.card
 
-    const width_ = width * 0.5
+    const width_ = width * 0.7
     const height_ = width * 0.12
     const x_ = x + width - width_ - width * 0.05
     const y_ = y + height - height_ - width * 0.05
-    const radius_ = width * 0.03
+    const radius_ = height_ / 2
 
     const text = [card.name, levelText(card.level)]
 
     if (card.number) text.push('x' + card.number)
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     ctx.fillStyle = color[0]
     ctx.fill()
 
@@ -393,9 +392,9 @@ class CardInSelf {
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.22
-    const radius_ = width * 0.03
+    const radius_ = 2
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     ctx.fillStyle = color[0]
     ctx.fill()
 
@@ -415,9 +414,9 @@ class CardInSelf {
     const height_ = width * 0.57
     const x_ = x + width * 0.05
     const y_ = y + width * 0.56
-    const radius_ = width * 0.03
+    const radius_ = 2
 
-    drawRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     ctx.fillStyle = color[0]
     ctx.fill()
 
@@ -456,18 +455,20 @@ class CardInSelf {
 
     ctx.globalAlpha = this.novaTime
 
-    drawRadius({ x, y, width, height, radius: width * 0.04 })
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
 
     ctx.clip()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
-    this.drawTitle()
-    this.drawName()
-
     if (this.mouseDownPositionTime !== 0) {
       ctx.globalAlpha = this.mouseDownPositionTime
 
+      this.drawTitle()
+      this.drawName()
       this.drawRaceType()
       this.drawDescription()
     }
@@ -504,15 +505,7 @@ class Role {
   drawBackground() {
     const { x, y, width, height, information } = this
 
-    ctx.save()
-
-    drawRadius({ x, y, width, height, radius: this.width / 2 })
-
-    ctx.clip()
-
-    drawImage(information.master.imageDOM, { x: x, y: y, width: width, height: height })
-
-    ctx.restore()
+    drawImageFullHeight(information.master.imageDOM, { x: x, y: y, width: width, height: height })
   }
 
   drawTitle() {
@@ -530,10 +523,10 @@ class Role {
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.04}px ${window.fontFamily}`
 
-    drawRadius(option)
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    drawRectRadius(option)
+    ctx.fillStyle = `rgba(0, 0, 0, 0.5)`
     ctx.fill()
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), option.x + option.width / 2, option.y + option.height / 2)
   }
 
@@ -551,7 +544,7 @@ class Role {
     if (information.master._ACTION && information.master._ACTION > 0) {
       new Array(information.master._ACTION).fill().forEach((i, index) => {
         const option_ = { ...option, x: option.x + index * (option.width + width * 0.04) }
-        drawRadius(option_)
+        drawRectRadius(option_)
         ctx.fillStyle = `rgba(255, 255, 255, 1)`
         ctx.fill()
       })
@@ -575,7 +568,7 @@ class Role {
 
     ctx.save()
 
-    drawRadius(option)
+    drawRectRadius(option)
 
     ctx.clip()
 
@@ -584,7 +577,7 @@ class Role {
 
     drawRect({ ...option, width: information.master.HP / information.master.HP_ * option.width })
 
-    ctx.fillStyle = `rgba(185, 0, 0, 1)`
+    ctx.fillStyle = `rgba(185, 0, 0, 0.5)`
     ctx.fill()
 
     ctx.restore()
@@ -627,7 +620,7 @@ class Role {
         option.x = x + (width - option.width) / 2 + diff * (option.width + width * 0.02)
         option.y = y + height + width * 0.02
 
-        drawRadius(option)
+        drawRectRadius(option)
         ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
         ctx.fill()
         ctx.fillStyle = 'rgba(255, 255, 255, 1)'
