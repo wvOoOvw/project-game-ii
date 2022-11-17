@@ -638,7 +638,7 @@ class ExploreInPreview {
       if (this.extra) {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
-          var height__ = height * 0.035
+          var height__ = height * 0.04
           var radius__ = height__ / 2
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
@@ -758,7 +758,7 @@ class ShopInPreview {
       if (this.extra) {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
-          var height__ = height * 0.035
+          var height__ = height * 0.04
           var radius__ = height__ / 2
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
@@ -878,7 +878,7 @@ class CardInPreview {
       if (this.extra) {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
-          var height__ = height * 0.035
+          var height__ = height * 0.04
           var radius__ = height__ / 2
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
@@ -999,7 +999,7 @@ class MasterInPreview {
 
       master.skill.forEach((i, index) => {
         var width__ = height * 0.12
-        var height__ = height * 0.035
+        var height__ = height * 0.04
         var radius__ = height__ / 2
         var x__ = (windowWidth - width__) / 2
         var y__ = y_ + height_ - height__ - 12
@@ -1025,7 +1025,7 @@ class MasterInPreview {
       if (this.extra) {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
-          var height__ = height * 0.035
+          var height__ = height * 0.04
           var radius__ = height__ / 2
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
