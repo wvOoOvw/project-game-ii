@@ -1,11 +1,245 @@
-import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
+import { ifTouchCover, numberFix, levelText } from './utils-common'
+import { drawMultilineText, drawImage, drawImageFullHeight, drawRectAngle } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
 const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
+
+class CardInPve {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = 0
+    this.offsetY = 0
+
+    this.type = props.type
+    this.card = props.card
+
+    this.touchStart = props.touchStart
+    this.touchEnd = props.touchEnd
+
+    this.mouseDownPosition = null
+
+    this.novaTime = 0
+    this.ifTouchEndTime = 0
+    this.mouseDownPositionTime = 0
+  }
+
+  get ifTouchEnd() {
+    return this.offsetY < 0 - this.height / 2
+  }
+
+  get option() {
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+  }
+
+  get color() {
+    const ifTouchEndTime = this.ifTouchEndTime
+
+    const active = [0, 0, 0]
+
+    return [
+      `rgba(${Math.floor(255 - ifTouchEndTime * (255 - active[0]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[1]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[2]))}, 0.75)`,
+      `rgba(${Math.floor(ifTouchEndTime * (255 - active[0]) + active[0])}, ${Math.floor(ifTouchEndTime * (255 - active[1]) + active[1])}, ${Math.floor(ifTouchEndTime * (255 - active[2]) + active[2])}, 1)`
+    ]
+  }
+
+  eventDown(e) {
+    try {
+      this.mouseDownPosition = [e.x || e.touches[0].clientX, e.y || e.touches[0].clientY]
+      this.touchStart()
+    } catch { }
+  }
+
+  eventUp(e) {
+    if (this.ifTouchEnd) this.touchEnd()
+
+    this.mouseDownPosition = null
+
+    this.offsetX = 0
+    this.offsetY = 0
+  }
+
+  eventMove(e) {
+    if (!this.mouseDownPosition) return
+
+    const changeX = (e.pageX || e.targetTouches[0].pageX) - this.mouseDownPosition[0]
+    const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
+    this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]
+
+    this.offsetX = this.offsetX + changeX
+    this.offsetY = this.offsetY + changeY
+  }
+
+  drawTitle() {
+    const { x, y, width, height } = this.option
+    const color = this.color
+
+    const width_ = width * 0.7
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.05
+    const radius_ = height_ / 2
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = color[0]
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = color[1]
+    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const color = this.color
+    const card = this.card
+
+    const width_ = width * 0.7
+    const height_ = width * 0.12
+    const x_ = x + width - width_ - width * 0.05
+    const y_ = y + height - height_ - width * 0.05
+    const radius_ = height_ / 2
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = color[0]
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = color[1]
+    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawRaceType() {
+    const { x, y, width, height } = this.option
+    const color = this.color
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.22
+    const radius_ = 2
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = color[0]
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = color[1]
+    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawDescription() {
+    const { x, y, width, height } = this.option
+    const color = this.color
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.57
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.56
+    const radius_ = 2
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = color[0]
+    ctx.fill()
+
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'top'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = color[1]
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
+  }
+
+  drawSelf() {
+    const card = this.card
+    const { x, y, width, height } = this.option
+
+    ctx.save()
+
+    ctx.translate(x + width / 2, y + height / 2)
+    ctx.scale(this.mouseDownPositionTime + 1, this.mouseDownPositionTime + 1)
+    ctx.translate(-(x + width / 2), -(y + height / 2))
+
+    ctx.globalAlpha = this.novaTime
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    if (this.mouseDownPositionTime !== 0) {
+      ctx.globalAlpha = this.mouseDownPositionTime
+
+      this.drawTitle()
+      this.drawName()
+      this.drawRaceType()
+      this.drawDescription()
+    }
+
+    ctx.restore()
+
+    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
+    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+  }
+
+  drawOpposite() {
+    const { x, y, width, height } = this.option
+
+    ctx.save()
+
+    ctx.globalAlpha = this.novaTime
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fill()
+
+    ctx.restore()
+  }
+
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
+    }
+    if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime - 0.05)
+    }
+
+    if (this.ifTouchEnd && this.ifTouchEndTime < 1) {
+      this.ifTouchEndTime = numberFix(this.ifTouchEndTime + 0.05)
+    }
+    if (!this.ifTouchEnd && this.ifTouchEndTime > 0) {
+      this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
+    }
+
+    if (this.type === 'self') this.drawSelf()
+    if (this.type === 'opposite') this.drawOpposite()
+  }
+}
 
 class MoneyInList {
   constructor(props) {
@@ -34,9 +268,9 @@ class MoneyInList {
     const height_ = width * 0.07
     const x_ = x + width * 0.03
     const y_ = y + width * 0.03
-    const radius_ = width * 0.02
+    const radius_ = height_ / 2
 
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -60,7 +294,7 @@ class MoneyInList {
     const y_ = y + height - height_ - height * 0.1
     const radius_ = height_ / 2
 
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -81,10 +315,6 @@ class MoneyInList {
     const money = this.money
 
     ctx.save()
-
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
 
     drawImage(money.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -131,6 +361,13 @@ class ExploreInList {
 
   eventMove(e) {
     this.touchTimeout = false
+  }
+
+  drawImage() {
+    const { x, y, width, height } = this.option
+    const explore = this.explore
+
+    drawImage(explore.imageDOM, { x: x, y: y, width: width, height: height })
   }
 
   drawTitle() {
@@ -182,16 +419,9 @@ class ExploreInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const { x, y, width, height } = this.option
-    const explore = this.explore
-
     ctx.save()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(explore.imageDOM, { x: x, y: y, width: width, height: height })
+    this.drawImage()
 
     ctx.globalAlpha = this.novaTime
 
@@ -240,6 +470,13 @@ class ShopInList {
 
   eventMove(e) {
     this.touchTimeout = false
+  }
+
+  drawImage() {
+    const { x, y, width, height } = this.option
+    const shop = this.shop
+
+    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
   }
 
   drawTitle() {
@@ -315,16 +552,9 @@ class ShopInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const { x, y, width, height } = this.option
-    const shop = this.shop
-
     ctx.save()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(shop.imageDOM, { x: x, y: y, width: width, height: height })
+    this.drawImage()
 
     ctx.globalAlpha = this.novaTime
 
@@ -374,6 +604,13 @@ class CardInList {
 
   eventMove(e) {
     this.touchTimeout = false
+  }
+
+  drawImage() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
   }
 
   drawTitle() {
@@ -427,16 +664,9 @@ class CardInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const { x, y, width, height } = this.option
-    const card = this.card
-
     ctx.save()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+    this.drawImage()
 
     ctx.globalAlpha = this.novaTime
 
@@ -485,6 +715,13 @@ class MasterInList {
 
   eventMove(e) {
     this.touchTimeout = false
+  }
+
+  drawImage() {
+    const { x, y, width, height } = this.option
+    const master = this.master
+
+    drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
   }
 
   drawTitle() {
@@ -536,16 +773,9 @@ class MasterInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    const { x, y, width, height } = this.option
-    const master = this.master
-
     ctx.save()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    drawImage(master.imageDOM, { x: x, y: y, width: width, height: height })
+    this.drawImage()
 
     ctx.globalAlpha = this.novaTime
 
@@ -1067,4 +1297,4 @@ class MasterInPreview {
   }
 }
 
-export { MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }
+export { CardInPve, MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }

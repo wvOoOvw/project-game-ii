@@ -1,7 +1,8 @@
-import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
+import { arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
 
 import { Navigation } from './ui-navigation'
+import { CardInPve } from './ui-source'
 
 import { Picture } from './utils-picture'
 
@@ -201,7 +202,7 @@ class RoleMessage {
 
       const width = ctx.measureText(text).width + 48
 
-      drawRectRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.5 })
+      drawRectAngle({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.2 })
       ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
       ctx.fill()
 
@@ -214,270 +215,6 @@ class RoleMessage {
 
       if (i.time === 0) this.queqe = this.queqe.filter(i => i.time)
     })
-  }
-}
-
-class CardInOpposite {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.novaTime = 0
-
-    this.card = props.card
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    const x = this.x
-    const y = this.y
-    const width = this.width
-    const height = this.height
-
-    ctx.save()
-
-    ctx.globalAlpha = this.novaTime
-
-    drawRectAngle({ x, y, width, height, radius: 8 })
-
-    ctx.clip()
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fill()
-
-    ctx.restore()
-  }
-}
-
-class CardInSelf {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-
-    this.card = props.card
-
-    this.touchStart = props.touchStart
-    this.touchEnd = props.touchEnd
-
-    this.mouseDownPosition = null
-
-    this.novaTime = 0
-    this.ifTouchEndTime = 0
-    this.mouseDownPositionTime = 0
-  }
-
-  get ifTouchEnd() {
-    return this.offsetY < 0 - this.height / 2
-  }
-
-  get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
-  }
-
-  get optionDiff() {
-    const diff = {
-      x: -this.width * 0.5,
-      y: -this.height * 0.5,
-      width: this.width,
-      height: this.height
-    }
-
-    const x = this.x + this.offsetX + diff.x * this.mouseDownPositionTime
-    const y = this.y + this.offsetY + diff.y * this.mouseDownPositionTime
-    const width = this.width + diff.width * this.mouseDownPositionTime
-    const height = this.height + diff.height * this.mouseDownPositionTime
-
-    return { x, y, width, height }
-  }
-
-  get color() {
-    const ifTouchEndTime = this.ifTouchEndTime
-
-    const active = [0, 0, 0]
-
-    return [
-      `rgba(${Math.floor(255 - ifTouchEndTime * (255 - active[0]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[1]))}, ${Math.floor(255 - ifTouchEndTime * (255 - active[2]))}, 0.75)`,
-      `rgba(${Math.floor(ifTouchEndTime * (255 - active[0]) + active[0])}, ${Math.floor(ifTouchEndTime * (255 - active[1]) + active[1])}, ${Math.floor(ifTouchEndTime * (255 - active[2]) + active[2])}, 1)`
-    ]
-  }
-
-  eventDown(e) {
-    try {
-      this.mouseDownPosition = [e.x || e.touches[0].clientX, e.y || e.touches[0].clientY]
-      this.touchStart()
-    } catch { }
-  }
-
-  eventUp(e) {
-    if (this.ifTouchEnd) this.touchEnd()
-
-    this.mouseDownPosition = null
-
-    this.offsetX = 0
-    this.offsetY = 0
-  }
-
-  eventMove(e) {
-    if (!this.mouseDownPosition) return
-
-    const changeX = (e.pageX || e.targetTouches[0].pageX) - this.mouseDownPosition[0]
-    const changeY = (e.pageY || e.targetTouches[0].pageY) - this.mouseDownPosition[1]
-    this.mouseDownPosition = [this.mouseDownPosition[0] + changeX, this.mouseDownPosition[1] + changeY]
-
-    this.offsetX = this.offsetX + changeX
-    this.offsetY = this.offsetY + changeY
-  }
-
-  drawTitle() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-
-    const width_ = width * 0.7
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.05
-    const radius_ = height_ / 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawName() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.7
-    const height_ = width * 0.12
-    const x_ = x + width - width_ - width * 0.05
-    const y_ = y + height - height_ - width * 0.05
-    const radius_ = height_ / 2
-
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawRaceType() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.22
-    const radius_ = 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawDescription() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.57
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.56
-    const radius_ = 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
-
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
-      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
-    }
-    if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
-      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime - 0.05)
-    }
-
-    if (this.ifTouchEnd && this.ifTouchEndTime < 1) {
-      this.ifTouchEndTime = numberFix(this.ifTouchEndTime + 0.05)
-    }
-    if (!this.ifTouchEnd && this.ifTouchEndTime > 0) {
-      this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
-    }
-
-    const card = this.card
-    const { x, y, width, height } = this.option
-
-    ctx.save()
-
-    ctx.translate(x + width / 2, y + height / 2)
-    ctx.scale(this.mouseDownPositionTime + 1, this.mouseDownPositionTime + 1)
-    ctx.translate(-(x + width / 2), -(y + height / 2))
-
-    ctx.globalAlpha = this.novaTime
-
-    drawRectAngle({ x, y, width, height, radius: 8 })
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
-
-    ctx.clip()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-    if (this.mouseDownPositionTime !== 0) {
-      ctx.globalAlpha = this.mouseDownPositionTime
-
-      this.drawTitle()
-      this.drawName()
-      this.drawRaceType()
-      this.drawDescription()
-    }
-
-    ctx.restore()
-
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -494,8 +231,6 @@ class Role {
 
     this.InstanceCards = []
     this.touchCard
-
-    this.show = 'card'
   }
 
   get option() {
@@ -517,7 +252,7 @@ class Role {
     }
     option.x = x + width / 2 - option.width / 2
     option.y = y + width * 0.02
-    option.radius = option.height / 4
+    option.radius = option.height / 8
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -544,7 +279,7 @@ class Role {
     if (information.master._ACTION && information.master._ACTION > 0) {
       new Array(information.master._ACTION).fill().forEach((i, index) => {
         const option_ = { ...option, x: option.x + index * (option.width + width * 0.04) }
-        drawRectRadius(option_)
+        drawRectAngle(option_)
         ctx.fillStyle = `rgba(255, 255, 255, 1)`
         ctx.fill()
       })
@@ -616,9 +351,9 @@ class Role {
         const centerIndex = maxIndex / 2 - 0.5
         const diff = index - centerIndex
 
-        option.radius = option.height / 4
         option.x = x + (width - option.width) / 2 + diff * (option.width + width * 0.02)
         option.y = y + height + width * 0.02
+        option.radius = option.height / 8
 
         drawRectRadius(option)
         ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
@@ -648,6 +383,8 @@ class Role {
       option.y = y + (height - option.height) / 2
       option.touchStart = () => this.touchCard = i
       option.touchEnd = () => this.useCard(i)
+      option.card = i
+      option.type = this.type
 
       const find = this.InstanceCards.find(i_ => i_.card === i)
 
@@ -656,8 +393,7 @@ class Role {
       }
 
       if (!find) {
-        const INS = this.type === 'self' ? CardInSelf : CardInOpposite
-        this.InstanceCards.push(new INS({ card: i, ...option }))
+        this.InstanceCards.push(new CardInPve(option))
       }
     })
 

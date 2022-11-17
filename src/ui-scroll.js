@@ -1,4 +1,4 @@
-import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
+import { drawRect } from './utils-canvas'
 
 const ctx = canvas.getContext('2d')
 
