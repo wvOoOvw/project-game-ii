@@ -3,7 +3,7 @@ import { drawMultilineText, drawImage, drawRect, drawRectRadius, drawRectAngle }
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
-import { CardInList, MasterInList, CardInPreview, MasterInPreview } from './ui-source'
+import { CardEmpty, CardInList, MasterInList, CardInPreview, MasterInPreview } from './ui-source'
 
 import { Picture } from './utils-picture'
 
@@ -90,10 +90,9 @@ class Page {
         .map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
         .sort((a, b) => {
           return a.key - b.key
-          const a_ = String(a.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          const b_ = String(b.name).split('').reduce((t, i) => t + String(i).charCodeAt(0), 0)
-          return b_ - a_
         })
+
+      if (this.card.length < 8) this.card.push(...new Array(8 - this.card.length).fill())
     }
 
     this.instanceNavigation()
@@ -178,13 +177,8 @@ class Page {
 
   instanceCardList() {
     this.InstanceCardList = this.card.map((card, index) => {
-      const option = {
-        width: (windowWidth - 60) / 4,
-        card: card,
-        touchAble: true,
-        touchArea: this.InstanceScroll.option,
-        touchEvent: () => this.preview = card,
-      }
+      const option = {}
+      option.width = (windowWidth - 60) / 4
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
       if (this.type === 'master') {
@@ -193,8 +187,17 @@ class Page {
       if (this.type === 'card') {
         option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight + safeTop
       }
+      option.card = card
+      option.touchAble = true
+      option.touchArea = this.InstanceScroll.option
+      option.touchEvent = () => this.preview = card
 
-      return new CardInList(option)
+      if (card) {
+        return new CardInList(option)
+      }
+      if (!card) {
+        return new CardEmpty(option)
+      }
     })
   }
 

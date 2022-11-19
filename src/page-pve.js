@@ -2,7 +2,7 @@ import { arrayRandom, numberFix, levelText, wait } from './utils-common'
 import { drawMultilineText, drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
 
 import { Navigation } from './ui-navigation'
-import { CardInPve } from './ui-source'
+import { CardEmpty, CardInPve } from './ui-source'
 
 import { Picture } from './utils-picture'
 
@@ -393,7 +393,8 @@ class Role {
       }
 
       if (!find) {
-        this.InstanceCards.push(new CardInPve(option))
+        if(this.type === 'self')this.InstanceCards.push(new CardInPve(option))
+        if(this.type === 'opposite')this.InstanceCards.push(new CardEmpty(option))
       }
     })
 

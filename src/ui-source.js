@@ -7,6 +7,43 @@ const safeTop = wx.getSystemInfoSync().safeArea.top
 const windowWidth = wx.getSystemInfoSync().windowWidth
 const windowHeight = wx.getSystemInfoSync().windowHeight
 
+class CardEmpty {
+  constructor(props) {
+    this.x = props.x
+    this.y = props.y
+    this.width = props.width
+    this.height = props.height
+
+    this.offsetX = props.offsetX || 0
+    this.offsetY = props.offsetY || 0
+
+    this.card = props.card
+
+    this.novaTime = 0
+  }
+
+  get option() {
+    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+  }
+
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    const { x, y, width, height } = this.option
+
+    ctx.save()
+
+    ctx.globalAlpha = this.novaTime
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fill()
+
+    ctx.restore()
+  }
+}
+
 class CardInPve {
   constructor(props) {
     this.x = props.x
@@ -17,7 +54,6 @@ class CardInPve {
     this.offsetX = 0
     this.offsetY = 0
 
-    this.type = props.type
     this.card = props.card
 
     this.touchStart = props.touchStart
@@ -80,7 +116,7 @@ class CardInPve {
     const { x, y, width, height } = this.option
     const color = this.color
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.05
@@ -102,7 +138,7 @@ class CardInPve {
     const color = this.color
     const card = this.card
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width - width_ - width * 0.05
     const y_ = y + height - height_ - width * 0.05
@@ -167,7 +203,23 @@ class CardInPve {
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
-  drawSelf() {
+  render() {
+    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
+
+    if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
+    }
+    if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
+      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime - 0.05)
+    }
+
+    if (this.ifTouchEnd && this.ifTouchEndTime < 1) {
+      this.ifTouchEndTime = numberFix(this.ifTouchEndTime + 0.05)
+    }
+    if (!this.ifTouchEnd && this.ifTouchEndTime > 0) {
+      this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
+    }
+
     const card = this.card
     const { x, y, width, height } = this.option
 
@@ -202,42 +254,6 @@ class CardInPve {
     window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
     window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
     window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
-  }
-
-  drawOpposite() {
-    const { x, y, width, height } = this.option
-
-    ctx.save()
-
-    ctx.globalAlpha = this.novaTime
-
-    drawRectAngle({ x, y, width, height, radius: 8 })
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fill()
-
-    ctx.restore()
-  }
-
-  render() {
-    if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
-
-    if (this.mouseDownPosition && this.mouseDownPositionTime < 1) {
-      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime + 0.05)
-    }
-    if (!this.mouseDownPosition && this.mouseDownPositionTime > 0) {
-      this.mouseDownPositionTime = numberFix(this.mouseDownPositionTime - 0.05)
-    }
-
-    if (this.ifTouchEnd && this.ifTouchEndTime < 1) {
-      this.ifTouchEndTime = numberFix(this.ifTouchEndTime + 0.05)
-    }
-    if (!this.ifTouchEnd && this.ifTouchEndTime > 0) {
-      this.ifTouchEndTime = numberFix(this.ifTouchEndTime - 0.05)
-    }
-
-    if (this.type === 'self') this.drawSelf()
-    if (this.type === 'opposite') this.drawOpposite()
   }
 }
 
@@ -315,6 +331,13 @@ class MoneyInList {
     const money = this.money
 
     ctx.save()
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
 
     drawImage(money.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -419,7 +442,16 @@ class ExploreInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
+    const { x, y, width, height } = this.option
+
     ctx.save()
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
 
     this.drawImage()
 
@@ -552,7 +584,16 @@ class ShopInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
+    const { x, y, width, height } = this.option
+
     ctx.save()
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
 
     this.drawImage()
 
@@ -617,7 +658,7 @@ class CardInList {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.05
@@ -639,7 +680,7 @@ class CardInList {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width - width_ - width * 0.05
     const y_ = y + height - height_ - width * 0.05
@@ -664,7 +705,16 @@ class CardInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
+    const { x, y, width, height } = this.option
+
     ctx.save()
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
 
     this.drawImage()
 
@@ -773,7 +823,16 @@ class MasterInList {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
+    const { x, y, width, height } = this.option
+
     ctx.save()
+
+    drawRectAngle({ x, y, width, height, radius: 8 })
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fill()
+
+    ctx.clip()
 
     this.drawImage()
 
@@ -1297,4 +1356,4 @@ class MasterInPreview {
   }
 }
 
-export { CardInPve, MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }
+export { CardEmpty, CardInPve, MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }
