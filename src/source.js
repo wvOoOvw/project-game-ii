@@ -233,7 +233,7 @@ var originCard = [
   {
     key: 1,
     name: '小火把',
-    type: '进攻',
+    type: '进攻 状态',
     race: '火焰',
     description: l => `造成 ${100 + (l - 1) * 5}%ATTACT 伤害, 并附加给目标 1 层 '燃'`,
     function: (card, self, opposite) => {
@@ -251,7 +251,7 @@ var originCard = [
   {
     key: 2,
     name: '大火把',
-    type: '进攻',
+    type: '进攻 状态',
     race: '火焰',
     description: l => `造成 ${50 + (l - 1) * 2.5}%ATTACT 伤害, 并附加给目标 2 层 '燃'`,
     function: (card, self, opposite) => {
@@ -303,7 +303,7 @@ var originCard = [
   {
     key: 5,
     name: '火焰聚能',
-    type: '辅助',
+    type: '增益',
     race: '火焰',
     description: l => `消耗对手的所有 '燃' , 提升自身 '燃' 层数 * ${10 + (l - 1) * 0.5} 基础ATTACT`,
     function: (card, self, opposite) => {
@@ -338,7 +338,7 @@ var originCard = [
   {
     key: 7,
     name: '火球燃烧',
-    type: '进攻',
+    type: '进攻 提升',
     race: '火焰',
     description: l => `造成 ${60 + (l - 1) * 3} 伤害, 提升一次牌库 '火球术' 等级`,
     function: (card, self, opposite) => {

@@ -53,13 +53,17 @@ class Main {
     Message.render()
     Animation.render()
 
-    if (window.Imitation.state.page.current === 'pve' && window.Imitation.state.page.current !== 'transition') {
-      Sound.stop('bgm')
-      if (Sound.find('pve').length === 0) Sound.play('pve')
+    if (!window.Imitation.state.soundBackground) {
+      Sound.stop('background-main')
+      Sound.stop('background-pve')
     }
-    if (window.Imitation.state.page.current !== 'pve' && window.Imitation.state.page.current !== 'transition') {
-      Sound.stop('pve')
-      if (Sound.find('bgm').length === 0) Sound.play('bgm')
+    if (window.Imitation.state.soundBackground && window.Imitation.state.page.current === 'pve' && window.Imitation.state.page.current !== 'transition') {
+      Sound.stop('background-main')
+      if (Sound.find('background-pve').length === 0) Sound.play('background-pve')
+    }
+    if (window.Imitation.state.soundBackground && window.Imitation.state.page.current !== 'pve' && window.Imitation.state.page.current !== 'transition') {
+      Sound.stop('background-pve')
+      if (Sound.find('background-main').length === 0) Sound.play('background-main')
     }
     Sound.render()
   }
@@ -158,6 +162,9 @@ class Main {
       explore: originExplore,
       shop: originShop,
       reward: null,
+
+      soundBackground: false,
+      soundSource: false
     }
 
     window.Imitation.state.function.getInfo()

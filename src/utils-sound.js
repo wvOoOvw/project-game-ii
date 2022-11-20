@@ -7,8 +7,8 @@ import I_pve from '../static/sound/pve.m4a'
 class Sound {
   constructor() {
     this.map = {
-      'bgm': I_bgm,
-      'pve': I_pve,
+      'background-main': I_bgm,
+      'background-pve': I_pve,
 
       'master-main-1': I_Vo1002_Lup01,
       'master-main-2': I_Vo1002_Lup01,
