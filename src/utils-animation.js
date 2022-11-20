@@ -9,38 +9,39 @@ const ctx = canvas.getContext('2d')
 
 class Animation {
   constructor() {
-    const parse = (origin) => {
-      Object.entries(origin).forEach(i => {
-        i[1].forEach((i_, index_) => {
-          const image = new Image()
-          image.src = i[1][index_]
-          i[1][index_] = image
-        })
-      })
-    }
-
     this.map = {
       'red-hit': [red_hit_0, red_hit_0, red_hit_1, red_hit_1, red_hit_2, red_hit_2, red_hit_3, red_hit_3, red_hit_4, red_hit_4, red_hit_5, red_hit_5]
     }
 
     this.queqe = []
+  }
 
-    parse(this.map)
+  load() {
+    return Promise.all(Object.entries(this.map).map(i => {
+      return Promise.all(i[1].map((i_, index_) => {
+        return new Promise(r => {
+          const image = new Image()
+          image.src = i[1][index_]
+          image.onload = r
+          i[1][index_] = image
+        })
+      }))
+    }))
   }
 
   play(key, option) {
     if (!this.map[key]) return
 
-    this.queqe.push({
-      index: 0,
-      imgs: this.map[key],
-      option, option
-    })
+    this.queqe.push({ key: key, src: this.map[key], option, index: 0 })
+  }
+
+  stop(key) {
+    this.queqe = this.queqe.filter(i => i.key !== key)
   }
 
   render() {
     this.queqe.forEach((i, index) => {
-      const img = i.imgs[i.index]
+      const img = i.src[i.index]
 
       if (img) {
         ctx.drawImage(img, ...i.option(img))
@@ -54,4 +55,6 @@ class Animation {
   }
 }
 
-export { Animation }
+const AnimationInstance = new Animation()
+
+export { AnimationInstance as Animation }

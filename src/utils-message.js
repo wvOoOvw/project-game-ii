@@ -24,7 +24,7 @@ class Message {
     this.y = windowHeight
   }
 
-  send(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
+  play(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
     clearTimeout(this.timeoutRef)
 
     this.message = message
@@ -78,4 +78,6 @@ class Message {
   }
 }
 
-export { Message }
+const MessageInstance = new Message()
+
+export { MessageInstance as Message }

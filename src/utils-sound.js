@@ -1,24 +1,55 @@
-// import S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt from '../static/_storages_386a-audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt.mp3'
-// import S_5c88acd3ccdc817369 from '../static/5c88acd3ccdc817369.mp3'
+import I_pve from '../static/sound/pve.m4a'
+import I_bgm from '../static/sound/bgm.m4a'
 
 class Sound {
   constructor() {
     this.map = {
-      // JOJO_HBY: S_audiofreehighqps_DA_B0_CKwRINsEIkYTAAWoHgCR2Utt,
-      // hit: S_5c88acd3ccdc817369,
+      'bgm': I_bgm,
+      'pve': I_pve
     }
 
-    this.audioQueue = new Array(8).fill().map(i => new Audio())
+    this.queqe = []
   }
 
-  play(key, loop = false) {
-    const current = this.audioQueue.find(i => !i.playing)
+  load() {
+    return Promise.all(Object.entries(this.map).map(i => {
+      return new Promise(r => {
+        const audio = new Audio()
+        audio.src = this.map[i[0]]
+        audio.onloadeddata = r
+      })
+    }))
+  }
 
-    current.onended = () => current.playing = false
-    current.playing = true
-    current.loop = loop
-    current.src = this.map[key]
-    current.play()
+  play(key, option) {
+    if (!this.map[key]) return
+
+    this.queqe.push({ key: key, option, Audio: new Audio(this.map[key]) })
+  }
+
+  stop(key) {
+    this.queqe.forEach(i => {
+      if (i.key === key) i.stop = true
+    })
+  }
+
+  find(key) {
+    return this.queqe.filter(i => i.key === key)
+  }
+
+  render() {
+    this.queqe.forEach((i, index) => {
+
+      Object.assign(i.Audio, i.option)
+
+      i.Audio.onplay = () => i.play = true
+      i.Audio.onpause = () => this.queqe = this.queqe.filter(i_ => i_ !== i)
+
+      try {
+        if (i.stop) i.Audio.pause()
+        if (!i.play) i.Audio.play()
+      } catch { }
+    })
   }
 }
 

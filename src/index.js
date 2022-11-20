@@ -13,9 +13,8 @@ import PageStore from './page-store'
 import PageShop from './page-shop'
 import PageReward from './page-reward'
 
-import { Message } from './ui-message'
-import { Animation } from './ui-animation'
-
+import { Message } from './utils-message'
+import { Animation } from './utils-animation'
 import { Sound } from './utils-sound'
 import { Event } from './utils-event'
 import { Picture } from './utils-picture'
@@ -28,13 +27,9 @@ const ctx = canvas.getContext('2d')
 
 class Main {
   constructor() {
-    this.loadingInformation = false
     this.animationFrameId
 
     this.instance
-
-    this.instanceMessage = new Message()
-    this.instanceAnimation = new Animation()
 
     this.init()
     this.loopStart()
@@ -54,8 +49,19 @@ class Main {
     if (!ifCurrent) this.instance = new pageClass()
 
     this.instance.render()
-    this.instanceMessage.render()
-    this.instanceAnimation.render()
+
+    Message.render()
+    Animation.render()
+
+    if (window.Imitation.state.page.current === 'pve' && window.Imitation.state.page.current !== 'transition') {
+      Sound.stop('bgm')
+      if (Sound.find('pve').length === 0) Sound.play('pve')
+    }
+    if (window.Imitation.state.page.current !== 'pve' && window.Imitation.state.page.current !== 'transition') {
+      Sound.stop('pve')
+      if (Sound.find('bgm').length === 0) Sound.play('bgm')
+    }
+    Sound.render()
   }
 
   loopStart() {
@@ -92,9 +98,11 @@ class Main {
         loopStart: this.loopStart,
         loopEnd: this.loopEnd,
 
-        message: (...props) => this.instanceMessage.send(...props),
-        animation: (...props) => this.instanceAnimation.play(...props),
+        message: (...props) => Message.play(...props),
+        animation: (...props) => Animation.play(...props),
         sound: (...props) => Sound.play(...props),
+        animation_: (...props) => Animation.stop(...props),
+        sound_: (...props) => Sound.stop(...props),
         event: (...props) => Event.addEventListener(...props),
 
         setInfo: async () => {
@@ -155,9 +163,15 @@ class Main {
     window.Imitation.state.function.getInfo()
 
     window.Imitation.state.page.current = 'loading'
-    await Picture.load()
-    // await wait(60)
+
+    await Promise.all([
+      Sound.load(),
+      Picture.load(),
+      Animation.load()
+    ])
+    await wait(60)
     loadPicture()
+
     window.Imitation.state.page.current = 'transition'
     window.Imitation.state.page.next = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
     window.Imitation.state.page.current = window.wx._web && searchParams('path') ? searchParams('path') : 'home'

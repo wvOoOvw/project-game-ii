@@ -872,7 +872,7 @@ class ExploreInPreview {
     const { x, y, width, height } = this.option
     const explore = this.explore
 
-    drawImageFullHeight(explore.imageDOM, { x: x, y: y, width: width, height: height * 0.4 })
+    drawImageFullHeight(explore.imageDOM, { x: x, y: y + height * 0.025, width: width, height: height * 0.35 })
   }
 
   drawContent() {
@@ -908,7 +908,7 @@ class ExploreInPreview {
 
     {
       const width_ = width - height * 0.04
-      const height_ = height * 0.25
+      const height_ = height * 0.31
       const x_ = x + width * 0.05
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
@@ -992,7 +992,7 @@ class ShopInPreview {
     const { x, y, width, height } = this.option
     const shop = this.shop
 
-    drawImageFullHeight(shop.imageDOM, { x: x, y: y, width: width, height: height * 0.4 })
+    drawImageFullHeight(shop.imageDOM, { x: x, y: y + height * 0.025, width: width, height: height * 0.35 })
   }
 
   drawContent() {
@@ -1028,7 +1028,7 @@ class ShopInPreview {
 
     {
       const width_ = width - height * 0.04
-      const height_ = height * 0.25
+      const height_ = height * 0.31
       const x_ = x + width * 0.05
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
@@ -1112,7 +1112,7 @@ class CardInPreview {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    drawImageFullHeight(card.imageDOM, { x: x, y: y, width: width, height: height * 0.4 })
+    drawImageFullHeight(card.imageDOM, { x: x, y: y + height * 0.025, width: width, height: height * 0.35 })
   }
 
   drawContent() {
@@ -1124,7 +1124,8 @@ class CardInPreview {
     const list = [
       'CARD 卡牌',
       [card.name, levelText(card.level), `${card.exp / Math.pow(2, card.level - 1)}%`].join(' '),
-      [card.race, '·', card.type].join(' '),
+      [card.race].join(' '),
+      [card.type].join(' '),
     ]
 
     list.forEach((i, index) => {
@@ -1147,7 +1148,7 @@ class CardInPreview {
     })
 
     {
-      const width_ = width - height * 0.04
+      const width_ = width - width * 0.1
       const height_ = height * 0.25
       const x_ = x + width * 0.05
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
@@ -1162,7 +1163,7 @@ class CardInPreview {
       ctx.textBaseline = 'top'
       ctx.fillStyle = `rgba(255, 255, 255, 1)`
 
-      drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
+      drawMultilineText({ x: x_ + width * 0.1, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
 
       if (this.extra) {
         this.extra.forEach((i, index) => {
@@ -1232,7 +1233,7 @@ class MasterInPreview {
     const { x, y, width, height } = this.option
     const master = this.master
 
-    drawImageFullHeight(master.imageDOM, { x: x, y: y, width: width, height: height * 0.4 })
+    drawImageFullHeight(master.imageDOM, { x: x, y: y + height * 0.025, width: width, height: height * 0.35 })
   }
 
   drawContent() {
