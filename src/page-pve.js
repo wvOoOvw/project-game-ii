@@ -541,6 +541,8 @@ class Page {
     self.information.master._ACTION = self.information.master._ACTION - 1
 
     this.InstanceCardMessage.play(card)
+    // window.Imitation.state.function.sound(currentRole.information.master.soundAction)
+    window.Imitation.state.function.sound(card.soundAction)
 
     await wait(120)
 

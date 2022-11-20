@@ -30,13 +30,21 @@ class Animation {
   }
 
   play(key, option) {
-    if (!this.map[key]) return
+    if (!this.map[key]) console.error(key)
 
     this.queqe.push({ key: key, src: this.map[key], option, index: 0 })
   }
 
   stop(key) {
     this.queqe = this.queqe.filter(i => i.key !== key)
+  }
+
+  clear() {
+    this.queqe = []
+  }
+
+  find(key) {
+    return this.queqe.filter(i => i.key === key)
   }
 
   render() {

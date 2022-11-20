@@ -21,7 +21,7 @@ import { Picture } from './utils-picture'
 
 import { parseMoney, parseCard, parseMaster, wait, searchParams } from './utils-common'
 
-import { originMoney, originMaster, originCard, originExplore, originShop, loadPicture } from './source'
+import { originMoney, originMaster, originCard, originExplore, originShop, loadSource } from './source'
 
 const ctx = canvas.getContext('2d')
 
@@ -170,7 +170,7 @@ class Main {
       Animation.load()
     ])
     await wait(60)
-    loadPicture()
+    loadSource()
 
     window.Imitation.state.page.current = 'transition'
     window.Imitation.state.page.next = window.wx._web && searchParams('path') ? searchParams('path') : 'home'

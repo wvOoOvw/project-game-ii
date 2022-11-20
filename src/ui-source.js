@@ -896,12 +896,12 @@ class ExploreInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'middle'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
@@ -915,12 +915,12 @@ class ExploreInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: explore.description })
 
@@ -1016,12 +1016,12 @@ class ShopInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'middle'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
@@ -1035,12 +1035,12 @@ class ShopInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: shop.description })
 
@@ -1137,12 +1137,12 @@ class CardInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'middle'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
@@ -1156,12 +1156,12 @@ class CardInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + width * 0.1, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
 
@@ -1169,7 +1169,7 @@ class CardInPreview {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
           var height__ = height * 0.04
-          var radius__ = height__ / 2
+          var radius__ = 4
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
@@ -1259,12 +1259,12 @@ class MasterInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'middle'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
@@ -1278,19 +1278,19 @@ class MasterInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      ctx.fillStyle = `rgba(255, 255, 255, 1)`
       ctx.fill()
 
       ctx.textAlign = 'start'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: master.skill[this.skillIndex].description(master.level) })
 
       master.skill.forEach((i, index) => {
         var width__ = height * 0.12
         var height__ = height * 0.04
-        var radius__ = height__ / 2
+        var radius__ = 4
         var x__ = (windowWidth - width__) / 2
         var y__ = y_ + height_ - height__ - 12
 
@@ -1304,9 +1304,9 @@ class MasterInPreview {
         x__ = x__ + diff
 
         drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-        ctx.fillStyle = index === skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
-        ctx.fill()
         ctx.fillStyle = index === skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+        ctx.fill()
+        ctx.fillStyle = index === skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
         ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
         window.Imitation.state.function.event('touchstart', () => this.skillIndex = index, { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
@@ -1316,7 +1316,7 @@ class MasterInPreview {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
           var height__ = height * 0.04
-          var radius__ = height__ / 2
+          var radius__ = 4
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 

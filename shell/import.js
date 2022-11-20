@@ -10,7 +10,7 @@ const list = []
 
   dirs.forEach(item => {
     if (item.includes('.DS')) return
-    list.push(`import I_${item.replace(/\.(jpeg|jpg|png|m4a)/, '').replace(/\./g, '').replace(/\-/g, '')} from '${s}/${item}'`)
+    list.push(`import I_${item.replace(/\.(jpeg|jpg|png|m4a|mp3)/, '').replace(/\./g, '').replace(/\-/g, '')} from '${s}/${item}'`)
   })
 }
 

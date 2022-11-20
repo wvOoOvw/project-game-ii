@@ -452,12 +452,18 @@ var originCard = [
   },
 ]
 
-const loadPicture = () => {
+const loadSource = () => {
   originMoney.forEach(i => i.imageDOM = Picture.get('money-' + i.key))
   originExplore.forEach(i => i.imageDOM = Picture.get('explore-' + i.key))
   originShop.forEach(i => i.imageDOM = Picture.get('shop-' + i.key))
   originMaster.forEach(i => i.imageDOM = Picture.get('master-' + i.key))
   originCard.forEach(i => i.imageDOM = Picture.get('card-' + i.key))
+
+  originMaster.forEach(i => i.soundMain = 'master-main-' + i.key)
+  originCard.forEach(i => i.soundMain = 'card-main-' + i.key)
+
+  originMaster.forEach(i => i.soundAction = 'master-action-' + i.key)
+  originCard.forEach(i => i.soundAction = 'card-action-' + i.key)
 }
 
-export { originMoney, originMaster, originCard, originExplore, originShop, loadPicture }
+export { originMoney, originMaster, originCard, originExplore, originShop, loadSource }
