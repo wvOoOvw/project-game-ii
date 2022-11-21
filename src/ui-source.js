@@ -159,7 +159,7 @@ class CardInPve {
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawRaceType() {
+  drawRace() {
     const { x, y, width, height } = this.option
     const color = this.color
     const card = this.card
@@ -178,7 +178,29 @@ class CardInPve {
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = color[1]
-    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawType() {
+    const { x, y, width, height } = this.option
+    const color = this.color
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.39
+    const radius_ = 2
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = color[0]
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = color[1]
+    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -245,7 +267,8 @@ class CardInPve {
 
       this.drawTitle()
       this.drawName()
-      this.drawRaceType()
+      this.drawRace()
+      this.drawType()
       this.drawDescription()
     }
 
@@ -928,7 +951,7 @@ class ExploreInPreview {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
           var height__ = height * 0.04
-          var radius__ = height__ / 2
+          var radius__ = 4
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
@@ -1048,7 +1071,7 @@ class ShopInPreview {
         this.extra.forEach((i, index) => {
           var width__ = height * 0.12
           var height__ = height * 0.04
-          var radius__ = height__ / 2
+          var radius__ = 4
           var x__ = (windowWidth - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
@@ -1163,7 +1186,7 @@ class CardInPreview {
       ctx.textBaseline = 'top'
       ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      drawMultilineText({ x: x_ + width * 0.1, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
+      drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
 
       if (this.extra) {
         this.extra.forEach((i, index) => {

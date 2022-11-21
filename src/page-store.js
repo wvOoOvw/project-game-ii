@@ -162,7 +162,7 @@ class Page {
       option.touchArea = this.InstanceScroll.option
       option.touchEvent = () => {
         this.preview = master
-        window.Imitation.state.function.sound(master.soundMain)
+        if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(master.soundMain)
       }
       option.height = (windowWidth - 60) / 4 * 1.35
       option.x = 12
@@ -194,7 +194,7 @@ class Page {
       option.touchArea = this.InstanceScroll.option
       option.touchEvent = () => {
         this.preview = card
-        window.Imitation.state.function.sound(card.soundMain)
+        if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(card.soundMain)
       }
 
       if (card) {

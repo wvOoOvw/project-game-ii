@@ -49,7 +49,7 @@ class CardMessage {
   drawTitle() {
     const { x, y, width, height } = this.option
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width * 0.05
     const y_ = y + width * 0.05
@@ -70,7 +70,7 @@ class CardMessage {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    const width_ = width * 0.7
+    const width_ = width * 0.5
     const height_ = width * 0.12
     const x_ = x + width - width_ - width * 0.05
     const y_ = y + height - height_ - width * 0.05
@@ -91,7 +91,7 @@ class CardMessage {
     ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
-  drawRaceType() {
+  drawRace() {
     const { x, y, width, height } = this.option
     const card = this.card
 
@@ -109,7 +109,28 @@ class CardMessage {
     ctx.textBaseline = 'middle'
     ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
     ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.fillText(card.race + ' · ' + card.type, x_ + width_ / 2, y_ + height_ / 2)
+    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  drawType() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.9
+    const height_ = width * 0.12
+    const x_ = x + width * 0.05
+    const y_ = y + width * 0.39
+    const radius_ = 4
+
+    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    ctx.fill()
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -168,7 +189,8 @@ class CardMessage {
 
     this.drawTitle()
     this.drawName()
-    this.drawRaceType()
+    this.drawRace()
+    this.drawType()
     this.drawDescription()
 
     ctx.restore()
@@ -393,8 +415,8 @@ class Role {
       }
 
       if (!find) {
-        if(this.type === 'self')this.InstanceCards.push(new CardInPve(option))
-        if(this.type === 'opposite')this.InstanceCards.push(new CardEmpty(option))
+        if (this.type === 'self') this.InstanceCards.push(new CardInPve(option))
+        if (this.type === 'opposite') this.InstanceCards.push(new CardEmpty(option))
       }
     })
 
@@ -412,13 +434,41 @@ class Role {
   }
 }
 
+class Round {
+  constructor() {
+    this.round
+  }
+
+  render() {
+    const option = {}
+
+    option.width = 120
+    option.height = 12
+    option.y = 12 + safeTop
+    option.x = (windowWidth - option.width) / 2
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.font = `900 24px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillText('ROUND', option.x + option.width / 2, option.y + option.height / 2)
+
+    ctx.font = `900 14px ${window.fontFamily}`
+    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    ctx.fillText(`${Math.floor(this.round)}/99`, option.x + option.width / 2, option.y + option.height / 2 + 2)
+  }
+}
+
 class Page {
   constructor() {
     this.currentUseCard = false
     this.currentRole
     this.round = 0.5
     this.auto = false
+    this.log = []
 
+    this.InstanceRound = new Round()
     this.InstanceNavigation
     this.InstanceRoleSelf
     this.InstanceRoleOpposite
@@ -499,26 +549,6 @@ class Page {
     this.InstanceNavigation = new Navigation(option)
   }
 
-  drawRound() {
-    const option = {}
-
-    option.width = 120
-    option.height = 12
-    option.y = 12 + safeTop
-    option.x = (windowWidth - option.width) / 2
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-
-    ctx.font = `900 24px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fillText('ROUND', option.x + option.width / 2, option.y + option.height / 2)
-
-    ctx.font = `900 14px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fillText(`${Math.floor(this.round)}/99`, option.x + option.width / 2, option.y + option.height / 2 + 2)
-  }
-
   pumpCard = (card, role) => {
     if (role.information.card.hand.length === 2) {
       role.information.card.cemetery.push(card)
@@ -541,8 +571,7 @@ class Page {
     self.information.master._ACTION = self.information.master._ACTION - 1
 
     this.InstanceCardMessage.play(card)
-    // window.Imitation.state.function.sound(currentRole.information.master.soundAction)
-    window.Imitation.state.function.sound(card.soundAction)
+    if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(card.soundAction)
 
     await wait(120)
 
@@ -655,6 +684,8 @@ class Page {
       }
     }
 
+    this.log.push({ card, user: currentRole === this.InstanceRoleSelf ? 'self' : 'opposite', round: this.round })
+
     await wait(120)
 
     this.roundContinue()
@@ -746,8 +777,9 @@ class Page {
   render() {
     drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
 
-    this.drawRound()
+    this.InstanceRound.round = this.round
 
+    this.InstanceRound.render()
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()
     this.InstanceRoleSelf.render()
