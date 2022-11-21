@@ -1,17 +1,17 @@
-import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
 import { CardEmpty, CardInList, MasterInList, CardInPreview, MasterInPreview } from './ui-source'
-
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class Page {
   constructor() {
@@ -34,12 +34,12 @@ class Page {
 
   get masterHeight() {
     const row = this.master.length
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -47,15 +47,15 @@ class Page {
     this.card = []
 
     if (this.type === 'card') {
-      this.master = parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])
+      this.master = parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])
         .map(i => {
-          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key === i.key
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
           return i
         })
 
-      this.card = parseCard(window.Imitation.state.info.library.card)
+      this.card = parseCard(Imitation.state.info.library.card)
         .map(i => {
-          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
           return i
         })
         .sort((a, b) => {
@@ -68,9 +68,9 @@ class Page {
         })
     }
     if (this.type === 'master') {
-      this.master = parseMaster(window.Imitation.state.info.library.master)
+      this.master = parseMaster(Imitation.state.info.library.master)
         .map(i => {
-          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key === i.key
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].master.key === i.key
           return i
         })
         .sort((a, b) => {
@@ -82,12 +82,12 @@ class Page {
           return b_ - a_
         })
 
-      this.card = parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
+      this.card = parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card
         .map(i => {
-          i.inTeam = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
+          i.inTeam = Imitation.state.info.team[Imitation.state.info.teamIndex].card.some(i_ => i_.key === i.key)
           return i
         })
-        .map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
+        .map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) })))
         .sort((a, b) => {
           return a.key - b.key
         })
@@ -111,8 +111,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              window.Imitation.state.page.current = 'transition'
-              window.Imitation.state.page.next = 'home'
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'home'
             }
           },
           {
@@ -130,9 +130,9 @@ class Page {
           {
             active: true,
             justifyContent: 'left',
-            text: levelText(window.Imitation.state.info.teamIndex + 1),
+            text: levelText(Imitation.state.info.teamIndex + 1),
             event: () => {
-              window.Imitation.state.info.teamIndex = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex + 1] ? window.Imitation.state.info.teamIndex + 1 : 0
+              Imitation.state.info.teamIndex = Imitation.state.info.team[Imitation.state.info.teamIndex + 1] ? Imitation.state.info.teamIndex + 1 : 0
               this.init()
             }
           },
@@ -148,7 +148,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, contentHeight: this.masterHeight + this.cardHeight + 12 }
+    const option = { x: 12, y: 12, width: Canvas.width - 24, height: Canvas.height - this.InstanceNavigation.height - 36, contentHeight: this.masterHeight + this.cardHeight + 12 }
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -156,21 +156,21 @@ class Page {
   instanceMasterList() {
     this.InstanceMasterList = this.master.map((master, index) => {
       const option = {}
-      option.width = windowWidth - 24
+      option.width = Canvas.width - 24
       option.master = master
       option.touchAble = true
       option.touchArea = this.InstanceScroll.option
       option.touchEvent = () => {
         this.preview = master
-        if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(master.soundMain)
+        if (Imitation.state.soundSource) Sound.play(master.soundMain)
       }
-      option.height = (windowWidth - 60) / 4 * 1.35
+      option.height = (Canvas.width - 60) / 4 * 1.35
       option.x = 12
       if (this.type === 'master') {
-        option.y = 24 + index * (option.height + 12) + this.cardHeight + safeTop
+        option.y = 24 + index * (option.height + 12) + this.cardHeight
       }
       if (this.type === 'card') {
-        option.y = 12 + index * (option.height + 12) + safeTop
+        option.y = 12 + index * (option.height + 12)
       }
 
       return new MasterInList(option)
@@ -180,21 +180,21 @@ class Page {
   instanceCardList() {
     this.InstanceCardList = this.card.map((card, index) => {
       const option = {}
-      option.width = (windowWidth - 60) / 4
+      option.width = (Canvas.width - 60) / 4
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
       if (this.type === 'master') {
-        option.y = 12 + parseInt(index / 4) * (option.height + 12) + safeTop
+        option.y = 12 + parseInt(index / 4) * (option.height + 12)
       }
       if (this.type === 'card') {
-        option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight + safeTop
+        option.y = 24 + parseInt(index / 4) * (option.height + 12) + this.masterHeight
       }
       option.card = card
       option.touchAble = true
       option.touchArea = this.InstanceScroll.option
       option.touchEvent = () => {
         this.preview = card
-        if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(card.soundMain)
+        if (Imitation.state.soundSource) Sound.play(card.soundMain)
       }
 
       if (card) {
@@ -283,16 +283,16 @@ class Page {
   }
 
   loadCard(card) {
-    const team = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
     if (team.length === 8) {
-      window.Imitation.state.function.message('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      Message.play('超出卡组数量限制', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
     if (findInTeam) {
-      window.Imitation.state.function.message('卡牌已装载', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      Message.play('卡牌已装载', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
     if (!findInTeam) {
@@ -301,17 +301,17 @@ class Page {
 
     this.init()
     this.preview = null
-    window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.setInfo()
+    Message.play('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.setInfo()
   }
 
   unloadCard(card) {
-    const team = window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card
+    const team = Imitation.state.info.team[Imitation.state.info.teamIndex].card
 
     const findInTeam = team.find(i_ => i_.key === card.key)
 
     if (!findInTeam) {
-      window.Imitation.state.function.message('未装载当前卡牌', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+      Message.play('未装载当前卡牌', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
@@ -319,21 +319,21 @@ class Page {
 
     this.init()
     this.preview = null
-    window.Imitation.state.function.message('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.setInfo()
+    Message.play('卸载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.setInfo()
   }
 
   loadMaster(master) {
-    window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key = master.key
+    Imitation.state.info.team[Imitation.state.info.teamIndex].master.key = master.key
 
     this.init()
     this.preview = null
-    window.Imitation.state.function.message('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-    window.Imitation.state.function.setInfo()
+    Message.play('装载成功', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+    Imitation.state.function.setInfo()
   }
 
   render() {
-    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
     if (this.preview) {
       this.drawPreview()

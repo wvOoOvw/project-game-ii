@@ -54,11 +54,17 @@ class Sound {
 
   load() {
     return Promise.all(Object.entries(this.map).map(i => {
-      return new Promise(r => {
-        const audio = new Audio()
-        audio.src = this.map[i[0]]
-        audio.onloadeddata = r
-      })
+      return Promise.race([
+        new Promise(r => {
+          const audio = new Audio()
+          audio.onloadeddata = r
+          audio.src = this.map[i[0]]
+          audio.load()
+        }),
+        new Promise(r => {
+          setTimeout(() => r(), 1000)
+        })
+      ])
     }))
   }
 

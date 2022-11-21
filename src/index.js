@@ -1,8 +1,8 @@
 import './adapter-weapp'
-import './adapter-web'
-import './adapter-dpr'
-import './adapter-font-family'
-import './data-imitation'
+
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+import { originMoney, originMaster, originCard, originExplore, originShop, sourceIoad } from './source'
 
 import PageTransition from './page-transition'
 import PageLoading from './page-loading'
@@ -13,17 +13,13 @@ import PageStore from './page-store'
 import PageShop from './page-shop'
 import PageReward from './page-reward'
 
-import { Message } from './utils-message'
-import { Animation } from './utils-animation'
-import { Sound } from './utils-sound'
-import { Event } from './utils-event'
-import { Picture } from './utils-picture'
-
-import { parseMoney, parseCard, parseMaster, wait, searchParams } from './utils-common'
-
-import { originMoney, originMaster, originCard, originExplore, originShop, loadSource } from './source'
-
-const ctx = canvas.getContext('2d')
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Main {
   constructor() {
@@ -36,11 +32,11 @@ class Main {
   }
 
   render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    Canvas.ctx.clearRect(0, 0, Canvas.width, Canvas.height)
 
     Event.clearEventListener()
 
-    const pageClass = window.Imitation.state.page.map[window.Imitation.state.page.current]
+    const pageClass = Imitation.state.page.map[Imitation.state.page.current]
 
     if (!pageClass) return
 
@@ -53,17 +49,17 @@ class Main {
     Message.render()
     Animation.render()
 
-    if (!window.Imitation.state.soundBackground) {
+    if (!Imitation.state.soundBackground) {
       Sound.stop('background-main')
       Sound.stop('background-pve')
     }
-    if (window.Imitation.state.soundBackground && window.Imitation.state.page.current === 'pve' && window.Imitation.state.page.current !== 'transition') {
+    if (Imitation.state.soundBackground && Imitation.state.page.current === 'pve' && Imitation.state.page.current !== 'transition') {
       Sound.stop('background-main')
-      if (Sound.find('background-pve').length === 0) Sound.play('background-pve')
+      if (Sound.find('background-pve').length === 0) Sound.play('background-pve', { loop: true })
     }
-    if (window.Imitation.state.soundBackground && window.Imitation.state.page.current !== 'pve' && window.Imitation.state.page.current !== 'transition') {
+    if (Imitation.state.soundBackground && Imitation.state.page.current !== 'pve' && Imitation.state.page.current !== 'transition') {
       Sound.stop('background-pve')
-      if (Sound.find('background-main').length === 0) Sound.play('background-main')
+      if (Sound.find('background-main').length === 0) Sound.play('background-main', { loop: true })
     }
     Sound.render()
   }
@@ -82,7 +78,7 @@ class Main {
   }
 
   async init() {
-    window.Imitation.state = {
+    Imitation.state = {
       page: {
         current: '',
         next: '',
@@ -98,28 +94,17 @@ class Main {
         },
       },
       function: {
-        render: this.render,
-        loopStart: this.loopStart,
-        loopEnd: this.loopEnd,
-
-        message: (...props) => Message.play(...props),
-        animation: (...props) => Animation.play(...props),
-        sound: (...props) => Sound.play(...props),
-        animation_: (...props) => Animation.stop(...props),
-        sound_: (...props) => Sound.stop(...props),
-        event: (...props) => Event.addEventListener(...props),
-
         setInfo: async () => {
-          localStorage.setItem('info', JSON.stringify(window.Imitation.state.info))
+          localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         },
         getInfo: async () => {
           localStorage.removeItem('info')
           const info = localStorage.getItem('info')
           if (info) {
-            window.Imitation.state.info = JSON.parse(info)
+            Imitation.state.info = JSON.parse(info)
           }
           if (!info) {
-            window.Imitation.state.function.initInfo()
+            Imitation.state.function.initInfo()
           }
         },
         initInfo: async () => {
@@ -153,7 +138,7 @@ class Main {
             ]
           }
 
-          window.Imitation.state.info = info
+          Imitation.state.info = info
         }
       },
 
@@ -167,31 +152,32 @@ class Main {
       soundSource: false
     }
 
-    window.Imitation.state.function.getInfo()
+    Imitation.state.function.getInfo()
 
-    window.Imitation.state.page.current = 'loading'
+    Imitation.state.page.current = 'loading'
 
     await Promise.all([
       Sound.load(),
       Picture.load(),
       Animation.load()
     ])
+
+    sourceIoad()
+
     await wait(60)
-    loadSource()
 
-    window.Imitation.state.page.current = 'transition'
-    window.Imitation.state.page.next = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
-    window.Imitation.state.page.current = window.wx._web && searchParams('path') ? searchParams('path') : 'home'
+    Imitation.state.page.current = 'transition'
+    Imitation.state.page.next = searchParams('path') ? searchParams('path') : 'home'
 
-    if (window.wx._web && searchParams('path') === 'pve') {
-      window.Imitation.state.battle = {
+    if (searchParams('path') === 'pve') {
+      Imitation.state.battle = {
         self: {
           master: {
-            ...parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])[0],
+            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
             buff: []
           },
           card: {
-            team: parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
             hand: [],
           },
         },

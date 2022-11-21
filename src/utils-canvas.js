@@ -10,7 +10,7 @@
 // width	可选。要使用的图像的宽度。（伸展或缩小图像）
 // height	可选。要使用的图像的高度。（伸展或缩小图像）
 
-const ctx = canvas.getContext('2d')
+import { Canvas } from './instance-canvas'
 
 const drawImage = (image, option) => {
   const x = option.x
@@ -41,7 +41,7 @@ const drawImage = (image, option) => {
     sheight = sheight - heightDiff / ratio
   }
 
-  ctx.drawImage(image, sx, sy, swidth, sheight, x, y, width, height)
+  Canvas.ctx.drawImage(image, sx, sy, swidth, sheight, x, y, width, height)
 }
 
 const drawImageFullHeight = (image, option) => {
@@ -56,7 +56,7 @@ const drawImageFullHeight = (image, option) => {
 
   x = x + (width - realWidth) / 2
 
-  ctx.drawImage(image, x, y, realWidth, height)
+  Canvas.ctx.drawImage(image, x, y, realWidth, height)
 }
 
 const drawRectRadius = (option) => {
@@ -66,16 +66,16 @@ const drawRectRadius = (option) => {
   const height = option.height
   const radius = Array.isArray(option.radius) ? option.radius : new Array(4).fill(option.radius)
 
-  ctx.beginPath()
-  ctx.moveTo(x, y + radius[0])
-  ctx.arcTo(x, y, x + radius[0], y, radius[0])
-  ctx.lineTo(x + width - radius[1], y)
-  ctx.arcTo(x + width, y, x + width, y + radius[1], radius[1])
-  ctx.lineTo(x + width, y + height - radius[2])
-  ctx.arcTo(x + width, y + height, x + width - radius[2], y + height, radius[2])
-  ctx.lineTo(x + radius[3], y + height)
-  ctx.arcTo(x, y + height, x, y + height - radius[3], radius[3])
-  ctx.closePath()
+  Canvas.ctx.beginPath()
+  Canvas.ctx.moveTo(x, y + radius[0])
+  Canvas.ctx.arcTo(x, y, x + radius[0], y, radius[0])
+  Canvas.ctx.lineTo(x + width - radius[1], y)
+  Canvas.ctx.arcTo(x + width, y, x + width, y + radius[1], radius[1])
+  Canvas.ctx.lineTo(x + width, y + height - radius[2])
+  Canvas.ctx.arcTo(x + width, y + height, x + width - radius[2], y + height, radius[2])
+  Canvas.ctx.lineTo(x + radius[3], y + height)
+  Canvas.ctx.arcTo(x, y + height, x, y + height - radius[3], radius[3])
+  Canvas.ctx.closePath()
 }
 
 const drawRectAngle = (option) => {
@@ -85,16 +85,16 @@ const drawRectAngle = (option) => {
   const height = option.height
   const radius = Array.isArray(option.radius) ? option.radius : new Array(4).fill(option.radius)
 
-  ctx.beginPath()
-  ctx.moveTo(x, y + radius[0])
-  ctx.lineTo(x + radius[0], y)
-  ctx.lineTo(x + width - radius[1], y)
-  ctx.lineTo(x + width, y + radius[1])
-  ctx.lineTo(x + width, y + height - radius[2])
-  ctx.lineTo(x + width - radius[1], y + height)
-  ctx.lineTo(x + radius[3], y + height)
-  ctx.lineTo(x, y + height - radius[3])
-  ctx.closePath()
+  Canvas.ctx.beginPath()
+  Canvas.ctx.moveTo(x, y + radius[0])
+  Canvas.ctx.lineTo(x + radius[0], y)
+  Canvas.ctx.lineTo(x + width - radius[1], y)
+  Canvas.ctx.lineTo(x + width, y + radius[1])
+  Canvas.ctx.lineTo(x + width, y + height - radius[2])
+  Canvas.ctx.lineTo(x + width - radius[1], y + height)
+  Canvas.ctx.lineTo(x + radius[3], y + height)
+  Canvas.ctx.lineTo(x, y + height - radius[3])
+  Canvas.ctx.closePath()
 }
 
 const drawRect = (option) => {
@@ -103,12 +103,12 @@ const drawRect = (option) => {
   const width = option.width
   const height = option.height
 
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.lineTo(x + width, y)
-  ctx.lineTo(x + width, y + height)
-  ctx.lineTo(x, y + height)
-  ctx.closePath()
+  Canvas.ctx.beginPath()
+  Canvas.ctx.moveTo(x, y)
+  Canvas.ctx.lineTo(x + width, y)
+  Canvas.ctx.lineTo(x + width, y + height)
+  Canvas.ctx.lineTo(x, y + height)
+  Canvas.ctx.closePath()
 }
 
 const drawMultilineText = (option) => {
@@ -122,7 +122,7 @@ const drawMultilineText = (option) => {
   var row = []
 
   text.split('').forEach(i => {
-    if (ctx.measureText(temp + i).width > width) {
+    if (Canvas.ctx.measureText(temp + i).width > width) {
       row.push(temp)
       temp = ''
     }
@@ -131,7 +131,7 @@ const drawMultilineText = (option) => {
   row.push(temp)
 
   row.forEach((i, index) => {
-    ctx.fillText(i, x, y + index * wrapSpace)
+    Canvas.ctx.fillText(i, x, y + index * wrapSpace)
   })
 }
 

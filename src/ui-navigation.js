@@ -1,9 +1,13 @@
-import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-const ctx = canvas.getContext('2d')
-
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Navigation {
   constructor(props) {
@@ -25,22 +29,22 @@ class Navigation {
   }
 
   drawBackground() {
-    drawRectRadius({ x: 12, y: windowHeight - this.height - 12, width: windowWidth - 24, height: this.height, radius: 4 })
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.fill()
+    drawRectRadius({ x: 12, y: Canvas.height - this.height - 12, width: Canvas.width - 24, height: this.height, radius: 4 })
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    Canvas.ctx.fill()
   }
 
   drawContent() {
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 10px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 10px Courier`
 
     this.content.forEach((row, contentIndex) => {
       const justifyContentIndex = { left: 0, right: 0 }
 
       row.forEach((item, rowIndex) => {
         var option = {}
-        option.y = windowHeight - 36 - this.itemHeight - contentIndex * this.itemHeight - (contentIndex - 1) * 12
+        option.y = Canvas.height - 36 - this.itemHeight - contentIndex * this.itemHeight - (contentIndex - 1) * 12
         option.width = item.width || this.itemWidth
         option.height = item.height || this.itemHeight
         option.radius = item.radius || this.itemRadius
@@ -51,10 +55,10 @@ class Navigation {
           option.x = 24 + justifyContentIndex[item.justifyContent] * (option.width + 12)
         }
         if (item.justifyContent === 'right') {
-          option.x = windowWidth - 24 - justifyContentIndex[item.justifyContent] * (option.width + 12) - option.width
+          option.x = Canvas.width - 24 - justifyContentIndex[item.justifyContent] * (option.width + 12) - option.width
         }
         if (item.justifyContent === 'center') {
-          option.x = (windowWidth - option.width) / 2
+          option.x = (Canvas.width - option.width) / 2
 
           const maxIndex = row.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -68,28 +72,28 @@ class Navigation {
 
         option = { ...option, ...item }
 
-        ctx.fillStyle = option.active ? option.backgroundColor[1] : option.backgroundColor[0]
+        Canvas.ctx.fillStyle = option.active ? option.backgroundColor[1] : option.backgroundColor[0]
 
         drawRectRadius(option)
 
-        ctx.fill()
+        Canvas.ctx.fill()
 
-        ctx.fillStyle = option.active ? option.textColor[1] : option.textColor[0]
+        Canvas.ctx.fillStyle = option.active ? option.textColor[1] : option.textColor[0]
 
-        ctx.fillText(option.text, option.x + option.width / 2, option.y + option.height / 2)
+        Canvas.ctx.fillText(option.text, option.x + option.width / 2, option.y + option.height / 2)
 
-        window.Imitation.state.function.event('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
+        Event.addEventListener('touchstart', (e) => option.event ? option.event(e) : null, { ifTouchCover: option })
       })
     })
   }
 
   render() {
-    ctx.save()
+    Canvas.ctx.save()
 
     this.drawBackground()
     this.drawContent()
 
-    ctx.restore()
+    Canvas.ctx.restore()
   }
 }
 

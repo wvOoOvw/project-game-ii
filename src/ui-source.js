@@ -1,11 +1,13 @@
-import { ifTouchCover, numberFix, levelText } from './utils-common'
-import { drawMultilineText, drawImage, drawImageFullHeight, drawRectAngle } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class CardEmpty {
   constructor(props) {
@@ -31,16 +33,16 @@ class CardEmpty {
 
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    Canvas.ctx.fill()
 
-    ctx.restore()
+    Canvas.ctx.restore()
   }
 }
 
@@ -123,14 +125,14 @@ class CardInPve {
     const radius_ = height_ / 2
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
+    Canvas.ctx.fillStyle = color[0]
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = color[1]
+    Canvas.ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -149,14 +151,14 @@ class CardInPve {
     if (card.number) text.push('x' + card.number)
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
+    Canvas.ctx.fillStyle = color[0]
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = color[1]
+    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRace() {
@@ -171,14 +173,14 @@ class CardInPve {
     const radius_ = 2
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
+    Canvas.ctx.fillStyle = color[0]
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = color[1]
+    Canvas.ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawType() {
@@ -193,14 +195,14 @@ class CardInPve {
     const radius_ = 2
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
+    Canvas.ctx.fillStyle = color[0]
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
-    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = color[1]
+    Canvas.ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -215,13 +217,13 @@ class CardInPve {
     const radius_ = 2
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = color[0]
-    ctx.fill()
+    Canvas.ctx.fillStyle = color[0]
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = color[1]
+    Canvas.ctx.textAlign = 'start'
+    Canvas.ctx.textBaseline = 'top'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = color[1]
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
@@ -245,25 +247,25 @@ class CardInPve {
     const card = this.card
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.translate(x + width / 2, y + height / 2)
-    ctx.scale(this.mouseDownPositionTime + 1, this.mouseDownPositionTime + 1)
-    ctx.translate(-(x + width / 2), -(y + height / 2))
+    Canvas.ctx.translate(x + width / 2, y + height / 2)
+    Canvas.ctx.scale(this.mouseDownPositionTime + 1, this.mouseDownPositionTime + 1)
+    Canvas.ctx.translate(-(x + width / 2), -(y + height / 2))
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
     if (this.mouseDownPositionTime !== 0) {
-      ctx.globalAlpha = this.mouseDownPositionTime
+      Canvas.ctx.globalAlpha = this.mouseDownPositionTime
 
       this.drawTitle()
       this.drawName()
@@ -272,11 +274,11 @@ class CardInPve {
       this.drawDescription()
     }
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -311,16 +313,16 @@ class MoneyInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText('MONEY 货币', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText('MONEY 货币', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -335,16 +337,16 @@ class MoneyInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText([master.name, money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -353,23 +355,23 @@ class MoneyInList {
     const { x, y, width, height } = this.option
     const money = this.money
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     drawImage(money.imageDOM, { x: x, y: y, width: width, height: height })
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
 
-    ctx.restore()
+    Canvas.ctx.restore()
   }
 }
 
@@ -426,16 +428,16 @@ class ExploreInList {
     const y_ = y + height * 0.1
     const radius_ = height_ / 2
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = explore.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
-    ctx.fill()
-    ctx.fillStyle = explore.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
-    ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillStyle = explore.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fill()
+    Canvas.ctx.fillStyle = explore.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fillText('EXPLORE 探索', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -450,16 +452,16 @@ class ExploreInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -467,27 +469,27 @@ class ExploreInList {
 
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     this.drawImage()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -544,16 +546,16 @@ class ShopInList {
     const y_ = y + height * 0.1
     const radius_ = height_ / 2
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = shop.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
-    ctx.fill()
-    ctx.fillStyle = shop.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
-    ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillStyle = shop.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fill()
+    Canvas.ctx.fillStyle = shop.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fillText('SHOP 礼盒', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -568,16 +570,16 @@ class ShopInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawExtra() {
@@ -592,16 +594,16 @@ class ShopInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -609,28 +611,28 @@ class ShopInList {
 
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     this.drawImage()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
     this.drawExtra()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -687,16 +689,16 @@ class CardInList {
     const y_ = y + width * 0.05
     const radius_ = height_ / 2
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = card.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
-    ctx.fill()
-    ctx.fillStyle = card.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
-    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillStyle = card.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fill()
+    Canvas.ctx.fillStyle = card.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -713,16 +715,16 @@ class CardInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -730,27 +732,27 @@ class CardInList {
 
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     this.drawImage()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -807,16 +809,16 @@ class MasterInList {
     const y_ = y + height * 0.1
     const radius_ = height_ / 2
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = master.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
-    ctx.fill()
-    ctx.fillStyle = master.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
-    ctx.fillText('MASTER 队长', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillStyle = master.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fill()
+    Canvas.ctx.fillStyle = master.inTeam ? `rgba(255, 255, 255, 1)` : 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fillText('MASTER 队长', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -831,16 +833,16 @@ class MasterInList {
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-    ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${height * 0.075}px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    ctx.fillText([master.name, levelText(master.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.fillText([master.name, levelText(master.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -848,36 +850,36 @@ class MasterInList {
 
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectAngle({ x, y, width, height, radius: 8 })
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     this.drawImage()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawTitle()
     this.drawName()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
 class ExploreInPreview {
   constructor() {
     this.x = 0
-    this.y = safeTop
-    this.width = windowWidth
-    this.height = windowHeight - safeTop
+    this.y = 0
+    this.width = Canvas.width
+    this.height = Canvas.height
 
     this.skillIndex = 0
     this.novaTime = 0
@@ -902,7 +904,7 @@ class ExploreInPreview {
     const { x, y, width, height } = this.option
     const explore = this.explore
 
-    ctx.font = `900 ${height * 0.014}px ${window.fontFamily}`
+    Canvas.ctx.font = `900 ${height * 0.014}px Courier`
 
     const list = [
       'EXPLORE 探索',
@@ -919,14 +921,14 @@ class ExploreInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      ctx.fillText(i, x_ + height_, y_ + height_ / 2)
+      Canvas.ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
 
     {
@@ -938,12 +940,12 @@ class ExploreInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'top'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: explore.description })
 
@@ -952,11 +954,11 @@ class ExploreInPreview {
           var width__ = height * 0.12
           var height__ = height * 0.04
           var radius__ = 4
-          var x__ = (windowWidth - width__) / 2
+          var x__ = (Canvas.width - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
+          Canvas.ctx.textAlign = 'center'
+          Canvas.ctx.textBaseline = 'middle'
 
           const maxIndex = this.extra.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -965,12 +967,12 @@ class ExploreInPreview {
           x__ = x__ + diff
 
           drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-          ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-          ctx.fill()
-          ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-          ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
+          Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+          Canvas.ctx.fill()
+          Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+          Canvas.ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
-          window.Imitation.state.function.event('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
+          Event.addEventListener('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
         })
       }
     }
@@ -979,25 +981,25 @@ class ExploreInPreview {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawImage()
     this.drawContent()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.close)
+    Event.addEventListener('touchstart', this.close)
   }
 }
 
 class ShopInPreview {
   constructor() {
     this.x = 0
-    this.y = safeTop
-    this.width = windowWidth
-    this.height = windowHeight - safeTop
+    this.y = 0
+    this.width = Canvas.width
+    this.height = Canvas.height
 
     this.skillIndex = 0
     this.novaTime = 0
@@ -1022,12 +1024,12 @@ class ShopInPreview {
     const { x, y, width, height } = this.option
     const shop = this.shop
 
-    ctx.font = `900 ${height * 0.014}px ${window.fontFamily}`
+    Canvas.ctx.font = `900 ${height * 0.014}px Courier`
 
     const list = [
       'SHOP 礼盒',
       shop.name,
-      [shop.money.name, ':', '售价', shop.money.number, '/', '拥有', window.Imitation.state.info.money.find(i => i.key === shop.money.key).number].join(' '),
+      [shop.money.name, ':', '售价', shop.money.number, '/', '拥有', Imitation.state.info.money.find(i => i.key === shop.money.key).number].join(' '),
     ]
 
     list.forEach((i, index) => {
@@ -1039,14 +1041,14 @@ class ShopInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      ctx.fillText(i, x_ + height_, y_ + height_ / 2)
+      Canvas.ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
 
     {
@@ -1058,12 +1060,12 @@ class ShopInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'top'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: shop.description })
 
@@ -1072,11 +1074,11 @@ class ShopInPreview {
           var width__ = height * 0.12
           var height__ = height * 0.04
           var radius__ = 4
-          var x__ = (windowWidth - width__) / 2
+          var x__ = (Canvas.width - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
+          Canvas.ctx.textAlign = 'center'
+          Canvas.ctx.textBaseline = 'middle'
 
           const maxIndex = this.extra.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -1085,12 +1087,12 @@ class ShopInPreview {
           x__ = x__ + diff
 
           drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-          ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-          ctx.fill()
-          ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-          ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
+          Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+          Canvas.ctx.fill()
+          Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+          Canvas.ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
-          window.Imitation.state.function.event('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
+          Event.addEventListener('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
         })
       }
     }
@@ -1099,25 +1101,25 @@ class ShopInPreview {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawImage()
     this.drawContent()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.close)
+    Event.addEventListener('touchstart', this.close)
   }
 }
 
 class CardInPreview {
   constructor() {
     this.x = 0
-    this.y = safeTop
-    this.width = windowWidth
-    this.height = windowHeight - safeTop
+    this.y = 0
+    this.width = Canvas.width
+    this.height = Canvas.height
 
     this.skillIndex = 0
     this.novaTime = 0
@@ -1142,7 +1144,7 @@ class CardInPreview {
     const { x, y, width, height } = this.option
     const card = this.card
 
-    ctx.font = `900 ${height * 0.014}px ${window.fontFamily}`
+    Canvas.ctx.font = `900 ${height * 0.014}px Courier`
 
     const list = [
       'CARD 卡牌',
@@ -1160,14 +1162,14 @@ class CardInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      ctx.fillText(i, x_ + height_, y_ + height_ / 2)
+      Canvas.ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
 
     {
@@ -1179,12 +1181,12 @@ class CardInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'top'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: card.description(card.level) })
 
@@ -1193,11 +1195,11 @@ class CardInPreview {
           var width__ = height * 0.12
           var height__ = height * 0.04
           var radius__ = 4
-          var x__ = (windowWidth - width__) / 2
+          var x__ = (Canvas.width - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
+          Canvas.ctx.textAlign = 'center'
+          Canvas.ctx.textBaseline = 'middle'
 
           const maxIndex = this.extra.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -1206,12 +1208,12 @@ class CardInPreview {
           x__ = x__ + diff
 
           drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-          ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-          ctx.fill()
-          ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-          ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
+          Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+          Canvas.ctx.fill()
+          Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+          Canvas.ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
-          window.Imitation.state.function.event('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
+          Event.addEventListener('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
         })
       }
     }
@@ -1220,25 +1222,25 @@ class CardInPreview {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawImage()
     this.drawContent()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.close)
+    Event.addEventListener('touchstart', this.close)
   }
 }
 
 class MasterInPreview {
   constructor() {
     this.x = 0
-    this.y = safeTop
-    this.width = windowWidth
-    this.height = windowHeight - safeTop
+    this.y = 0
+    this.width = Canvas.width
+    this.height = Canvas.height
 
     this.skillIndex = 0
     this.novaTime = 0
@@ -1264,7 +1266,7 @@ class MasterInPreview {
     const master = this.master
     const skillIndex = this.skillIndex
 
-    ctx.font = `900 ${height * 0.014}px ${window.fontFamily}`
+    Canvas.ctx.font = `900 ${height * 0.014}px Courier`
 
     const list = [
       'MASTER 队长',
@@ -1282,14 +1284,14 @@ class MasterInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-      ctx.fillText(i, x_ + height_, y_ + height_ / 2)
+      Canvas.ctx.fillText(i, x_ + height_, y_ + height_ / 2)
     })
 
     {
@@ -1301,12 +1303,12 @@ class MasterInPreview {
 
       drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
-      ctx.fillStyle = `rgba(255, 255, 255, 1)`
-      ctx.fill()
+      Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+      Canvas.ctx.fill()
 
-      ctx.textAlign = 'start'
-      ctx.textBaseline = 'top'
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'top'
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
       drawMultilineText({ x: x_ + height * 0.04, y: y_ + height * 0.02, width: width_ - height * 0.08, wrapSpace: height * 0.021, text: master.skill[this.skillIndex].description(master.level) })
 
@@ -1314,11 +1316,11 @@ class MasterInPreview {
         var width__ = height * 0.12
         var height__ = height * 0.04
         var radius__ = 4
-        var x__ = (windowWidth - width__) / 2
+        var x__ = (Canvas.width - width__) / 2
         var y__ = y_ + height_ - height__ - 12
 
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
+        Canvas.ctx.textAlign = 'center'
+        Canvas.ctx.textBaseline = 'middle'
 
         const maxIndex = master.skill.length
         const centerIndex = maxIndex / 2 - 0.5
@@ -1327,12 +1329,12 @@ class MasterInPreview {
         x__ = x__ + diff
 
         drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-        ctx.fillStyle = index === skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
-        ctx.fill()
-        ctx.fillStyle = index === skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
-        ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
+        Canvas.ctx.fillStyle = index === skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+        Canvas.ctx.fill()
+        Canvas.ctx.fillStyle = index === skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
+        Canvas.ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
-        window.Imitation.state.function.event('touchstart', () => this.skillIndex = index, { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
+        Event.addEventListener('touchstart', () => this.skillIndex = index, { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
       })
 
       if (this.extra) {
@@ -1340,11 +1342,11 @@ class MasterInPreview {
           var width__ = height * 0.12
           var height__ = height * 0.04
           var radius__ = 4
-          var x__ = (windowWidth - width__) / 2
+          var x__ = (Canvas.width - width__) / 2
           var y__ = y_ + height_ + height * 0.02
 
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
+          Canvas.ctx.textAlign = 'center'
+          Canvas.ctx.textBaseline = 'middle'
 
           const maxIndex = this.extra.length
           const centerIndex = maxIndex / 2 - 0.5
@@ -1353,12 +1355,12 @@ class MasterInPreview {
           x__ = x__ + diff
 
           drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
-          ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-          ctx.fill()
-          ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-          ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
+          Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+          Canvas.ctx.fill()
+          Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+          Canvas.ctx.fillText(i.name, x__ + width__ / 2, y__ + height__ / 2)
 
-          window.Imitation.state.function.event('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
+          Event.addEventListener('touchstart', () => i.event(), { ifTouchCover: { x: x__, y: y__, width: width__, height: height__ }, stop: true })
         })
       }
     }
@@ -1367,16 +1369,16 @@ class MasterInPreview {
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
     this.drawImage()
     this.drawContent()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.close)
+    Event.addEventListener('touchstart', this.close)
   }
 }
 

@@ -1,12 +1,13 @@
-import { drawMultilineText, drawImage, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Page {
   constructor() {
@@ -14,51 +15,51 @@ class Page {
   }
 
   render() {
-    drawImage(Picture.get('background-home'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-home'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
     new Array(['商店', 'shop'], ['探索', 'explore'], ['编队', 'store']).forEach((i, index) => {
-      const option = { x: windowWidth / 2 - 60, y: windowHeight - 120 - index * 60, width: 120, height: 40, radius: 8 }
+      const option = { x: Canvas.width / 2 - 60, y: Canvas.height - 120 - index * 60, width: 120, height: 40, radius: 8 }
 
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 14px ${window.fontFamily}`
+      Canvas.ctx.textAlign = 'center'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.font = `900 14px Courier`
 
       drawRectAngle(option)
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-      ctx.fill()
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-      ctx.fillText(i[0], option.x + option.width / 2, option.y + option.height / 2)
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+      Canvas.ctx.fill()
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.fillText(i[0], option.x + option.width / 2, option.y + option.height / 2)
 
       const event = () => {
-        window.Imitation.state.page.current = 'transition'
-        window.Imitation.state.page.next = i[1]
+        Imitation.state.page.current = 'transition'
+        Imitation.state.page.next = i[1]
       }
 
-      window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+      Event.addEventListener('touchstart', event, { ifTouchCover: option })
     })
 
     new Array(['音乐', 'soundBackground'], ['音效', 'soundSource']).forEach((i, index) => {
-      const option = { y: 12 + safeTop, width: 64, height: 28, radius: 4 }
+      const option = { y: 12, width: 64, height: 28, radius: 4 }
 
       option.x = 12 + index * (12 + option.width)
 
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 10px ${window.fontFamily}`
+      Canvas.ctx.textAlign = 'center'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.font = `900 10px Courier`
 
       drawRectAngle(option)
 
-      ctx.fillStyle = window.Imitation.state[i[1]] ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
-      ctx.fill()
-      ctx.fillStyle = window.Imitation.state[i[1]] ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
-      ctx.fillText(i[0], option.x + option.width / 2, option.y + option.height / 2)
+      Canvas.ctx.fillStyle = Imitation.state[i[1]] ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+      Canvas.ctx.fill()
+      Canvas.ctx.fillStyle = Imitation.state[i[1]] ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.fillText(i[0], option.x + option.width / 2, option.y + option.height / 2)
 
       const event = () => {
-        window.Imitation.state[i[1]] = !window.Imitation.state[i[1]]
+        Imitation.state[i[1]] = !Imitation.state[i[1]]
       }
 
-      window.Imitation.state.function.event('touchstart', event, { ifTouchCover: option })
+      Event.addEventListener('touchstart', event, { ifTouchCover: option })
     })
 
   }

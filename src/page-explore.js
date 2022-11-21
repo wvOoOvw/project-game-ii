@@ -1,17 +1,17 @@
-import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
 import { ExploreInList, ExploreInPreview } from './ui-source'
-
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class Page {
   constructor() {
@@ -31,11 +31,11 @@ class Page {
 
   get exploreHeight() {
     const row = this.explore.length
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
-    this.explore = window.Imitation.state.explore.filter(i => i.type === this.type)
+    this.explore = Imitation.state.explore.filter(i => i.type === this.type)
 
     this.instanceNavigation()
     this.instanceScroll()
@@ -51,8 +51,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              window.Imitation.state.page.current = 'transition'
-              window.Imitation.state.page.next = 'home'
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'home'
             }
           },
           {
@@ -79,7 +79,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, contentHeight: this.exploreHeight }
+    const option = { x: 12, y: 12, width: Canvas.width - 24, height: Canvas.height - this.InstanceNavigation.height - 36, contentHeight: this.exploreHeight }
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -87,15 +87,15 @@ class Page {
   instanceExplore() {
     this.InstanceExplore = this.explore.map((explore, index) => {
       const option = {
-        width: windowWidth - 24,
+        width: Canvas.width - 24,
         explore: explore,
         touchAble: true,
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = explore,
       }
-      option.height = (windowWidth - 60) / 4 * 1.35
+      option.height = (Canvas.width - 60) / 4 * 1.35
       option.x = 12
-      option.y = 12 + index * (option.height + 12) + safeTop
+      option.y = 12 + index * (option.height + 12)
 
       return new ExploreInList(option)
     })
@@ -103,10 +103,10 @@ class Page {
 
   instanceExplorePreview() {
     const option = {}
-    option.width = windowWidth * 0.7
+    option.width = Canvas.width * 0.7
     option.height = option.width * 1.35
-    option.x = windowWidth * 0.15
-    option.y = (windowHeight - option.width * 1.5) / 2 - 60
+    option.x = Canvas.width * 0.15
+    option.y = (Canvas.height - option.width * 1.5) / 2 - 60
 
     this.InstanceExplorePreview = new ExploreInPreview(option)
   }
@@ -147,14 +147,14 @@ class Page {
   }
 
   enter(explore) {
-    window.Imitation.state.battle = {
+    Imitation.state.battle = {
       self: {
         master: {
-          ...parseMaster([window.Imitation.state.info.library.master.find(i => i.key === window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].master.key)])[0],
+          ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
           buff: []
         },
         card: {
-          team: parseCard(window.Imitation.state.info.team[window.Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...window.Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
+          team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
           hand: [],
         },
       },
@@ -172,17 +172,17 @@ class Page {
       reward: explore.reward
     }
 
-    if (window.Imitation.state.battle.self.card.team.length < 8) {
-      window.Imitation.state.function.message('卡组数量满足8张', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
+    if (Imitation.state.battle.self.card.team.length < 8) {
+      Message.play('卡组数量满足8张', 'rgba(255, 50 ,50, 1)', 'rgba(255, 255, 255, 1)')
       return
     }
 
-    window.Imitation.state.page.current = 'transition'
-    window.Imitation.state.page.next = 'pve'
+    Imitation.state.page.current = 'transition'
+    Imitation.state.page.next = 'pve'
   }
 
   render() {
-    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
     if (this.preview) {
       this.drawPreview()

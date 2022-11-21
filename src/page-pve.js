@@ -1,16 +1,16 @@
-import { arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 import { Navigation } from './ui-navigation'
 import { CardEmpty, CardInPve } from './ui-source'
-
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
 
 const numberAnimation = (number, time, callback) => {
   const list = new Array(time).fill(number / time)
@@ -25,10 +25,10 @@ const numberAnimation = (number, time, callback) => {
 
 class CardMessage {
   constructor() {
-    this.width = Math.min(windowWidth * 0.7, (windowHeight - safeTop) * 0.5)
+    this.width = Math.min(Canvas.width * 0.7, (Canvas.height) * 0.5)
     this.height = this.width * 1.35
-    this.x = (windowWidth - this.width) / 2
-    this.y = ((windowHeight - safeTop) - this.height) / 2
+    this.x = (Canvas.width - this.width) / 2
+    this.y = ((Canvas.height) - this.height) / 2
 
     this.card
 
@@ -56,14 +56,14 @@ class CardMessage {
     const radius_ = height_ / 2
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawName() {
@@ -81,14 +81,14 @@ class CardMessage {
     if (card.number) text.push('x' + card.number)
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawRace() {
@@ -102,14 +102,14 @@ class CardMessage {
     const radius_ = 4
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawType() {
@@ -123,14 +123,14 @@ class CardMessage {
     const radius_ = 4
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -144,13 +144,13 @@ class CardMessage {
     const radius_ = 4
 
     drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'start'
-    ctx.textBaseline = 'top'
-    ctx.font = `900 ${width * 0.045}px ${window.fontFamily}`
-    ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.textAlign = 'start'
+    Canvas.ctx.textBaseline = 'top'
+    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
     drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
   }
 
@@ -173,17 +173,17 @@ class CardMessage {
     const card = this.card
     const { x, y, width, height } = this.option
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.novaTime
+    Canvas.ctx.globalAlpha = this.novaTime
 
-    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-    ctx.fill()
+    drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    Canvas.ctx.fill()
 
     drawRectAngle({ x, y, width, height, radius: 16 })
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
 
     drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
 
@@ -193,7 +193,7 @@ class CardMessage {
     this.drawType()
     this.drawDescription()
 
-    ctx.restore()
+    Canvas.ctx.restore()
   }
 }
 
@@ -215,23 +215,23 @@ class RoleMessage {
       const offsetX = (i.time - this.time) / 4
       const offsetY = (i.time - this.time) / 2
 
-      ctx.save()
+      Canvas.ctx.save()
 
-      ctx.globalAlpha = i.time / this.time
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.font = `900 ${fontSize}px ${window.fontFamily}`
+      Canvas.ctx.globalAlpha = i.time / this.time
+      Canvas.ctx.textAlign = 'center'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.font = `900 ${fontSize}px Courier`
 
-      const width = ctx.measureText(text).width + 48
+      const width = Canvas.ctx.measureText(text).width + 48
 
       drawRectAngle({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.2 })
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
-      ctx.fill()
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
+      Canvas.ctx.fill()
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-      ctx.fillText(text, i.x + offsetX, i.y + offsetY)
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.fillText(text, i.x + offsetX, i.y + offsetY)
 
-      ctx.restore()
+      Canvas.ctx.restore()
 
       i.time = numberFix(i.time - 1)
 
@@ -276,15 +276,15 @@ class Role {
     option.y = y + width * 0.02
     option.radius = option.height / 8
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.04}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
 
     drawRectRadius(option)
-    ctx.fillStyle = `rgba(0, 0, 0, 0.5)`
-    ctx.fill()
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), option.x + option.width / 2, option.y + option.height / 2)
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.5)`
+    Canvas.ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillText([information.master.name, levelText(information.master.level)].join(' '), option.x + option.width / 2, option.y + option.height / 2)
   }
 
   drawACTION() {
@@ -302,8 +302,8 @@ class Role {
       new Array(information.master._ACTION).fill().forEach((i, index) => {
         const option_ = { ...option, x: option.x + index * (option.width + width * 0.04) }
         drawRectAngle(option_)
-        ctx.fillStyle = `rgba(255, 255, 255, 1)`
-        ctx.fill()
+        Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+        Canvas.ctx.fill()
       })
     }
   }
@@ -311,9 +311,9 @@ class Role {
   drawHA() {
     const { x, y, width, height, information } = this
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 ${width * 0.04}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
 
     const option = {
       width: width * 1.2,
@@ -323,34 +323,34 @@ class Role {
     option.y = y + height - option.height - width * 0.02
     option.radius = option.height / 2
 
-    ctx.save()
+    Canvas.ctx.save()
 
     drawRectRadius(option)
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fill()
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    Canvas.ctx.fill()
 
     drawRect({ ...option, width: information.master.HP / information.master.HP_ * option.width })
 
-    ctx.fillStyle = `rgba(185, 0, 0, 0.5)`
-    ctx.fill()
+    Canvas.ctx.fillStyle = `rgba(185, 0, 0, 0.5)`
+    Canvas.ctx.fill()
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-    ctx.fillText(`HP ${Math.floor(information.master.HP)} / ${information.master.HP_} - ATTACT ${Math.floor(information.master.ATTACT)}`, option.x + option.width / 2, option.y + option.height / 2)
+    Canvas.ctx.fillText(`HP ${Math.floor(information.master.HP)} / ${information.master.HP_} - ATTACT ${Math.floor(information.master.ATTACT)}`, option.x + option.width / 2, option.y + option.height / 2)
   }
 
   drawBuff() {
     const { x, y, width, height, information } = this
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.font = `900 ${width * 0.03}px ${window.fontFamily}`
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.font = `900 ${width * 0.03}px Courier`
 
     var renderList = information.master.buff
       .reduce((t, i) => {
@@ -378,10 +378,10 @@ class Role {
         option.radius = option.height / 8
 
         drawRectRadius(option)
-        ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-        ctx.fill()
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-        ctx.fillText(i.number ? `${i.name} X${i.number}` : i.name, option.x + option.width / 2, option.y + option.height / 2)
+        Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+        Canvas.ctx.fill()
+        Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+        Canvas.ctx.fillText(i.number ? `${i.name} X${i.number}` : i.name, option.x + option.width / 2, option.y + option.height / 2)
       })
   }
 
@@ -444,19 +444,19 @@ class Round {
 
     option.width = 120
     option.height = 12
-    option.y = 12 + safeTop
-    option.x = (windowWidth - option.width) / 2
+    option.y = 12
+    option.x = (Canvas.width - option.width) / 2
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
 
-    ctx.font = `900 24px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fillText('ROUND', option.x + option.width / 2, option.y + option.height / 2)
+    Canvas.ctx.font = `900 24px Courier`
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    Canvas.ctx.fillText('ROUND', option.x + option.width / 2, option.y + option.height / 2)
 
-    ctx.font = `900 14px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fillText(`${Math.floor(this.round)}/99`, option.x + option.width / 2, option.y + option.height / 2 + 2)
+    Canvas.ctx.font = `900 14px Courier`
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillText(`${Math.floor(this.round)}/99`, option.x + option.width / 2, option.y + option.height / 2 + 2)
   }
 }
 
@@ -484,33 +484,33 @@ class Page {
   }
 
   instanceRoleSelf() {
-    const boxHeight = (windowHeight - this.InstanceNavigation.height - 36 - safeTop) / 2
+    const boxHeight = (Canvas.height - this.InstanceNavigation.height - 36) / 2
 
     const option = {
-      width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
-      height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
+      width: Math.min(Canvas.width * 0.75, boxHeight * 0.75),
+      height: Math.min(Canvas.width * 0.75, boxHeight * 0.75),
       type: 'self',
-      information: window.Imitation.state.battle.self,
+      information: Imitation.state.battle.self,
       useCard: this.useCard,
     }
-    option.x = (windowWidth - option.width) / 2
-    option.y = windowHeight - this.InstanceNavigation.height - 24 - boxHeight + (boxHeight - option.height) / 2
+    option.x = (Canvas.width - option.width) / 2
+    option.y = Canvas.height - this.InstanceNavigation.height - 24 - boxHeight + (boxHeight - option.height) / 2
 
     this.InstanceRoleSelf = new Role(option)
   }
 
   instanceRoleOpposite() {
-    const boxHeight = (windowHeight - this.InstanceNavigation.height - 36 - safeTop) / 2
+    const boxHeight = (Canvas.height - this.InstanceNavigation.height - 36) / 2
 
     const option = {
-      width: Math.min(windowWidth * 0.75, boxHeight * 0.75),
-      height: Math.min(windowWidth * 0.75, boxHeight * 0.75),
+      width: Math.min(Canvas.width * 0.75, boxHeight * 0.75),
+      height: Math.min(Canvas.width * 0.75, boxHeight * 0.75),
       type: 'opposite',
-      information: window.Imitation.state.battle.opposite,
+      information: Imitation.state.battle.opposite,
       useCard: this.useCard
     }
-    option.x = (windowWidth - option.width) / 2
-    option.y = (boxHeight - option.height) / 2 + 24 + safeTop
+    option.x = (Canvas.width - option.width) / 2
+    option.y = (boxHeight - option.height) / 2 + 24
 
     this.InstanceRoleOpposite = new Role(option)
   }
@@ -523,8 +523,8 @@ class Page {
             justifyContent: 'left',
             text: '退出战斗',
             event: () => {
-              window.Imitation.state.page.current = 'transition'
-              window.Imitation.state.page.next = 'explore'
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = 'explore'
             }
           },
           {
@@ -571,7 +571,7 @@ class Page {
     self.information.master._ACTION = self.information.master._ACTION - 1
 
     this.InstanceCardMessage.play(card)
-    if (window.Imitation.state.soundSource) window.Imitation.state.function.sound(card.soundAction)
+    if (Imitation.state.soundSource) Sound.play(card.soundAction)
 
     await wait(120)
 
@@ -590,15 +590,15 @@ class Page {
       }
 
       if (current.message) {
-        window.Imitation.state.function.message(current.message, 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+        Message.play(current.message, 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
       }
 
       if (current.animation) {
         if (current.target === 'self') {
-          window.Imitation.state.function.animation(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
+          Animation.play(current.animation, (img) => [self.x + self.width / 2 - img.width / 2, self.y + self.height / 2 - img.height / 2])
         }
         if (current.target === 'opposite') {
-          window.Imitation.state.function.animation(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
+          Animation.play(current.animation, (img) => [opposite.x + opposite.width / 2 - img.width / 2, opposite.y + opposite.height / 2 - img.height / 2])
         }
       }
 
@@ -757,25 +757,25 @@ class Page {
 
   battlerOver = () => {
     if (this.InstanceRoleOpposite.information.master.HP <= 0) {
-      const reward = window.Imitation.state.battle.reward()
+      const reward = Imitation.state.battle.reward()
 
-      window.Imitation.state.function.message('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-      window.Imitation.state.reward = { value: reward, back: 'explore', title: '战斗胜利' }
-      window.Imitation.state.page.current = 'transition'
-      window.Imitation.state.page.next = 'reward'
+      Message.play('战斗胜利', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.reward = { value: reward, back: 'explore', title: '战斗胜利' }
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'reward'
       return
     }
     if (this.InstanceRoleSelf.information.master.HP <= 0) {
-      window.Imitation.state.function.message('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
-      window.Imitation.state.reward = { value: [], back: 'explore', title: '战斗失败' }
-      window.Imitation.state.page.current = 'transition'
-      window.Imitation.state.page.next = 'reward'
+      Message.play('战斗失败', 'rgba(0, 0, 0, 1)', 'rgba(255, 255, 255, 1)')
+      Imitation.state.reward = { value: [], back: 'explore', title: '战斗失败' }
+      Imitation.state.page.current = 'transition'
+      Imitation.state.page.next = 'reward'
       return
     }
   }
 
   render() {
-    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
     this.InstanceRound.round = this.round
 

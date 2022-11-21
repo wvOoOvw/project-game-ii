@@ -1,13 +1,11 @@
 import { ifTouchCover } from './utils-common'
 
+import { Canvas } from './instance-canvas'
+
 class Event {
   constructor() {
     this.event = []
 
-    this.init()
-  }
-
-  init = () => {
     const event = (e, type) => {
       const exe = this.event
         .filter(i => i.type === type)
@@ -26,15 +24,15 @@ class Event {
     }
 
     new Array('touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup').forEach(type => {
-      canvas.addEventListener(type, e => event(e, type), { passive: true })
+      Canvas.canvas.addEventListener(type, e => event(e, type), { passive: true })
     })
   }
 
   addEventListener = (type, callback, option) => {
     try {
-      if (window.wx._web && window.ontouchstart === undefined && type === 'touchstart') type = 'mousedown'
-      if (window.wx._web && window.ontouchmove === undefined && type === 'touchmove') type = 'mousemove'
-      if (window.wx._web && window.ontouchend === undefined && type === 'touchend') type = 'mouseup'
+      if (window.ontouchstart === undefined && type === 'touchstart') type = 'mousedown'
+      if (window.ontouchmove === undefined && type === 'touchmove') type = 'mousemove'
+      if (window.ontouchend === undefined && type === 'touchend') type = 'mouseup'
     } catch { }
 
     this.event.push({ type, callback, option })

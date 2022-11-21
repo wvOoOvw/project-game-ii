@@ -1,11 +1,7 @@
 import { drawRectRadius } from './utils-canvas'
 import { numberFix, wait } from './utils-common'
 
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Canvas } from './instance-canvas'
 
 class Message {
   constructor() {
@@ -18,10 +14,10 @@ class Message {
     this.show = false
 
     this.opacity = 0
-    this.width = Math.min(windowWidth - 24, 200)
+    this.width = Math.min(Canvas.width - 24, 200)
     this.height = 32
-    this.x = (windowWidth - this.width) / 2
-    this.y = windowHeight
+    this.x = (Canvas.width - this.width) / 2
+    this.y = Canvas.height
   }
 
   play(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
@@ -47,34 +43,34 @@ class Message {
       this.opacity = numberFix(this.opacity - 0.05)
     }
 
-    if (this.show && this.y > windowHeight - 44) {
+    if (this.show && this.y > Canvas.height - 44) {
       this.y = numberFix(this.y - 4)
     }
 
-    if (!this.show && this.y < windowHeight) {
+    if (!this.show && this.y < Canvas.height) {
       this.y = numberFix(this.y + 4)
     }
 
     if (!this.show && this.opacity === 0) return
 
-    ctx.save()
+    Canvas.ctx.save()
 
-    ctx.globalAlpha = this.opacity
+    Canvas.ctx.globalAlpha = this.opacity
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 10px ${window.fontFamily}`
-    ctx.fillStyle = this.backgroundColor
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 10px Courier`
+    Canvas.ctx.fillStyle = this.backgroundColor
 
     drawRectRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 8 })
 
-    ctx.fill()
+    Canvas.ctx.fill()
 
-    ctx.fillStyle = this.textColor
+    Canvas.ctx.fillStyle = this.textColor
 
-    ctx.fillText(this.message, this.x + this.width / 2, this.y + this.height / 2)
+    Canvas.ctx.fillText(this.message, this.x + this.width / 2, this.y + this.height / 2)
 
-    ctx.restore()
+    Canvas.ctx.restore()
   }
 }
 

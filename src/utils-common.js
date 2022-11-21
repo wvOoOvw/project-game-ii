@@ -1,5 +1,7 @@
 import { originMoney, originMaster, originCard, originBoss, originExplore } from './source'
 
+import { Canvas } from './instance-canvas'
+
 const parseCard = (array) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
@@ -42,8 +44,6 @@ const parseMoney = (array) => {
   return result
 }
 
-export { parseCard, parseMaster, parseMoney }
-
 const levelText = (level) => {
   if (level === 1) return 'I'
   if (level === 2) return 'II'
@@ -63,9 +63,11 @@ const levelText = (level) => {
   if (level === 16) return 'XVI'
 }
 
-export { levelText }
+const searchParams = n => {
+  try { if (wx) return null } catch { }
 
-const searchParams = n => new URL(location.href).searchParams.get(n)
+  return new URL(location.href).searchParams.get(n)
+}
 
 const wait = async (time, callback) => {
   var current = 0
@@ -126,8 +128,6 @@ const setArrayRandom = (array) => {
   return result
 }
 
-export { wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams }
-
 const ifTouchCover = (e, option) => {
   const x = option.x
   const y = option.y
@@ -138,10 +138,10 @@ const ifTouchCover = (e, option) => {
   var y_ = e.y || e.touches[0].clientY
 
   try {
-    const boundingClientRect = canvas.getBoundingClientRect()
+    const safeArea = Canvas.safeArea
 
-    x_ = x_ - boundingClientRect.left
-    y_ = y_ - boundingClientRect.top
+    x_ = x_ - safeArea.left
+    y_ = y_ - safeArea.top
 
   } catch { }
 
@@ -155,4 +155,4 @@ const ifScreenCover = (a, b) => {
   return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
 }
 
-export { ifTouchCover, ifScreenCover }
+export { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover }

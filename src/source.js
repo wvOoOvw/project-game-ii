@@ -1,6 +1,12 @@
-import { arrayRandom, levelText } from './utils-common'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 
-import { Picture } from './utils-picture'
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 const LevelRise = (v, l) => Math.floor(v * Math.pow(1.2, (l - 1)))
 
@@ -452,7 +458,7 @@ var originCard = [
   },
 ]
 
-const loadSource = () => {
+const sourceIoad = () => {
   originMoney.forEach(i => i.imageDOM = Picture.get('money-' + i.key))
   originExplore.forEach(i => i.imageDOM = Picture.get('explore-' + i.key))
   originShop.forEach(i => i.imageDOM = Picture.get('shop-' + i.key))
@@ -466,4 +472,4 @@ const loadSource = () => {
   originCard.forEach(i => i.soundAction = 'card-action-' + i.key)
 }
 
-export { originMoney, originMaster, originCard, originExplore, originShop, loadSource }
+export { originMoney, originMaster, originCard, originExplore, originShop, sourceIoad }

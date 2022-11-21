@@ -1,6 +1,13 @@
-import { drawRect } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-const ctx = canvas.getContext('2d')
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Scroll {
   constructor(props) {
@@ -74,21 +81,21 @@ class Scroll {
       }
     }
 
-    ctx.save()
+    Canvas.ctx.save()
 
     const option = { x: this.x, y: this.y, width: this.width, height: this.height }
 
     drawRect(option)
 
-    ctx.clip()
+    Canvas.ctx.clip()
 
     callback(this.scrollPosition)
 
-    ctx.restore()
+    Canvas.ctx.restore()
 
-    window.Imitation.state.function.event('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
-    window.Imitation.state.function.event('touchmove', this.eventMove.bind(this))
-    window.Imitation.state.function.event('touchend', this.eventUp.bind(this))
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 

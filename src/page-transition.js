@@ -1,12 +1,13 @@
-import { numberFix } from './utils-common'
-import { drawImage } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Page {
   constructor() {
@@ -30,16 +31,16 @@ class Page {
     }
 
     if (this.count > 60) {
-      window.Imitation.state.page.current = window.Imitation.state.page.next
-      window.Imitation.state.page.next = ''
+      Imitation.state.page.current = Imitation.state.page.next
+      Imitation.state.page.next = ''
       return
     }
 
-    ctx.globalAlpha = this.opacity
+    Canvas.ctx.globalAlpha = this.opacity
 
-    drawImage(Picture.get('background-transition'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-transition'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
-    ctx.globalAlpha = 1
+    Canvas.ctx.globalAlpha = 1
   }
 }
 

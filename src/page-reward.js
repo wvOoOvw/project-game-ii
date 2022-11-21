@@ -1,17 +1,17 @@
-import { ifTouchCover, ifScreenCover, parseCard, parseMaster, parseMoney, setArrayRandom, arrayRandom, numberFix, levelText, wait } from './utils-common'
-import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
 import { MoneyInList, CardInList, MasterInList, CardInPreview, MasterInPreview } from './ui-source'
-
-import { Picture } from './utils-picture'
-
-const ctx = canvas.getContext('2d')
-
-const safeTop = wx.getSystemInfoSync().safeArea.top
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
 
 class Page {
   constructor() {
@@ -37,17 +37,17 @@ class Page {
 
   get masterHeight() {
     const row = this.master.length
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   get cardHeight() {
     const row = Math.ceil(this.card.length / 4)
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   get moneyHeight() {
     const row = Math.ceil(this.money.length / 4)
-    return ((windowWidth - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+    return ((Canvas.width - 60) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -55,24 +55,24 @@ class Page {
     this.master = []
     this.money = []
 
-    if (!this.type && window.Imitation.state.reward.value.some(i => i.card)) {
+    if (!this.type && Imitation.state.reward.value.some(i => i.card)) {
       this.type = 'card'
     }
-    if (!this.type && window.Imitation.state.reward.value.some(i => i.master)) {
+    if (!this.type && Imitation.state.reward.value.some(i => i.master)) {
       this.type = 'master'
     }
-    if (!this.type && window.Imitation.state.reward.value.some(i => i.money)) {
+    if (!this.type && Imitation.state.reward.value.some(i => i.money)) {
       this.type = 'money'
     }
 
     if (this.type === 'card') {
-      this.card = parseCard(window.Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
+      this.card = parseCard(Imitation.state.reward.value.filter(i => i.card).map(i => ({ ...i, level: 1 })))
     }
     if (this.type === 'master') {
-      this.master = parseMaster(window.Imitation.state.reward.value.filter(i => i.master).map(i => ({ ...i, level: 1 })))
+      this.master = parseMaster(Imitation.state.reward.value.filter(i => i.master).map(i => ({ ...i, level: 1 })))
     }
     if (this.type === 'money') {
-      this.money = parseMoney(window.Imitation.state.reward.value.filter(i => i.money))
+      this.money = parseMoney(Imitation.state.reward.value.filter(i => i.money))
     }
 
     this.instanceNavigation()
@@ -92,8 +92,8 @@ class Page {
             justifyContent: 'left',
             text: '返回',
             event: () => {
-              window.Imitation.state.page.current = 'transition'
-              window.Imitation.state.page.next = window.Imitation.state.reward.back
+              Imitation.state.page.current = 'transition'
+              Imitation.state.page.next = Imitation.state.reward.back
             }
           },
           {
@@ -111,7 +111,7 @@ class Page {
           },
           {
             justifyContent: 'right',
-            text: window.Imitation.state.reward.title,
+            text: Imitation.state.reward.title,
           },
         ],
       ]
@@ -121,7 +121,7 @@ class Page {
   }
 
   instanceScroll() {
-    const option = { x: 12, y: 12 + safeTop, width: windowWidth - 24, height: windowHeight - this.InstanceNavigation.height - 36 - safeTop, contentHeight: this.masterHeight + this.cardHeight + this.moneyHeight + 12 }
+    const option = { x: 12, y: 12, width: Canvas.width - 24, height: Canvas.height - this.InstanceNavigation.height - 36, contentHeight: this.masterHeight + this.cardHeight + this.moneyHeight + 12 }
 
     this.InstanceScroll = new Scroll(option)
   }
@@ -129,16 +129,16 @@ class Page {
   instanceMaster() {
     this.InstanceMaster = this.master.map((master, index) => {
       const option = {
-        width: windowWidth - 24,
+        width: Canvas.width - 24,
         master: master,
         touchAble: true,
         touchArea: this.InstanceScroll.option,
         touchEvent: () => this.preview = master,
       }
 
-      option.height = (windowWidth - 60) / 4 * 1.35
+      option.height = (Canvas.width - 60) / 4 * 1.35
       option.x = 12
-      option.y = 12 + index * (option.height + 12) + safeTop
+      option.y = 12 + index * (option.height + 12)
 
       return new MasterInList(option)
     })
@@ -147,7 +147,7 @@ class Page {
   instanceCard() {
     this.InstanceCard = this.card.map((card, index) => {
       const option = {
-        width: (windowWidth - 60) / 4,
+        width: (Canvas.width - 60) / 4,
         card: card,
         touchAble: true,
         touchArea: this.InstanceScroll.option,
@@ -156,7 +156,7 @@ class Page {
 
       option.height = option.width * 1.35
       option.x = 12 + parseInt(index % 4) * (option.width + 12)
-      option.y = 12 + parseInt(index / 4) * (option.height + 12) + safeTop
+      option.y = 12 + parseInt(index / 4) * (option.height + 12)
 
       return new CardInList(option)
     })
@@ -165,13 +165,13 @@ class Page {
   instanceMoney() {
     this.InstanceMoney = this.money.map((money, index) => {
       const option = {
-        width: windowWidth - 24,
+        width: Canvas.width - 24,
         money: money,
       }
 
-      option.height = (windowWidth - 60) / 4 * 1.35
+      option.height = (Canvas.width - 60) / 4 * 1.35
       option.x = 12
-      option.y = 12 + index * (option.height + 12) + safeTop
+      option.y = 12 + index * (option.height + 12)
 
       return new MoneyInList(option)
     })
@@ -236,8 +236,8 @@ class Page {
   }
 
   compute() {
-    const library = window.Imitation.state.info.library
-    const reward = window.Imitation.state.reward.value
+    const library = Imitation.state.info.library
+    const reward = Imitation.state.reward.value
 
     reward.forEach(i => {
       if (i.card) {
@@ -270,11 +270,11 @@ class Page {
       }
     })
 
-    window.Imitation.state.function.setInfo()
+    Imitation.state.function.setInfo()
   }
 
   render() {
-    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: windowWidth, height: windowHeight })
+    drawImage(Picture.get('background-page'), { x: 0, y: 0, width: Canvas.width, height: Canvas.height })
 
     if (this.preview) {
       this.drawPreview()

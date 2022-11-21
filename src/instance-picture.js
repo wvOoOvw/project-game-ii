@@ -23,7 +23,6 @@ import I_yanwei29b3239c from '../static/image/yanwei.29b3239c.png'
 import I_yifulite8bc864d4 from '../static/image/yifulite.8bc864d4.png'
 import I_yinhui3c5f7f39 from '../static/image/yinhui.3c5f7f39.png'
 
-
 class Picture {
   constructor() {
     this.map = {
@@ -70,8 +69,8 @@ class Picture {
     return Promise.all(Object.entries(this.map).map(i => {
       return new Promise(r => {
         const image = new Image()
-        image.src = this.map[i[0]]
         image.onload = r
+        image.src = this.map[i[0]]
         this.map[i[0]] = image
       })
     }))

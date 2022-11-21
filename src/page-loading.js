@@ -1,9 +1,13 @@
-import { drawMultilineText, drawImage, drawRect, drawRectRadius } from './utils-canvas'
+import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
-const ctx = canvas.getContext('2d')
-
-const windowWidth = wx.getSystemInfoSync().windowWidth
-const windowHeight = wx.getSystemInfoSync().windowHeight
+import { Animation } from './instance-animation'
+import { Canvas } from './instance-canvas'
+import { Event } from './instance-event'
+import { Imitation } from './instance-imitation'
+import { Message } from './instance-message'
+import { Picture } from './instance-picture'
+import { Sound } from './instance-sound'
 
 class Page {
   constructor() {
@@ -13,15 +17,15 @@ class Page {
   render() {
     this.time = this.time + 1 / 32
 
-    drawRect({ x: 0, y: 0, width: windowWidth, height: windowHeight })
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    ctx.fill()
+    drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fill()
 
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.font = `900 14px ${window.fontFamily}`
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    ctx.fillText(`加载中${new Array(Math.floor(this.time % 4)).fill('.').join('')}`, windowWidth / 2, windowHeight / 2)
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 14px Courier`
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillText(`加载中${new Array(Math.floor(this.time % 4)).fill('.').join('')}`, Canvas.width / 2, Canvas.height / 2)
   }
 }
 
