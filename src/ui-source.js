@@ -1,5 +1,5 @@
 import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
-import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
+import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawMultilineText } from './utils-canvas'
 
 import { Animation } from './instance-animation'
 import { Canvas } from './instance-canvas'
@@ -37,10 +37,97 @@ class CardEmpty {
 
     Canvas.ctx.globalAlpha = this.novaTime
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
     Canvas.ctx.fill()
+
+    Canvas.ctx.restore()
+  }
+}
+
+class CardInPveMessage {
+  constructor() {
+    this.width = Math.min(Canvas.width * 0.7, (Canvas.height) * 0.5)
+    this.height = this.width * 1.35
+    this.x = (Canvas.width - this.width) / 2
+    this.y = ((Canvas.height) - this.height) / 2
+
+    this.card
+
+    this.nova = false
+    this.novaTime = 0
+    this.novaOverTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  play(card) {
+    this.card = card
+    this.nova = true
+  }
+
+  drawName() {
+    const { x, y, width, height } = this.option
+    const card = this.card
+
+    const width_ = width * 0.7
+    const height_ = width * 0.12
+    const x_ = x + width * 0.15
+    const y_ = y + height - width * 0.1 - height_
+    const radius_ = height_ / 2
+
+    const text = [card.name, levelText(card.level)]
+
+    if (card.number) text.push('x' + card.number)
+
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    Canvas.ctx.fill()
+
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
+    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
+  }
+
+  render() {
+    if (this.nova && this.novaTime < 1) {
+      this.novaTime = numberFix(this.novaTime + 0.05)
+    }
+    if (this.novaTime === 1) {
+      this.novaOverTime = this.novaOverTime + 1
+      this.nova = false
+    }
+    if (!this.nova && this.novaTime > 0 && this.novaOverTime === 40) {
+      this.novaTime = numberFix(this.novaTime - 0.05)
+    }
+    if (this.novaTime === 0) {
+      this.novaOverTime = 0
+      return
+    }
+
+    const card = this.card
+    const { x, y, width, height } = this.option
+
+    Canvas.ctx.save()
+
+    Canvas.ctx.globalAlpha = this.novaTime
+
+    drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    Canvas.ctx.fill()
+
+    drawRectRadius({ x, y, width, height, radius: 8 })
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
+
+    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
+
+    this.drawName()
 
     Canvas.ctx.restore()
   }
@@ -114,95 +201,30 @@ class CardInPve {
     this.offsetY = this.offsetY + changeY
   }
 
-  drawTitle() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-
-    const width_ = width * 0.5
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.05
-    const radius_ = height_ / 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = color[0]
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = color[1]
-    Canvas.ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
-  }
-
   drawName() {
     const { x, y, width, height } = this.option
     const color = this.color
     const card = this.card
 
-    const width_ = width * 0.5
+    const width_ = width * 0.7
     const height_ = width * 0.12
-    const x_ = x + width - width_ - width * 0.05
-    const y_ = y + height - height_ - width * 0.05
+    const x_ = x + width * 0.15
+    const y_ = y + height - width * 0.1 - height_
     const radius_ = height_ / 2
 
     const text = [card.name, levelText(card.level)]
 
     if (card.number) text.push('x' + card.number)
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     Canvas.ctx.fillStyle = color[0]
     Canvas.ctx.fill()
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
     Canvas.ctx.fillStyle = color[1]
     Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawRace() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.22
-    const radius_ = 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = color[0]
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = color[1]
-    Canvas.ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawType() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = color[0]
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = color[1]
-    Canvas.ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
   }
 
   drawDescription() {
@@ -210,21 +232,21 @@ class CardInPve {
     const color = this.color
     const card = this.card
 
-    const width_ = width * 0.9
-    const height_ = width * 0.57
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.56
-    const radius_ = 2
+    const width_ = width * 0.85
+    const height_ = width * 0.9
+    const x_ = x + (width - width_) / 2
+    const y_ = y + height - width * 0.3 - height_
+    const radius_ = 4
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
     Canvas.ctx.fillStyle = color[0]
     Canvas.ctx.fill()
 
     Canvas.ctx.textAlign = 'start'
     Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
     Canvas.ctx.fillStyle = color[1]
-    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
+    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.06, text: card.description(card.level) })
   }
 
   render() {
@@ -255,7 +277,7 @@ class CardInPve {
 
     Canvas.ctx.globalAlpha = this.novaTime
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 4 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -267,10 +289,7 @@ class CardInPve {
     if (this.mouseDownPositionTime !== 0) {
       Canvas.ctx.globalAlpha = this.mouseDownPositionTime
 
-      this.drawTitle()
       this.drawName()
-      this.drawRace()
-      this.drawType()
       this.drawDescription()
     }
 
@@ -306,12 +325,12 @@ class MoneyInList {
     const money = this.money
 
     const width_ = width * 0.35
-    const height_ = width * 0.07
-    const x_ = x + width * 0.03
-    const y_ = y + width * 0.03
+    const height_ = height * 0.2
+    const x_ = x + height * 0.1
+    const y_ = y + height * 0.1
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -319,7 +338,7 @@ class MoneyInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText('MONEY 货币', x_ + width_ / 2, y_ + height_ / 2)
@@ -335,7 +354,7 @@ class MoneyInList {
     const y_ = y + height - height_ - height * 0.1
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -343,7 +362,7 @@ class MoneyInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText([master.name, money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -357,7 +376,7 @@ class MoneyInList {
 
     Canvas.ctx.save()
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -430,9 +449,9 @@ class ExploreInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = explore.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
     Canvas.ctx.fill()
@@ -450,7 +469,7 @@ class ExploreInList {
     const y_ = y + height - height_ - height * 0.1
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -458,7 +477,7 @@ class ExploreInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText(explore.name, x_ + width_ / 2, y_ + height_ / 2)
@@ -471,7 +490,7 @@ class ExploreInList {
 
     Canvas.ctx.save()
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -548,9 +567,9 @@ class ShopInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = shop.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
     Canvas.ctx.fill()
@@ -568,7 +587,7 @@ class ShopInList {
     const y_ = y + height - height_ - height * 0.1
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -576,7 +595,7 @@ class ShopInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText(shop.name, x_ + width_ / 2, y_ + height_ / 2)
@@ -592,7 +611,7 @@ class ShopInList {
     const y_ = y + height - height_ - height * 0.4
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -600,7 +619,7 @@ class ShopInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText([shop.money.name, shop.money.number].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -613,7 +632,7 @@ class ShopInList {
 
     Canvas.ctx.save()
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -691,9 +710,9 @@ class CardInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = card.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
     Canvas.ctx.fill()
@@ -713,7 +732,7 @@ class CardInList {
 
     const text = [card.name, levelText(card.level)]
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -721,7 +740,7 @@ class CardInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
+    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -734,7 +753,7 @@ class CardInList {
 
     Canvas.ctx.save()
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -811,9 +830,9 @@ class MasterInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = master.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
     Canvas.ctx.fill()
@@ -831,7 +850,7 @@ class MasterInList {
     const y_ = y + height - height_ - height * 0.1
     const radius_ = height_ / 2
 
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
     Canvas.ctx.fillStyle = `rgba(255, 255, 255, 0.75)`
 
@@ -839,7 +858,7 @@ class MasterInList {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${height * 0.075}px Courier`
+    Canvas.ctx.font = `900 ${height * 0.07}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText([master.name, levelText(master.level)].join(' '), x_ + width_ / 2, y_ + height_ / 2)
@@ -852,7 +871,7 @@ class MasterInList {
 
     Canvas.ctx.save()
 
-    drawRectAngle({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
@@ -919,7 +938,7 @@ class ExploreInPreview {
       const y_ = height * 0.4 + height * 0.02 + index * height * 0.06
       const radius_ = height_ / 2
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -938,7 +957,7 @@ class ExploreInPreview {
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -966,7 +985,7 @@ class ExploreInPreview {
 
           x__ = x__ + diff
 
-          drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
+          drawRectRadius({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
           Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
           Canvas.ctx.fill()
           Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -1039,7 +1058,7 @@ class ShopInPreview {
       const y_ = height * 0.4 + height * 0.02 + index * height * 0.06
       const radius_ = height_ / 2
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1058,7 +1077,7 @@ class ShopInPreview {
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1086,7 +1105,7 @@ class ShopInPreview {
 
           x__ = x__ + diff
 
-          drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
+          drawRectRadius({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
           Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
           Canvas.ctx.fill()
           Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -1160,7 +1179,7 @@ class CardInPreview {
       const y_ = height * 0.4 + height * 0.02 + index * height * 0.06
       const radius_ = height_ / 2
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1179,7 +1198,7 @@ class CardInPreview {
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1207,7 +1226,7 @@ class CardInPreview {
 
           x__ = x__ + diff
 
-          drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
+          drawRectRadius({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
           Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
           Canvas.ctx.fill()
           Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -1282,7 +1301,7 @@ class MasterInPreview {
       const y_ = height * 0.4 + height * 0.02 + index * height * 0.06
       const radius_ = height_ / 2
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1301,7 +1320,7 @@ class MasterInPreview {
       const y_ = height * 0.4 + height * 0.02 + list.length * height * 0.06
       const radius_ = height * 0.02
 
-      drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
 
       Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
       Canvas.ctx.fill()
@@ -1328,7 +1347,7 @@ class MasterInPreview {
 
         x__ = x__ + diff
 
-        drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
+        drawRectRadius({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
         Canvas.ctx.fillStyle = index === skillIndex ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
         Canvas.ctx.fill()
         Canvas.ctx.fillStyle = index === skillIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
@@ -1354,7 +1373,7 @@ class MasterInPreview {
 
           x__ = x__ + diff
 
-          drawRectAngle({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
+          drawRectRadius({ x: x__, y: y__, width: width__, height: height__, radius: radius__ })
           Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
           Canvas.ctx.fill()
           Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
@@ -1382,4 +1401,4 @@ class MasterInPreview {
   }
 }
 
-export { CardEmpty, CardInPve, MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }
+export { CardEmpty, CardInPve, CardInPveMessage, MoneyInList, ExploreInList, ShopInList, CardInList, MasterInList, ExploreInPreview, ShopInPreview, CardInPreview, MasterInPreview }

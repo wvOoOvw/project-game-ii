@@ -24,7 +24,7 @@ class Page {
       Canvas.ctx.textBaseline = 'middle'
       Canvas.ctx.font = `900 14px Courier`
 
-      drawRectAngle(option)
+      drawRectRadius(option)
 
       Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
       Canvas.ctx.fill()
@@ -48,7 +48,7 @@ class Page {
       Canvas.ctx.textBaseline = 'middle'
       Canvas.ctx.font = `900 10px Courier`
 
-      drawRectAngle(option)
+      drawRectRadius(option)
 
       Canvas.ctx.fillStyle = Imitation.state[i[1]] ? 'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
       Canvas.ctx.fill()

@@ -168,6 +168,7 @@ class Main {
 
     Imitation.state.page.current = 'transition'
     Imitation.state.page.next = searchParams('path') ? searchParams('path') : 'home'
+    // Imitation.state.page.current = Imitation.state.page.next
 
     if (searchParams('path') === 'pve') {
       Imitation.state.battle = {

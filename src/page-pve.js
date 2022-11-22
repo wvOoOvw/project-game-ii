@@ -10,7 +10,7 @@ import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
 import { Navigation } from './ui-navigation'
-import { CardEmpty, CardInPve } from './ui-source'
+import { CardEmpty, CardInPve,CardInPveMessage } from './ui-source'
 
 const numberAnimation = (number, time, callback) => {
   const list = new Array(time).fill(number / time)
@@ -21,180 +21,6 @@ const numberAnimation = (number, time, callback) => {
     })
   }
   event()
-}
-
-class CardMessage {
-  constructor() {
-    this.width = Math.min(Canvas.width * 0.7, (Canvas.height) * 0.5)
-    this.height = this.width * 1.35
-    this.x = (Canvas.width - this.width) / 2
-    this.y = ((Canvas.height) - this.height) / 2
-
-    this.card
-
-    this.nova = false
-    this.novaTime = 0
-    this.novaOverTime = 0
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  play(card) {
-    this.card = card
-    this.nova = true
-  }
-
-  drawTitle() {
-    const { x, y, width, height } = this.option
-
-    const width_ = width * 0.5
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.05
-    const radius_ = height_ / 2
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    Canvas.ctx.fillText('CARD 卡牌', x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawName() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.5
-    const height_ = width * 0.12
-    const x_ = x + width - width_ - width * 0.05
-    const y_ = y + height - height_ - width * 0.05
-    const radius_ = height_ / 2
-
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawRace() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.22
-    const radius_ = 4
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    Canvas.ctx.fillText(card.race, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawType() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.12
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.39
-    const radius_ = 4
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    Canvas.ctx.fillText(card.type, x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawDescription() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.9
-    const height_ = width * 0.57
-    const x_ = x + width * 0.05
-    const y_ = y + width * 0.56
-    const radius_ = 4
-
-    drawRectAngle({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'start'
-    Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${width * 0.045}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.075, text: card.description(card.level) })
-  }
-
-  render() {
-    if (this.nova && this.novaTime < 1) {
-      this.novaTime = numberFix(this.novaTime + 0.05)
-    }
-    if (this.novaTime === 1) {
-      this.novaOverTime = this.novaOverTime + 1
-      this.nova = false
-    }
-    if (!this.nova && this.novaTime > 0 && this.novaOverTime === 40) {
-      this.novaTime = numberFix(this.novaTime - 0.05)
-    }
-    if (this.novaTime === 0) {
-      this.novaOverTime = 0
-      return
-    }
-
-    const card = this.card
-    const { x, y, width, height } = this.option
-
-    Canvas.ctx.save()
-
-    Canvas.ctx.globalAlpha = this.novaTime
-
-    drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-    Canvas.ctx.fill()
-
-    drawRectAngle({ x, y, width, height, radius: 16 })
-    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    Canvas.ctx.fill()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-    this.drawTitle()
-    this.drawName()
-    this.drawRace()
-    this.drawType()
-    this.drawDescription()
-
-    Canvas.ctx.restore()
-  }
 }
 
 class RoleMessage {
@@ -224,7 +50,7 @@ class RoleMessage {
 
       const width = Canvas.ctx.measureText(text).width + 48
 
-      drawRectAngle({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.2 })
+      drawRectRadius({ x: i.x - width / 2 + offsetX, y: i.y - fontSize + offsetY, width: width, height: fontSize * 2, radius: fontSize * 0.2 })
       Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
       Canvas.ctx.fill()
 
@@ -473,7 +299,7 @@ class Page {
     this.InstanceRoleSelf
     this.InstanceRoleOpposite
     this.InstanceRoleMessage = new RoleMessage()
-    this.InstanceCardMessage = new CardMessage()
+    this.InstanceCardInPveMessage = new CardInPveMessage()
 
     this.instanceNavigation()
     this.instanceRoleSelf()
@@ -570,7 +396,7 @@ class Page {
     self.information.card.hand = self.information.card.hand.filter(i => i !== card)
     self.information.master._ACTION = self.information.master._ACTION - 1
 
-    this.InstanceCardMessage.play(card)
+    this.InstanceCardInPveMessage.play(card)
     if (Imitation.state.soundSource) Sound.play(card.soundAction)
 
     await wait(120)
@@ -783,7 +609,7 @@ class Page {
     this.InstanceNavigation.render()
     this.InstanceRoleOpposite.render()
     this.InstanceRoleSelf.render()
-    this.InstanceCardMessage.render()
+    this.InstanceCardInPveMessage.render()
     this.InstanceRoleMessage.render()
 
     this.battlerOver()
