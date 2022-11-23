@@ -32,6 +32,7 @@ const _drawListBackground = (option) => {
   const { x, y, width, height } = option
 
   drawRectRadius({ x, y, width, height, radius: 8 })
+
   Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
   Canvas.ctx.fill()
 }
@@ -171,23 +172,12 @@ const _drawPreviewContent = (option, singleText, multilineText, skill, extra) =>
   }
 }
 
-class CardEmpty {
+class CardEmpty extends UI {
   constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-
+    super(props)
     this.card = props.card
 
     this.novaTime = 0
-  }
-
-  get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
   render() {
@@ -208,12 +198,10 @@ class CardEmpty {
   }
 }
 
-class CardInPveMessage {
-  constructor() {
-    this.width = Math.min(Canvas.width * 0.7, (Canvas.height) * 0.5)
-    this.height = this.width * 1.35
-    this.x = (Canvas.width - this.width) / 2
-    this.y = ((Canvas.height) - this.height) / 2
+
+class CardInPveMessage extends UI {
+  constructor(props) {
+    super(props)
 
     this.card
 
@@ -222,38 +210,9 @@ class CardInPveMessage {
     this.novaOverTime = 0
   }
 
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
   play(card) {
     this.card = card
     this.nova = true
-  }
-
-  drawName() {
-    const { x, y, width, height } = this.option
-    const card = this.card
-
-    const width_ = width * 0.7
-    const height_ = width * 0.12
-    const x_ = x + width * 0.15
-    const y_ = y + height - width * 0.1 - height_
-    const radius_ = height_ / 2
-
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
-    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
   }
 
   render() {
@@ -272,38 +231,23 @@ class CardInPveMessage {
       return
     }
 
-    const card = this.card
-    const { x, y, width, height } = this.option
-
     Canvas.ctx.save()
 
     Canvas.ctx.globalAlpha = this.novaTime
 
     drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
     Canvas.ctx.fill()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
-    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    Canvas.ctx.fill()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-    this.drawName()
+    drawImageFullHeight(this.card.imageDOM, { x: 0, y: (Canvas.height - Canvas.width) / 2, width: Canvas.width, height: Canvas.width })
 
     Canvas.ctx.restore()
   }
 }
 
-class CardInPve {
+class CardInPve extends UI {
   constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
-
-    this.offsetX = 0
-    this.offsetY = 0
+    super(props)
 
     this.card = props.card
 
@@ -319,10 +263,6 @@ class CardInPve {
 
   get ifTouchEnd() {
     return this.offsetY < 0 - this.height / 2
-  }
-
-  get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
   get color() {
@@ -363,54 +303,6 @@ class CardInPve {
     this.offsetY = this.offsetY + changeY
   }
 
-  drawName() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.7
-    const height_ = width * 0.12
-    const x_ = x + width * 0.15
-    const y_ = y + height - width * 0.1 - height_
-    const radius_ = height_ / 2
-
-    const text = [card.name, levelText(card.level)]
-
-    if (card.number) text.push('x' + card.number)
-
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = color[0]
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = color[1]
-    Canvas.ctx.fillText(text.join(' '), x_ + width_ / 2, y_ + height_ / 2)
-  }
-
-  drawDescription() {
-    const { x, y, width, height } = this.option
-    const color = this.color
-    const card = this.card
-
-    const width_ = width * 0.85
-    const height_ = width * 0.5
-    const x_ = x + (width - width_) / 2
-    const y_ = y + height - width * 0.3 - height_
-    const radius_ = 4
-
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = color[0]
-    Canvas.ctx.fill()
-
-    Canvas.ctx.textAlign = 'start'
-    Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = color[1]
-    drawMultilineText({ x: x_ + width * 0.05, y: y_ + width * 0.05, width: width_ - width * 0.1, wrapSpace: width * 0.06, text: card.description(card.level) })
-  }
-
   render() {
     if (this.novaTime < 1) this.novaTime = numberFix(this.novaTime + 0.05)
 
@@ -439,21 +331,12 @@ class CardInPve {
 
     Canvas.ctx.globalAlpha = this.novaTime
 
-    drawRectRadius({ x, y, width, height, radius: 4 })
+    drawRectRadius({ x, y, width, height, radius: 8 })
 
-    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillStyle = this.color[0]
     Canvas.ctx.fill()
 
-    Canvas.ctx.clip()
-
-    drawImage(card.imageDOM, { x: x, y: y, width: width, height: height })
-
-    if (this.mouseDownPositionTime !== 0) {
-      Canvas.ctx.globalAlpha = this.mouseDownPositionTime
-
-      this.drawName()
-      this.drawDescription()
-    }
+    drawImageFullHeight(this.card.imageDOM, this.option)
 
     Canvas.ctx.restore()
 
@@ -769,8 +652,8 @@ class MasterInPreview extends UI {
       ['名称: ', this.master.name].join(' '),
       ['等级: ', levelText(this.master.level)].join(' '),
       ['经验: ', `${this.master.exp} / ${Math.pow(2, this.master.level - 1) * 100}`].join(' '),
-      ['HP', this.master.HP].join(' '),
-      ['ATTACT', this.master.ATTACT].join(' '),
+      ['HP: ', this.master.HP].join(' '),
+      ['ATTACT: ', this.master.ATTACT].join(' '),
     ]
 
     const multilineText = this.master.skill[this.skillIndex].description(this.master.level)

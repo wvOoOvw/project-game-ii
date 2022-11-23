@@ -21,7 +21,6 @@ import I_w86ab2d3c from '../static/image/w.86ab2d3c.png'
 import I_xif1b31093 from '../static/image/xi.f1b31093.png'
 import I_yanwei29b3239c from '../static/image/yanwei.29b3239c.png'
 import I_yifulite8bc864d4 from '../static/image/yifulite.8bc864d4.png'
-import I_yinhui3c5f7f39 from '../static/image/yinhui.3c5f7f39.png'
 
 class Picture {
   constructor() {
@@ -57,7 +56,7 @@ class Picture {
       'card-5': I_shier4eb733a9,
       'card-6': I_tuijin5a8f324f,
       'card-7': I_yanwei29b3239c,
-      'card-8': I_yinhui3c5f7f39,
+      'card-8': I_yifulite8bc864d4,
       'card-9': I_huanga3fc17ce,
       'card-10': I_aiyafala37be7922,
       'card-11': I_hei6cc6018a,
