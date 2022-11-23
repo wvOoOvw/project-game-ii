@@ -233,7 +233,7 @@ class CardInPve {
     const card = this.card
 
     const width_ = width * 0.85
-    const height_ = width * 0.9
+    const height_ = width * 0.5
     const x_ = x + (width - width_) / 2
     const y_ = y + height - width * 0.3 - height_
     const radius_ = 4
