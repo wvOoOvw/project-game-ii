@@ -157,13 +157,6 @@ class Page {
     this.InstanceMasterList = this.master.map((master, index) => {
       const option = {}
       option.width = Canvas.width - 24
-      option.master = master
-      option.touchAble = true
-      option.touchArea = this.InstanceScroll.option
-      option.touchEvent = () => {
-        this.preview = master
-        if (Imitation.state.soundSource) Sound.play(master.soundMain)
-      }
       option.height = (Canvas.width - 60) / 4 * 1.35
       option.x = 12
       if (this.type === 'master') {
@@ -171,6 +164,13 @@ class Page {
       }
       if (this.type === 'card') {
         option.y = 12 + index * (option.height + 12)
+      }
+      option.master = master
+      option.touchAble = true
+      option.touchArea = this.InstanceScroll.option
+      option.touchEvent = () => {
+        this.preview = master
+        if (Imitation.state.soundSource) Sound.play(master.soundMain)
       }
 
       return new MasterInList(option)

@@ -9,6 +9,8 @@ import { Message } from './instance-message'
 import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
+import { Scroll } from './ui-scroll'
+
 class Navigation {
   constructor(props) {
     this.content = props.content

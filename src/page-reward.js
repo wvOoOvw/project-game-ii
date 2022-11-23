@@ -249,8 +249,8 @@ class Page {
           library.card.push({ key: i.key, level: 1, exp: i.exp })
         }
         const findInLibrary_ = library.card.find(i_ => i_.key === i.key)
-        while (findInLibrary_.exp >= 100 * Math.pow(2, findInLibrary_.level - 1)) {
-          findInLibrary_.exp = findInLibrary_.exp - 100 * Math.pow(2, findInLibrary_.level - 1)
+        while (findInLibrary_.exp >= Math.pow(2, findInLibrary_.level - 1) * 100) {
+          findInLibrary_.exp = findInLibrary_.exp - Math.pow(2, findInLibrary_.level - 1) * 100
           findInLibrary_.level = findInLibrary_.level + 1
         }
       }
@@ -263,8 +263,8 @@ class Page {
           library.master.push({ key: i.key, level: 1, exp: i.exp })
         }
         const findInLibrary_ = library.card.find(i_ => i_.key === i.key)
-        while (findInLibrary_.exp >= 100 * Math.pow(2, findInLibrary_.level - 1)) {
-          findInLibrary_.exp = findInLibrary_.exp - 100 * Math.pow(2, findInLibrary_.level - 1)
+        while (findInLibrary_.exp >= Math.pow(2, findInLibrary_.level - 1) * 100) {
+          findInLibrary_.exp = findInLibrary_.exp - Math.pow(2, findInLibrary_.level - 1) * 100
           findInLibrary_.level = findInLibrary_.level + 1
         }
       }
