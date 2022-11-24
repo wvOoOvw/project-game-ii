@@ -9,7 +9,12 @@ class Event {
     const event = (e, type) => {
       const exe = this.event
         .filter(i => i.type === type)
-        .sort((a, b) => b.priority - a.priority)
+        .sort((a, b) => {
+          const a_ = a.option === undefined || a.option.priority === undefined ? 0 : a.option.priority
+          const b_ = b.option === undefined || b.option.priority === undefined ? 0 : b.option.priority
+
+          return b_ - a_
+        })
 
       var stop = false
 
