@@ -10,16 +10,16 @@ import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
 class Scroll {
-  constructor(props) {
-    this.x = props.x
-    this.y = props.y
-    this.width = props.width
-    this.height = props.height
+  constructor() {
+    this.x = 0
+    this.y = 0
+    this.width = 0
+    this.height = 0
 
-    this.contentWidth = props.contentWidth
-    this.contentHeight = props.contentHeight
+    this.contentWidth = null
+    this.contentHeight = null
 
-    this.scrollPosition = props.scrollPosition || [0, 0]
+    this.scrollPosition = [0, 0]
 
     this.mouseDownPosition = null
   }
@@ -58,10 +58,10 @@ class Scroll {
       const time = 16
 
       if (this.scrollPosition[0] < 0) {
-        this.scrollPosition[0] = this.scrollPosition[0] / time < - 1 / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
+        this.scrollPosition[0] = this.scrollPosition[0] / time < -1 / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
       }
       if (this.scrollPosition[1] < 0) {
-        this.scrollPosition[1] = this.scrollPosition[1] / time < - 1 / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
+        this.scrollPosition[1] = this.scrollPosition[1] / time < -1 / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
       }
       if (this.scrollPosition[0] > 0) {
         if (this.contentWidth - this.width < 0 || this.contentWidth - this.width === 0) {

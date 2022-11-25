@@ -9,45 +9,35 @@ import { Message } from './instance-message'
 import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
-class UI {
-  constructor(props = {}) {
-    this.x = props.x || 0
-    this.y = props.y || 0
-    this.width = props.width || 0
-    this.height = props.height || 0
+const FadeCreator = (props) => {
+  return class Fade {
+    constructor() {
+      this.time = 0
+      this.component = new props()
+    }
 
-    this.offsetX = props.offsetX || 0
-    this.offsetY = props.offsetY || 0
-  }
+    render() {
+      if (this.time < 1) this.time = numberFix(this.time + 0.05)
 
-  get option() {
-    return { x: this.x + this.offsetX, y: this.y + this.offsetY, width: this.width, height: this.height }
+      this.component.render()
+
+      if (this.time < 1) {
+        Canvas.ctx.save()
+
+        Canvas.ctx.globalAlpha = 1 - this.time
+
+        drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+        Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+        Canvas.ctx.fill()
+
+        Canvas.ctx.restore()
+
+        Event.addEventListener('touchstart', undefined, { stop: true, priority: 1000 })
+        Event.addEventListener('touchmove', undefined, { stop: true, priority: 1000 })
+        Event.addEventListener('touchend', undefined, { stop: true, priority: 1000 })
+      }
+    }
   }
 }
 
-class Click {
-  constructor(props) {
-    this.touchEvent = props.touchEvent
-    this.touchArea = props.touchArea
-    this.touchTimeout
-  }
-
-  eventDown(e) {
-    if (!this.touchArea || ifTouchCover(e, this.touchArea)) this.touchTimeout = true
-  }
-  eventUp(e) {
-    if (this.touchTimeout === true) this.touchEvent()
-    this.touchTimeout = false
-  }
-  eventMove(e) {
-    this.touchTimeout = false
-  }
-
-  addEventListener(option) {
-    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: option })
-    Event.addEventListener('touchmove', this.eventMove.bind(this))
-    Event.addEventListener('touchend', this.eventUp.bind(this))
-  }
-}
-
-export { UI, Click }
+export { FadeCreator }

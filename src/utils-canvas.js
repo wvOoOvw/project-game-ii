@@ -135,4 +135,10 @@ const drawMultilineText = (option) => {
   })
 }
 
-export { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText }
+const drawFullColor = (color) => {
+  drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+  Canvas.ctx.fillStyle = color
+  Canvas.ctx.fill()
+}
+
+export { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText, drawFullColor }

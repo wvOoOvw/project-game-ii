@@ -4,14 +4,9 @@ import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, a
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 import { originMoney, originMaster, originCard, originExplore, originShop, sourceIoad } from './source'
 
-import PageTransition from './page-transition'
-import PageLoading from './page-loading'
 import PageHome from './page-home'
-import PageExplore from './page-explore'
 import PagePve from './page-pve'
 import PageStore from './page-store'
-import PageShop from './page-shop'
-import PageReward from './page-reward'
 
 import { Animation } from './instance-animation'
 import { Canvas } from './instance-canvas'
@@ -35,6 +30,8 @@ class Main {
     Canvas.ctx.clearRect(0, 0, Canvas.width, Canvas.height)
 
     Event.clearEventListener()
+
+    if (Imitation.state.page !== 'home' && Imitation.state.loading) return
 
     const pageClass = Imitation.state.page.map[Imitation.state.page.current]
 
@@ -80,17 +77,11 @@ class Main {
   async init() {
     Imitation.state = {
       page: {
-        current: '',
-        next: '',
+        current: searchParams('path') ? searchParams('path') : 'home',
         map: {
-          'transition': PageTransition,
-          'loading': PageLoading,
           'home': PageHome,
-          'explore': PageExplore,
           'pve': PagePve,
           'store': PageStore,
-          'shop': PageShop,
-          'reward': PageReward,
         },
       },
       function: {
@@ -98,7 +89,7 @@ class Main {
           localStorage.setItem('info', JSON.stringify(Imitation.state.info))
         },
         getInfo: async () => {
-          localStorage.removeItem('info')
+          // localStorage.removeItem('info')
           const info = localStorage.getItem('info')
           if (info) {
             Imitation.state.info = JSON.parse(info)
@@ -143,18 +134,13 @@ class Main {
       },
 
       info: null,
-      battle: null,
-      explore: originExplore,
-      shop: originShop,
-      reward: null,
+      loading: true,
 
       soundBackground: false,
       soundSource: false
     }
 
     Imitation.state.function.getInfo()
-
-    Imitation.state.page.current = 'loading'
 
     await Promise.all([
       Sound.load(),
@@ -164,38 +150,7 @@ class Main {
 
     sourceIoad()
 
-    // await wait(60)
-
-    Imitation.state.page.current = 'transition'
-    Imitation.state.page.next = searchParams('path') ? searchParams('path') : 'home'
-    Imitation.state.page.current = Imitation.state.page.next
-
-    if (searchParams('path') === 'pve') {
-      Imitation.state.battle = {
-        self: {
-          master: {
-            ...parseMaster([Imitation.state.info.library.master.find(i => i.key === Imitation.state.info.team[Imitation.state.info.teamIndex].master.key)])[0],
-            buff: []
-          },
-          card: {
-            team: parseCard(Imitation.state.info.team[Imitation.state.info.teamIndex].card.map(i => ({ ...i, ...Imitation.state.info.library.card.find(i_ => i_.key === i.key) }))),
-            hand: [],
-          },
-        },
-        opposite: {
-          master: {
-            ...parseMaster([originExplore[0].boss.master])[0],
-            buff: []
-          },
-          card: {
-            team: parseCard(originExplore[0].boss.card),
-            hand: [],
-          },
-          AI: originExplore[0].AI
-        },
-        reward: originExplore[0].reward
-      }
-    }
+    Imitation.state.loading = false
   }
 }
 

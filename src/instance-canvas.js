@@ -32,6 +32,8 @@ class Canvas {
   flex() {
     const safeArea = this.safeArea
 
+    this.canvas_.setAttribute('oncontextmenu', 'return false')
+
     this.canvas_.style.display = 'block'
     this.canvas_.style.touchAction = 'none'
     this.canvas_.style.position = 'absolute'
