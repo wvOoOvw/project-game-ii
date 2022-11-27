@@ -1,4 +1,4 @@
-import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { parseCard, parseMaster, parseMoney, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
 import { Animation } from './instance-animation'
@@ -11,10 +11,10 @@ import { Sound } from './instance-sound'
 
 class Scroll {
   constructor() {
-    this.x = 0
-    this.y = 0
-    this.width = 0
-    this.height = 0
+    this.x
+    this.y
+    this.width
+    this.height
 
     this.contentWidth = null
     this.contentHeight = null
@@ -26,6 +26,10 @@ class Scroll {
 
   get option() {
     return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  get minDiff() {
+    return 0.2
   }
 
   eventDown(e) {
@@ -53,30 +57,29 @@ class Scroll {
   }
 
   render(callback) {
-
     if (!this.mouseDownPosition) {
       const time = 16
 
       if (this.scrollPosition[0] < 0) {
-        this.scrollPosition[0] = this.scrollPosition[0] / time < -1 / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
+        this.scrollPosition[0] = this.scrollPosition[0] / time < -this.minDiff / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
       }
       if (this.scrollPosition[1] < 0) {
-        this.scrollPosition[1] = this.scrollPosition[1] / time < -1 / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
+        this.scrollPosition[1] = this.scrollPosition[1] / time < -this.minDiff / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
       }
       if (this.scrollPosition[0] > 0) {
         if (this.contentWidth - this.width < 0 || this.contentWidth - this.width === 0) {
-          this.scrollPosition[0] = this.scrollPosition[0] / time > 1 / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
+          this.scrollPosition[0] = this.scrollPosition[0] / time > this.minDiff / time ? this.scrollPosition[0] - this.scrollPosition[0] / time : 0
         }
         if (this.contentWidth - this.width > 0 && this.scrollPosition[0] > this.contentWidth - this.width) {
-          this.scrollPosition[0] = (this.scrollPosition[0] - (this.contentWidth - this.width)) / time > 1 / time ? this.scrollPosition[0] - (this.scrollPosition[0] - (this.contentWidth - this.width)) / time : this.contentWidth - this.width
+          this.scrollPosition[0] = (this.scrollPosition[0] - (this.contentWidth - this.width)) / time > this.minDiff / time ? this.scrollPosition[0] - (this.scrollPosition[0] - (this.contentWidth - this.width)) / time : this.contentWidth - this.width
         }
       }
       if (this.scrollPosition[1] > 0) {
         if (this.contentHeight - this.height < 0 || this.contentHeight - this.height === 0) {
-          this.scrollPosition[1] = this.scrollPosition[1] / time > 1 / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
+          this.scrollPosition[1] = this.scrollPosition[1] / time > this.minDiff / time ? this.scrollPosition[1] - this.scrollPosition[1] / time : 0
         }
         if (this.contentHeight - this.height > 0 && this.scrollPosition[1] > this.contentHeight - this.height) {
-          this.scrollPosition[1] = (this.scrollPosition[1] - (this.contentHeight - this.height)) / time > 1 / time ? this.scrollPosition[1] - (this.scrollPosition[1] - (this.contentHeight - this.height)) / time : this.contentHeight - this.height
+          this.scrollPosition[1] = (this.scrollPosition[1] - (this.contentHeight - this.height)) / time > this.minDiff / time ? this.scrollPosition[1] - (this.scrollPosition[1] - (this.contentHeight - this.height)) / time : this.contentHeight - this.height
         }
       }
     }

@@ -1,4 +1,4 @@
-import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { parseCard, parseMaster, parseMoney, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText, drawFullColor } from './utils-canvas'
 import { FadeCreator } from './utils-ui'
 
@@ -14,8 +14,8 @@ import { Sound } from './instance-sound'
 
 class Page {
   constructor() {
-    this.width = Canvas.width * 0.75
-    this.height = Canvas.width * 0.75
+    this.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
+    this.height = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.x = (Canvas.width - this.width) * 0.5
     this.y = (Canvas.height - this.height) * 0.5
 
@@ -39,6 +39,10 @@ class Page {
 
   get option() {
     return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  get minDiff() {
+    return 0.2
   }
 
   get maxRotateNumber() {
@@ -115,10 +119,10 @@ class Page {
         const time = 16
 
         if (this.rotateNumber < 0) {
-          this.rotateNumber = this.rotateNumber / time < -1 / time ? this.rotateNumber - this.rotateNumber / time : 0
+          this.rotateNumber = this.rotateNumber / time < -this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
         }
         if (this.rotateNumber > 0) {
-          this.rotateNumber = this.rotateNumber / time > 1 / time ? this.rotateNumber - this.rotateNumber / time : 0
+          this.rotateNumber = this.rotateNumber / time > this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
         }
       }
 
@@ -172,7 +176,7 @@ class Page {
 
     Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1)
 
-    drawImageFullHeight(Picture.get('card-1'), this.option)
+    drawImageFullHeight(Picture.get('home'), this.option)
 
     Canvas.ctx.restore()
   }

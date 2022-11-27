@@ -1,4 +1,4 @@
-import { parseWitch, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { parseCard, parseMaster, parseMoney, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText, drawFullColor } from './utils-canvas'
 import { FadeCreator } from './utils-ui'
 
@@ -12,8 +12,6 @@ import { Sound } from './instance-sound'
 
 import { Navigation } from './ui-navigation'
 
-import { originWitch, originMonster, sourceIoad } from './source'
-
 class Witch {
   constructor() {
     this.x
@@ -21,15 +19,13 @@ class Witch {
     this.width
     this.height
 
-    this.witch
-    this.left
-    this.right
+    this.witch = Imitation.state.cache
+
+    this.ifInTeam = Imitation.state.info.team.find(i => i.key === Imitation.state.cache.key) ? true : false
 
     this.mouseDownPosition = null
 
     this.rotateNumber = 0
-
-    this.touchEnd = new Function()
   }
 
   get option() {
@@ -52,8 +48,7 @@ class Witch {
   }
 
   eventUp(e) {
-    if (this.rotateNumber === this.maxRotateNumber) this.touchEnd(this.witch.skill[0], this.left)
-    if (this.rotateNumber === -this.maxRotateNumber) this.touchEnd(this.witch.skill[1], this.right)
+    if (Math.abs(this.rotateNumber) === this.maxRotateNumber) this.use()
 
     this.mouseDownPosition = null
   }
@@ -71,6 +66,25 @@ class Witch {
 
     if (result > this.maxRotateNumber) this.rotateNumber = this.maxRotateNumber
     if (result < -this.maxRotateNumber) this.rotateNumber = -this.maxRotateNumber
+  }
+
+  use() {
+    if (this.ifInTeam) {
+      Imitation.state.info.team = Imitation.state.info.team.filter(i => i.key !== Imitation.state.cache.key)
+      Imitation.state.page.current = 'store'
+      Message.play('卸载成功')
+      return
+    }
+    if (!this.ifInTeam) {
+      if (Imitation.state.info.team.length === 4) {
+        Message.play('装载失败 超过最大数量')
+        return
+      }
+      Imitation.state.info.team.push({ key: Imitation.state.cache.key })
+      Imitation.state.page.current = 'store'
+      Message.play('装载成功')
+      return
+    }
   }
 
   render() {
@@ -119,7 +133,7 @@ class Witch {
 
         drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText('使用', this.x + this.width * 0.07, this.y + this.height - this.width * 0.08)
+        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width * 0.07, this.y + this.height - this.width * 0.08)
       }
       if (this.rotateNumber < 0) {
         Canvas.ctx.textAlign = 'end'
@@ -131,7 +145,7 @@ class Witch {
 
         drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText('使用', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.08)
+        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.08)
       }
 
       Canvas.ctx.textAlign = 'center'
@@ -153,19 +167,6 @@ class Witch {
     Canvas.ctx.fill()
 
     Canvas.ctx.globalAlpha = Math.min((this.maxRotateNumber - Math.abs(this.rotateNumber)) / this.maxRotateNumber, 1)
-
-    // Canvas.ctx.textBaseline = 'middle'
-    // Canvas.ctx.font = `900 ${this.width * 0.05}px Courier`
-    // Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    // Canvas.ctx.textAlign = 'start'
-    // Canvas.ctx.fillText('向右侧滑动', this.x + this.width * 0.6, this.y + this.height * 0.5)
-    // Canvas.ctx.textAlign = 'end'
-    // Canvas.ctx.fillText('向左侧滑动', this.x + this.width * 0.4, this.y + this.height * 0.5)
-
-    // drawRectRadius({ x: this.x + this.width * 0.5 - 1, y: this.y + this.height * 0.1, width: 2, height: this.height * 0.8, radius: 1 })
-    // Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    // Canvas.ctx.fill()
 
     Canvas.ctx.textAlign = 'start'
     Canvas.ctx.textBaseline = 'top'
@@ -193,7 +194,7 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText('修女伊莲娜', this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
 
-    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
+    drawImageFullHeight(Picture.get('test-3'), { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
 
     if (current) {
       Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1)
@@ -209,100 +210,24 @@ class Witch {
   }
 }
 
-class Monster {
-  constructor() {
-    this.x
-    this.y
-    this.width
-    this.height
-
-    this.monster
-    this.skill
-
-    this.mouseDownPosition = null
-
-    this.rotateNumber = 0
-
-    this.touchEnd = new Function()
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  render() {
-    drawRectRadius({ ...this.option, radius: 8 })
-
-    Canvas.ctx.fillStyle = 'rgba(90, 0, 40, 1)'
-    Canvas.ctx.fill()
-
-    drawImageFullHeight(this.monster.imageDOM, { ...this.option, y: this.y + this.width * 0.1, height: this.height - this.width * 0.1 })
-
-    Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-
-    Canvas.ctx.textAlign = 'start'
-    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
-    Canvas.ctx.fill()
-    Canvas.ctx.fillText(`污秽:${this.monster.dirty}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
-
-    Canvas.ctx.textAlign = 'end'
-    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
-    Canvas.ctx.fill()
-    Canvas.ctx.fillText(this.monster.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
-
-    Canvas.ctx.textAlign = 'center'
-
-    drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.skill.description })
-  }
-}
-
 class Page {
   constructor() {
-    this.team = parseWitch(Imitation.state.info.team)
-
     this.InstanceNavigation = new Navigation()
-    this.InstanceNavigation.content = [{ name: '战斗', active: true }, { name: '仓库', event: () => Imitation.state.page.current = 'store' }]
+    this.InstanceNavigation.content = [
+      { name: '战斗', event: () => Imitation.state.page.current = 'pve' },
+      { name: '仓库', event: () => Imitation.state.page.current = 'store' },
+    ]
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.height = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.x = (Canvas.width - this.InstanceWitch.width) * 0.5
     this.InstanceWitch.y = (Canvas.height - this.InstanceNavigation.height) / 2
-
-    this.InstanceMonster = new Monster()
-    this.InstanceMonster.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
-    this.InstanceMonster.height = Math.min(Canvas.width * 0.5, Canvas.maxWidth * 0.5)
-    this.InstanceMonster.x = (Canvas.width - this.InstanceWitch.width) * 0.5
-    this.InstanceMonster.y = (Canvas.height - this.InstanceNavigation.height) / 2 - this.InstanceMonster.height * 1.5
-    this.InstanceMonster.monster = arrayRandom(originMonster, 1)[0]
-
-    this.round()
-  }
-
-  round(next) {
-    this.InstanceWitch.witch = next ? next : arrayRandom(this.team, 1)[0]
-    this.InstanceWitch.left = arrayRandom(this.team, 1)[0]
-    this.InstanceWitch.right = arrayRandom(this.team, 1)[0]
-
-    this.InstanceMonster.skill = arrayRandom(this.InstanceMonster.monster.skill, 1)[0]
-
-    this.InstanceWitch.touchEnd = (skill, next) => {
-      this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
-
-      this.round(next)
-    }
-  }
-
-  compute(witch, monster, witchSkill, monsterSkill) {
-
   }
 
   render() {
-    this.InstanceNavigation.render()
-    this.InstanceMonster.render()
     this.InstanceWitch.render()
+    this.InstanceNavigation.render()
   }
 }
 

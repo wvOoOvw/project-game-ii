@@ -54,53 +54,20 @@ class Sound {
 
   load() {
     return Promise.all(Object.entries(this.map).map(i => {
-      return Promise.race([
-        new Promise(r => {
-          const audio = new Audio()
-          audio.onloadeddata = r
-          audio.src = this.map[i[0]]
-          audio.load()
-        }),
-        new Promise(r => {
-          setTimeout(() => r(), 1000)
-        })
-      ])
+      return new Promise(r => {
+        const audio = new Audio()
+        audio.onloadeddata = r
+        audio.src = this.map[i[0]]
+        this.map[i[0]] = audio
+        audio.load()
+      })
     }))
   }
 
-  play(key, option) {
+  get(key) {
     if (!this.map[key]) console.error(key)
-
-    this.queqe.push({ key: key, option, Audio: new Audio(this.map[key]) })
-  }
-
-  stop(key) {
-    this.queqe.forEach(i => {
-      if (i.key === key) i.stop = true
-    })
-  }
-
-  clear() {
-    this.queqe = []
-  }
-
-  find(key) {
-    return this.queqe.filter(i => i.key === key)
-  }
-
-  render() {
-    this.queqe.forEach((i, index) => {
-
-      Object.assign(i.Audio, i.option)
-
-      i.Audio.onplay = () => i.play = true
-      i.Audio.onpause = () => this.queqe = this.queqe.filter(i_ => i_ !== i)
-
-      try {
-        if (i.stop) i.Audio.pause()
-        if (!i.play) i.Audio.play()
-      } catch { }
-    })
+    
+    return this.map[key]
   }
 }
 

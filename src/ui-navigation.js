@@ -1,4 +1,4 @@
-import { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { parseCard, parseMaster, parseMoney, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 
 import { Animation } from './instance-animation'
@@ -14,11 +14,10 @@ class Navigation {
     this.content = []
 
     this.mouseDownPosition = null
-    this.rotateNumber = 0
   }
 
   get height() {
-    return 30
+    return 30 + 24
   }
 
   render() {
@@ -42,7 +41,7 @@ class Navigation {
 
       Canvas.ctx.textAlign = 'center'
       Canvas.ctx.textBaseline = 'middle'
-      Canvas.ctx.font = `900 ${height * 0.35}px Courier`
+      Canvas.ctx.font = `900 10px Courier`
       Canvas.ctx.fillStyle = i.active ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)'
       Canvas.ctx.fillText(i.name, x + width / 2, y + height / 2)
 

@@ -117,6 +117,7 @@ const drawMultilineText = (option) => {
   const width = option.width
   const wrapSpace = option.wrapSpace
   const text = option.text
+  const onlyread = option.onlyread
 
   var temp = ''
   var row = []
@@ -129,6 +130,8 @@ const drawMultilineText = (option) => {
     temp = temp + i
   })
   row.push(temp)
+
+  if (onlyread) return row.length
 
   row.forEach((i, index) => {
     Canvas.ctx.fillText(i, x, y + index * wrapSpace)

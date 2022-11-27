@@ -1,12 +1,12 @@
-import { originMoney, originMaster, originCard, originBoss, originExplore } from './source'
+import { originWitch, originMonster } from './source'
 
 import { Canvas } from './instance-canvas'
 
-const parseCard = (array) => {
+const parseWitch = (array) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
 
-    const origin = originCard.find(i_ => i.key === i_.key)
+    const origin = originWitch.find(i_ => i.key === i_.key)
 
     result_.push({ ...origin, ...i })
 
@@ -16,25 +16,11 @@ const parseCard = (array) => {
   return result
 }
 
-const parseMaster = (array) => {
+const parseMonster = (array) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
 
-    const origin = originMaster.find(i_ => i.key === i_.key)
-
-    result_.push({ ...origin, ...i, HP: origin.HP(i.level), ATTACT: origin.ATTACT(i.level), HP_: origin.HP(i.level), ATTACT_: origin.ATTACT(i.level) })
-
-    return result_
-  }, [])
-
-  return result
-}
-
-const parseMoney = (array) => {
-  const result = array.reduce((t, i) => {
-    const result_ = [...t]
-
-    const origin = originMoney.find(i_ => i.key === i_.key)
+    const origin = originMonster.find(i_ => i.key === i_.key)
 
     result_.push({ ...origin, ...i })
 
@@ -44,7 +30,7 @@ const parseMoney = (array) => {
   return result
 }
 
-const levelText = (level) => {
+const symbolNumber = (level) => {
   if (level === 1) return 'I'
   if (level === 2) return 'II'
   if (level === 3) return 'III'
@@ -96,6 +82,17 @@ const hash = (n = 12, l = 1) => {
 
 const numberFix = (n) => {
   return Number(Number(n).toFixed(4))
+}
+
+const numberAnimation = (number, time, callback) => {
+  const list = new Array(time).fill(number / time)
+  const event = () => {
+    requestAnimationFrame(() => {
+      callback(list.shift())
+      if (list[0]) event()
+    })
+  }
+  event()
 }
 
 const arrayRandom = (array, number) => {
@@ -155,4 +152,4 @@ const ifScreenCover = (a, b) => {
   return x + width > x_ && x < x_ + width_ && y + height > y_ && y < y_ + height_
 }
 
-export { parseCard, parseMaster, parseMoney, levelText, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover }
+export { parseWitch, parseMonster, symbolNumber, wait, hash, numberFix, numberAnimation, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover }

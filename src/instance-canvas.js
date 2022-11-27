@@ -80,10 +80,14 @@ class Canvas {
     return this.canvas_.clientHeight
   }
 
+  get maxWidth() {
+    return window.ontouchstart === undefined ? 375 : this.width
+  }
+
   get safeArea() {
     try { if (wx) return wx.getSystemInfoSync().safeArea } catch { }
 
-    const width = window.ontouchstart === undefined ? window.document.documentElement.clientHeight * 0.5 : window.document.documentElement.clientWidth
+    const width = window.document.documentElement.clientWidth
     const height = window.document.documentElement.clientHeight
 
     const top = 0

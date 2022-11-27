@@ -25,59 +25,56 @@ import I_yifulite8bc864d4 from '../static/image/yifulite.8bc864d4.png'
 class Picture {
   constructor() {
     this.map = {
-      'background-transition': I_background29e6b3be,
-      'background-home': I_backgroundblurd92af6bc,
-      'background-page': I_backgroundblurd92af6bc,
-      'background-loading': I_backgroundblurd92af6bc,
+      'home': I_niyan0a121257,
 
-      'money-1': I_w86ab2d3c,
-      'money-2': I_w86ab2d3c,
-      'money-3': I_w86ab2d3c,
+      'monster-1': I_saileiya1d6838fc,
 
-      'explore-1': I_nengtianshi3189957b,
-      'explore-2': I_nengtianshi3189957b,
+      'witch-1': I_chenb65023b5,
+      'witch-skill-1': [I_niyan0a121257, I_saileiya1d6838fc],
 
-      'shop-1': I_kongxiande9b3926,
-      'shop-2': I_kongxiande9b3926,
-      'shop-3': I_kongxiande9b3926,
-      'shop-4': I_kongxiande9b3926,
-      'shop-5': I_kongxiande9b3926,
+      'witch-2': I_cuoec908ed3c,
+      'witch-skill-2': [I_niyan0a121257, I_saileiya1d6838fc],
 
-      'master-1': I_chenb65023b5,
-      'master-2': I_cuoec908ed3c,
-      'master-3': I_fengdi72b31ee1,
-      'master-4': I_linguangacf5bd67,
-      'master-5': I_nianafb4fd28,
+      'witch-3': I_fengdi72b31ee1,
+      'witch-skill-3': [I_niyan0a121257, I_saileiya1d6838fc],
 
-      'card-1': I_niyan0a121257,
-      'card-2': I_saileiya1d6838fc,
-      'card-3': I_senran4ce470a9,
-      'card-4': I_shanec3e6c6d,
-      'card-5': I_shier4eb733a9,
-      'card-6': I_tuijin5a8f324f,
-      'card-7': I_yanwei29b3239c,
-      'card-8': I_yifulite8bc864d4,
-      'card-9': I_huanga3fc17ce,
-      'card-10': I_aiyafala37be7922,
-      'card-11': I_hei6cc6018a,
-      'card-12': I_heijiane5f9b0d1,
+      'witch-4': I_linguangacf5bd67,
+      'witch-skill-4': [I_niyan0a121257, I_saileiya1d6838fc],
+
+      'witch-5': I_nianafb4fd28,
+      'witch-skill-5': [I_niyan0a121257, I_saileiya1d6838fc],
+
+      'witch-6': I_nianafb4fd28,
+      'witch-skill-6': [I_niyan0a121257, I_saileiya1d6838fc],
     }
   }
 
   load() {
     return Promise.all(Object.entries(this.map).map(i => {
       return new Promise(r => {
-        const image = new Image()
-        image.onload = r
-        image.src = this.map[i[0]]
-        this.map[i[0]] = image
+        if (typeof this.map[i[0]] === 'string') {
+          const image = new Image()
+          image.onload = r
+          image.src = this.map[i[0]]
+          this.map[i[0]] = image
+          return
+        }
+        if (typeof this.map[i[0]] === 'object') {
+          Promise.all(this.map[i[0]].map((i_, index_) => new Promise(r_ => {
+            const image = new Image()
+            image.onload = r_
+            image.src = i_
+            this.map[i[0]][index_] = image
+          }))).then(r)
+          return
+        }
       })
     }))
   }
 
   get(key) {
     if (!this.map[key]) console.error(key)
-    
+
     return this.map[key]
   }
 }
