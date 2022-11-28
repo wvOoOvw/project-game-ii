@@ -194,7 +194,7 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText('修女伊莲娜', this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
 
-    drawImageFullHeight(Picture.get('test-3'), { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
+    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
 
     if (current) {
       Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1)

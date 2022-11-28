@@ -94,9 +94,11 @@ class ListItem {
     Canvas.ctx.textBaseline = 'middle'
     Canvas.ctx.font = `900 ${width * 0.04}px Courier`
 
-    drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-    Canvas.ctx.fillStyle = this.source.inTeam ? `rgba(0, 0, 0, 0.75)` : `rgba(255, 255, 255, 0.75)`
-    Canvas.ctx.fill()
+    if (this.source.inTeam) {
+      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
+      Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+      Canvas.ctx.fill()
+    }
 
     Canvas.ctx.restore()
 
