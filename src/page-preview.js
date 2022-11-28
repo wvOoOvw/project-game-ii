@@ -175,24 +175,25 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('清醒:1200', this.x + this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(`清醒:${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('理性:980', this.x + this.width * 0.07, this.y + this.width * 0.13)
+    Canvas.ctx.fillText(`理性:${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.13)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('感性:980', this.x + this.width * 0.07, this.y + this.width * 0.21)
+    Canvas.ctx.fillText(`感性:${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.21)
 
     Canvas.ctx.textAlign = 'end'
-    Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('修女伊莲娜', this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
+
+    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.13)
 
     drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
 

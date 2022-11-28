@@ -1,6 +1,4 @@
 import I_aiyafala37be7922 from '../static/image/aiyafala.37be7922.png'
-import I_backgroundblurd92af6bc from '../static/image/background-blur.d92af6bc.jpg'
-import I_background29e6b3be from '../static/image/background.29e6b3be.jpg'
 import I_chenb65023b5 from '../static/image/chen.b65023b5.png'
 import I_cuoec908ed3c from '../static/image/cuoe.c908ed3c.png'
 import I_fengdi72b31ee1 from '../static/image/fengdi.72b31ee1.png'
@@ -29,23 +27,29 @@ class Picture {
 
       'monster-1': I_saileiya1d6838fc,
 
-      'witch-1': I_chenb65023b5,
-      'witch-skill-1': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-1': I_aiyafala37be7922,
+      'witch-skill-1': [I_shanec3e6c6d, I_saileiya1d6838fc],
 
-      'witch-2': I_cuoec908ed3c,
-      'witch-skill-2': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-2': I_tuijin5a8f324f,
+      'witch-skill-2': [I_shanec3e6c6d, I_saileiya1d6838fc],
 
-      'witch-3': I_fengdi72b31ee1,
-      'witch-skill-3': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-3': I_cuoec908ed3c,
+      'witch-skill-3': [I_shanec3e6c6d, I_saileiya1d6838fc],
 
       'witch-4': I_linguangacf5bd67,
-      'witch-skill-4': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-skill-4': [I_shanec3e6c6d, I_saileiya1d6838fc],
 
-      'witch-5': I_nianafb4fd28,
-      'witch-skill-5': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-5': I_yifulite8bc864d4,
+      'witch-skill-5': [I_shanec3e6c6d, I_saileiya1d6838fc],
 
-      'witch-6': I_nianafb4fd28,
-      'witch-skill-6': [I_niyan0a121257, I_saileiya1d6838fc],
+      'witch-6': I_yanwei29b3239c,
+      'witch-skill-6': [I_shanec3e6c6d, I_saileiya1d6838fc],
+
+      'witch-7': I_xif1b31093,
+      'witch-skill-7': [I_shanec3e6c6d, I_saileiya1d6838fc],
+
+      'witch-8': I_w86ab2d3c,
+      'witch-skill-8': [I_shanec3e6c6d, I_saileiya1d6838fc],
     }
   }
 

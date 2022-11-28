@@ -12,15 +12,15 @@ var originMonster = [
   {
     key: 1,
     name: '被污染的野猪',
-    dirty: 1200,
     description: '在丛林中被污染的野猪，具备一定的攻击性。',
+    dirty: 1200,
     skill: [
       {
         name: '冲撞',
         type: '伤害',
         description: '蓄势待发，准备向你冲来！做好防御的准备！！！',
-        function: (result, self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: Math.floor(100 + Math.random() * 50) })
+        function: (self, opposite, oppositeAll) => {
+          return [{ effect: 'Damage', target: opposite, value: Math.floor(100 + Math.random() * 50) }]
         }
       }
     ]
@@ -30,162 +30,240 @@ var originMonster = [
 var originWitch = [
   {
     key: 1,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
-        type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]
   },
   {
     key: 2,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
-        type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]
   },
   {
     key: 3,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
-        type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]
   },
   {
     key: 4,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
-        type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]
   },
   {
     key: 5,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
-        type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]
   },
   {
     key: 6,
-    name: '修女',
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
     purity: 1200,
-    rational: 980,
+    rational: 1180,
     perceptual: 880,
     skill: [
       {
-        key: 1,
-        name: '净化',
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        key: 2,
-        name: '冲撞',
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    key: 7,
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
+    purity: 1200,
+    rational: 1180,
+    perceptual: 880,
+    skill: [
+      {
+        name: '斩击',
         type: '伤害',
-        description: '去除污秽！以理性值20%的数值净化目标',
-        function: (self, opposite) => {
-          result.push({ effect: 'Damage', target: 'opposite', value: self.rational * 0.2 })
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
+        }
+      },
+      {
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    key: 8,
+    name: '魔女伊迪丝',
+    type: '进攻',
+    description: '',
+    purity: 1200,
+    rational: 1180,
+    perceptual: 880,
+    skill: [
+      {
+        name: '斩击',
+        type: '伤害',
+        description: '以理性值20%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [{ effect: 'Damage', target: opposite, value: self.rational * 0.2 }]
+        }
+      },
+      {
+        name: '回旋斩',
+        type: '伤害 提升',
+        description: '提升自身理性值10%，并以理性值15%的数值攻击目标',
+        function: (self, opposite, selfAll) => {
+          return [
+            { effect: 'Improve', target: self, key: 'rational', value: self.rational * 0.1 },
+            { effect: 'Damage', target: opposite, value: self.rational * 0.15 }
+          ]
         }
       }
     ]

@@ -1,4 +1,4 @@
-import { parseWitch, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { parseWitch, symbolNumber, wait, hash, numberFix, numberAnimation, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText, drawFullColor } from './utils-canvas'
 import { FadeCreator } from './utils-ui'
 
@@ -120,6 +120,9 @@ class Witch {
         drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
         Canvas.ctx.fillText('使用', this.x + this.width * 0.07, this.y + this.height - this.width * 0.08)
+
+        Canvas.ctx.textAlign = 'center'
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.right.name })
       }
       if (this.rotateNumber < 0) {
         Canvas.ctx.textAlign = 'end'
@@ -132,11 +135,16 @@ class Witch {
         drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
         Canvas.ctx.fillText('使用', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.08)
+
+        Canvas.ctx.textAlign = 'center'
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.left.name })
       }
 
-      Canvas.ctx.textAlign = 'center'
-      const row = drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.12, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.06 * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1) - this.width * 0.06 * row, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description })
+      {
+        Canvas.ctx.textAlign = 'center'
+        const row = drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.12, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description, onlyread: true })
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.06 * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1) - this.width * 0.06 * row, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description })
+      }
     }
 
     Canvas.ctx.globalAlpha = 1
@@ -154,19 +162,6 @@ class Witch {
 
     Canvas.ctx.globalAlpha = Math.min((this.maxRotateNumber - Math.abs(this.rotateNumber)) / this.maxRotateNumber, 1)
 
-    // Canvas.ctx.textBaseline = 'middle'
-    // Canvas.ctx.font = `900 ${this.width * 0.05}px Courier`
-    // Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-
-    // Canvas.ctx.textAlign = 'start'
-    // Canvas.ctx.fillText('向右侧滑动', this.x + this.width * 0.6, this.y + this.height * 0.5)
-    // Canvas.ctx.textAlign = 'end'
-    // Canvas.ctx.fillText('向左侧滑动', this.x + this.width * 0.4, this.y + this.height * 0.5)
-
-    // drawRectRadius({ x: this.x + this.width * 0.5 - 1, y: this.y + this.height * 0.1, width: 2, height: this.height * 0.8, radius: 1 })
-    // Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
-    // Canvas.ctx.fill()
-
     Canvas.ctx.textAlign = 'start'
     Canvas.ctx.textBaseline = 'top'
     Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
@@ -174,24 +169,25 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('清醒:1200', this.x + this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(`清醒:${Math.ceil(this.witch.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('理性:980', this.x + this.width * 0.07, this.y + this.width * 0.13)
+    Canvas.ctx.fillText(`理性:${Math.ceil(this.witch.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.13)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('感性:980', this.x + this.width * 0.07, this.y + this.width * 0.21)
+    Canvas.ctx.fillText(`感性:${Math.ceil(this.witch.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.21)
 
     Canvas.ctx.textAlign = 'end'
-    Canvas.ctx.textBaseline = 'top'
-    Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText('修女伊莲娜', this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
+
+    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.13)
 
     drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
 
@@ -245,7 +241,7 @@ class Monster {
     Canvas.ctx.textAlign = 'start'
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`污秽:${this.monster.dirty}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(`污秽:${Math.ceil(this.monster.dirty)}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
 
     Canvas.ctx.textAlign = 'end'
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -291,12 +287,38 @@ class Page {
     this.InstanceWitch.touchEnd = (skill, next) => {
       this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
 
-      this.round(next)
+      // this.round(next)
     }
   }
 
-  compute(witch, monster, witchSkill, monsterSkill) {
+  async compute(witch, monster, witchSkill, monsterSkill) {
+    const witchResult = witchSkill.function(witch, monster, this.team)
 
+    while (witchResult.length) {
+      const current = witchResult.shift()
+
+      if (current.effect === 'Damage') {
+        numberAnimation(current.value, 32, i => current.target.dirty = current.target.dirty - i, current.target.dirty)
+        // Animation.play('red-hit', (img) => [this.InstanceMonster.x + this.InstanceMonster.width / 2 - img.width / 2, this.InstanceMonster.y + this.InstanceMonster.height / 2 - img.height / 2])
+      }
+      if (current.effect === 'Improve') {
+        numberAnimation(current.value, 32, i => current.target[current.key] = current.target[current.key] + i, current.target[current.key])
+      }
+
+      await wait(30)
+    }
+
+    const monsterResult = monsterSkill.function(monster, witch, this.team)
+
+    while (monsterResult.length) {
+      const current = monsterResult.shift()
+
+      if (current.effect === 'Damage') {
+        numberAnimation(current.value, 32, i => current.target.purity = current.target.purity - i, current.target.purity)
+      }
+
+      await wait(30)
+    }
   }
 
   render() {

@@ -15,9 +15,9 @@ class Message {
 
     this.opacity = 0
     this.width = Math.min(Canvas.width - 24, 200)
-    this.height = 32
     this.x = (Canvas.width - this.width) / 2
-    this.y = -32
+    this.height = 30
+    this.y = -30
   }
 
   play(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
@@ -47,7 +47,7 @@ class Message {
       this.y = numberFix(this.y + 2)
     }
 
-    if (!this.show && this.y > -32) {
+    if (!this.show && this.y > -30) {
       this.y = numberFix(this.y - 2)
     }
 

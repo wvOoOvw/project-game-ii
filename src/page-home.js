@@ -162,7 +162,7 @@ class Page {
     Canvas.ctx.font = `900 ${width * 0.05}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
-    Canvas.ctx.fillText('魔女的冒险', this.x + this.width * 0.5, this.y + this.height * 0.4)
+    Canvas.ctx.fillText('魔女的冒险 污秽篇', this.x + this.width * 0.5, this.y + this.height * 0.4)
     if (Imitation.state.loading) {
       Canvas.ctx.fillText('加载资源中', this.x + this.width * 0.5, this.y + this.height * 0.6)
     }

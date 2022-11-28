@@ -13,32 +13,6 @@ import { Sound } from './instance-sound'
 import { Scroll } from './ui-scroll'
 import { Navigation } from './ui-navigation'
 
-class ListItemEmpty {
-  constructor() {
-    this.x
-    this.y
-    this.width
-    this.height
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
-  }
-
-  render() {
-    const { x, y, width, height } = this.option
-
-    Canvas.ctx.save()
-
-    drawRectRadius({ x, y, width, height, radius: 8 })
-
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    Canvas.ctx.fill()
-
-    Canvas.ctx.restore()
-  }
-}
-
 class ListItem {
   constructor() {
     this.x
@@ -48,7 +22,7 @@ class ListItem {
 
     this.offsetY = 0
 
-    this.source
+    this.witch
 
     this.touchEvent = null
     this.touchArea = null
@@ -75,28 +49,18 @@ class ListItem {
 
     Canvas.ctx.save()
 
-    drawRectRadius({ x, y, width, height, radius: 8 })
+    drawRectRadius({ x, y, width, height, radius: 4 })
 
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
 
     Canvas.ctx.clip()
 
-    drawImage(this.source.imageDOM, { x: x, y: y, width: width, height: height })
+    drawImage(this.witch.imageDOM, this.option)
 
-    const width_ = height * 0.075
-    const height_ = height * 0.075
-    const x_ = x + height * 0.05
-    const y_ = y + height * 0.05
-    const radius_ = height_ / 2
-
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.04}px Courier`
-
-    if (this.source.inTeam) {
-      drawRectRadius({ x: x_, y: y_, width: width_, height: height_, radius: radius_ })
-      Canvas.ctx.fillStyle = `rgba(0, 0, 0, 0.75)`
+    if (this.witch.inTeam) {
+      drawRectRadius({ x: x + height * 0.05, y: y + height * 0.05, width: height * 0.075, height: height * 0.075, radius: height * 0.075 / 2 })
+      Canvas.ctx.fillStyle = `rgba(0, 0, 0, 1)`
       Canvas.ctx.fill()
     }
 
@@ -125,9 +89,9 @@ class List {
     return { x: this.x, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
-  get witchHeight() {
-    const row = Math.ceil(this.witch.length / 4)
-    return ((this.width - 36) / 4 * 1.35) * row + (row ? 12 * (row - 1) : 0)
+  get itemHeight() {
+    const row = Math.ceil(this.witch.length / 2)
+    return (this.width - 36) / 4 * 1.5 * row + (row ? 12 * (row - 1) : 0)
   }
 
   init() {
@@ -135,22 +99,15 @@ class List {
     this.InstanceScroll.y = this.y
     this.InstanceScroll.width = this.width
     this.InstanceScroll.height = this.height
-    this.InstanceScroll.contentHeight = this.witchHeight + 12
+    this.InstanceScroll.contentHeight = this.itemHeight + 12
 
     this.InstanceWitch = this.witch.map((witch, index) => {
-      var Instance
-      if (witch) {
-        Instance = new ListItem()
-      }
-      if (!witch) {
-        Instance = new ListItemEmpty()
-      }
-
+      const Instance = new ListItem()
       Instance.width = (this.width - 36) / 4
-      Instance.height = Instance.width * 1.35
+      Instance.height = (this.width - 36) / 4 * 1.35
       Instance.x = this.x + parseInt(index % 4) * (Instance.width + 12)
       Instance.y = this.y + parseInt(index / 4) * (Instance.height + 12)
-      Instance.source = witch
+      Instance.witch = witch
       Instance.touchAble = true
       Instance.touchArea = this.InstanceScroll.option
       Instance.touchEvent = () => {

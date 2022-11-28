@@ -85,7 +85,7 @@ const numberFix = (n) => {
 }
 
 const numberAnimation = (number, time, callback) => {
-  const list = new Array(time).fill(number / time)
+  const list = new Array(time).fill(Number((number / time).toFixed(5)))
   const event = () => {
     requestAnimationFrame(() => {
       callback(list.shift())
