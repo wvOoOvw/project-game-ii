@@ -33,7 +33,7 @@ class Witch {
   }
 
   get minDiff() {
-    return 0.2
+    return 0.01
   }
 
   get maxRotateNumber() {
@@ -92,10 +92,10 @@ class Witch {
       const time = 16
 
       if (this.rotateNumber < 0) {
-        this.rotateNumber = this.rotateNumber / time < -this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
+        this.rotateNumber = this.rotateNumber / time < -this.minDiff ? this.rotateNumber - this.rotateNumber / time : 0
       }
       if (this.rotateNumber > 0) {
-        this.rotateNumber = this.rotateNumber / time > this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
+        this.rotateNumber = this.rotateNumber / time > this.minDiff ? this.rotateNumber - this.rotateNumber / time : 0
       }
     }
 
@@ -223,7 +223,7 @@ class Page {
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.height = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.x = (Canvas.width - this.InstanceWitch.width) * 0.5
-    this.InstanceWitch.y = (Canvas.height - this.InstanceNavigation.height) / 2
+    this.InstanceWitch.y = Canvas.height / 2
   }
 
   render() {

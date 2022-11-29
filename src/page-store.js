@@ -142,26 +142,26 @@ class Page {
     ]
 
     this.InstanceList = new List()
-    this.InstanceList.witch = parseWitch(Imitation.state.info.library)
-      .map(i => { i.inTeam = Imitation.state.info.team.find(i_ => i_.key === i.key); return i })
-      .sort((a, b) => {
-        return a.key - b.key
-      })
-      .sort((a, b) => {
-        const a_ = a.inTeam ? 1 : 0
-        const b_ = b.inTeam ? 1 : 0
-        return b_ - a_
-      })
     this.InstanceList.width = Math.min(Canvas.width - 24, Canvas.maxWidth - 24)
-    this.InstanceList.height = Canvas.height - this.InstanceNavigation.height - 12
+    this.InstanceList.height = Canvas.height - 12
     this.InstanceList.x = (Canvas.width - this.InstanceList.width) / 2
     this.InstanceList.y = 12
+    this.InstanceList.witch = parseWitch(Imitation.state.info.library)
+    .map(i => { i.inTeam = Imitation.state.info.team.find(i_ => i_.key === i.key); return i })
+    .sort((a, b) => {
+      return a.key - b.key
+    })
+    .sort((a, b) => {
+      const a_ = a.inTeam ? 1 : 0
+      const b_ = b.inTeam ? 1 : 0
+      return b_ - a_
+    })
     this.InstanceList.init()
   }
 
   render() {
-    this.InstanceNavigation.render()
     this.InstanceList.render()
+    this.InstanceNavigation.render()
   }
 }
 

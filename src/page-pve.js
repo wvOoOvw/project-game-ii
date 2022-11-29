@@ -41,7 +41,7 @@ class Witch {
   }
 
   get minDiff() {
-    return 0.2
+    return 0.01
   }
 
   get maxRotateNumber() {
@@ -86,10 +86,10 @@ class Witch {
       const time = 16
 
       if (this.rotateTime < 0) {
-        this.rotateTime = this.rotateTime / time < -this.minDiff / time ? this.rotateTime - this.rotateTime / time : 0
+        this.rotateTime = this.rotateTime / time < -this.minDiff ? this.rotateTime - this.rotateTime / time : 0
       }
       if (this.rotateTime > 0) {
-        this.rotateTime = this.rotateTime / time > this.minDiff / time ? this.rotateTime - this.rotateTime / time : 0
+        this.rotateTime = this.rotateTime / time > this.minDiff ? this.rotateTime - this.rotateTime / time : 0
       }
     }
 
@@ -311,19 +311,22 @@ class Page {
     this.monster = parseMonster(originMonster)
 
     this.InstanceNavigation = new Navigation()
-    this.InstanceNavigation.content = [{ name: '战斗', active: true }, { name: '仓库', event: () => Imitation.state.page.current = 'store' }]
+    this.InstanceNavigation.content = [
+      { name: '战斗', active: true },
+      { name: '仓库', event: () => Imitation.state.page.current = 'store' }
+    ]
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.height = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.x = (Canvas.width - this.InstanceWitch.width) * 0.5
-    this.InstanceWitch.y = (Canvas.height - this.InstanceNavigation.height) / 2
+    this.InstanceWitch.y = Canvas.height / 2
 
     this.InstanceMonster = new Monster()
     this.InstanceMonster.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceMonster.height = Math.min(Canvas.width * 0.5, Canvas.maxWidth * 0.5)
     this.InstanceMonster.x = (Canvas.width - this.InstanceWitch.width) * 0.5
-    this.InstanceMonster.y = (Canvas.height - this.InstanceNavigation.height) / 2 - this.InstanceMonster.height * 1.5
+    this.InstanceMonster.y = Canvas.height / 2 - this.InstanceMonster.height * 1.5
     this.InstanceMonster.monster = arrayRandom(originMonster, 1)[0]
 
     this.round()
@@ -360,6 +363,8 @@ class Page {
 
   async compute(witch, monster, witchSkill, monsterSkill) {
     const witchResult = witchSkill.function(witch, monster, this.team)
+
+    Message.play(`使用 ${witchSkill.name}`)
 
     await wait(60)
 
@@ -406,9 +411,9 @@ class Page {
   }
 
   render() {
-    this.InstanceNavigation.render()
     this.InstanceMonster.render()
     this.InstanceWitch.render()
+    this.InstanceNavigation.render()
   }
 }
 

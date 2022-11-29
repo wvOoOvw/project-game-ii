@@ -42,7 +42,7 @@ class Page {
   }
 
   get minDiff() {
-    return 0.2
+    return 0.01
   }
 
   get maxRotateNumber() {
@@ -119,10 +119,10 @@ class Page {
         const time = 16
 
         if (this.rotateNumber < 0) {
-          this.rotateNumber = this.rotateNumber / time < -this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
+          this.rotateNumber = this.rotateNumber / time < -this.minDiff ? this.rotateNumber - this.rotateNumber / time : 0
         }
         if (this.rotateNumber > 0) {
-          this.rotateNumber = this.rotateNumber / time > this.minDiff / time ? this.rotateNumber - this.rotateNumber / time : 0
+          this.rotateNumber = this.rotateNumber / time > this.minDiff ? this.rotateNumber - this.rotateNumber / time : 0
         }
       }
 
