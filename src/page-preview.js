@@ -175,15 +175,15 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`清醒:${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(`清醒 ${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`理性:${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.13)
+    Canvas.ctx.fillText(`理性 ${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.13)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`感性:${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.21)
+    Canvas.ctx.fillText(`感性 ${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.21)
 
     Canvas.ctx.textAlign = 'end'
 

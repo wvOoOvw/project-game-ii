@@ -81,7 +81,7 @@ class Canvas {
   }
 
   get maxWidth() {
-    return window.ontouchstart === undefined ? 375 : this.width
+    return window.ontouchstart === undefined ? this.safeArea.height * 0.5 : this.width
   }
 
   get safeArea() {
