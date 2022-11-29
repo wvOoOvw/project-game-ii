@@ -57,15 +57,15 @@ class Message {
 
     Canvas.ctx.globalAlpha = this.opacity
 
-    Canvas.ctx.textAlign = 'center'
-    Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 10px Courier`
     Canvas.ctx.fillStyle = this.backgroundColor
 
     drawRectRadius({ x: this.x, y: this.y, width: this.width, height: this.height, radius: 4 })
 
     Canvas.ctx.fill()
 
+    Canvas.ctx.textAlign = 'center'
+    Canvas.ctx.textBaseline = 'middle'
+    Canvas.ctx.font = `900 10px Courier`
     Canvas.ctx.fillStyle = this.textColor
 
     Canvas.ctx.fillText(this.message, this.x + this.width / 2, this.y + this.height / 2)

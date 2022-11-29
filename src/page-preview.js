@@ -128,29 +128,29 @@ class Witch {
         text.forEach((i, index) => {
           drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04 + index * this.width * 0.08, width: 2, height: this.width * 0.05, radius: 1 })
           Canvas.ctx.fill()
-          Canvas.ctx.fillText(i, this.x + this.width * 0.07, this.y + this.width * 0.05 + index * this.width * 0.08)
+          Canvas.ctx.fillText(i, this.x + this.width * 0.07, this.y + this.width * 0.045 + index * this.width * 0.08)
         })
 
         drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width * 0.07, this.y + this.height - this.width * 0.08)
+        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
       }
       if (this.rotateNumber < 0) {
         Canvas.ctx.textAlign = 'end'
         text.forEach((i, index) => {
           drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04 + index * this.width * 0.08, width: 2, height: this.width * 0.05, radius: 1 })
           Canvas.ctx.fill()
-          Canvas.ctx.fillText(i, this.x + this.width - this.width * 0.07, this.y + this.width * 0.05 + index * this.width * 0.08)
+          Canvas.ctx.fillText(i, this.x + this.width - this.width * 0.07, this.y + this.width * 0.045 + index * this.width * 0.08)
         })
 
         drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.08)
+        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.085)
       }
 
       Canvas.ctx.textAlign = 'center'
       const row = drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.12, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.06 * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1) - this.width * 0.06 * row, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description })
+      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateNumber) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description })
     }
 
     Canvas.ctx.globalAlpha = 1
@@ -175,25 +175,25 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`清醒 ${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(`清醒 ${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`理性 ${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.13)
+    Canvas.ctx.fillText(`理性 ${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`感性 ${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.21)
+    Canvas.ctx.fillText(`感性 ${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
     Canvas.ctx.textAlign = 'end'
 
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.05)
+    Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.045)
 
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.13)
+    Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
     drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
 
