@@ -7,7 +7,7 @@ class Canvas {
   }
 
   create() {
-    // try { if (wx) return this.canvas_ = window.canvas } catch { }
+    try { if (wx) return this.canvas_ = window.canvas } catch { }
 
     const body = document.querySelector('body')
 
@@ -57,13 +57,13 @@ class Canvas {
   }
 
   get canvas() {
-    // try { if (wx) return window.canvas } catch { }
+    try { if (wx) return window.canvas } catch { }
 
     return this.canvas_
   }
 
   get ctx() {
-    // try { if (wx) return window.canvas.getContext('2d') } catch { }
+    try { if (wx) return window.canvas.getContext('2d') } catch { }
 
     return this.canvas_.getContext('2d')
   }
