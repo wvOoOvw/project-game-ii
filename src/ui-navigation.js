@@ -93,7 +93,7 @@ class Navigation {
     line.x = (Canvas.width - line.width) / 2
 
     drawRectRadius(line)
-    Canvas.ctx.fillStyle = `rgba(${255 - (this.visibleTime / this.maxVisibleTime) * 255}, ${255 - (this.visibleTime / this.maxVisibleTime) * 255}, ${255 - (this.visibleTime / this.maxVisibleTime) * 255}, 1)`
+    Canvas.ctx.fillStyle = `rgba(${Math.ceil(255 - (this.visibleTime / this.maxVisibleTime) * 255)}, ${Math.ceil(255 - (this.visibleTime / this.maxVisibleTime) * 255)}, ${Math.ceil(255 - (this.visibleTime / this.maxVisibleTime) * 255)}, 1)`
     Canvas.ctx.fill()
 
     Canvas.ctx.restore()

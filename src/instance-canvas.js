@@ -21,8 +21,14 @@ class Canvas {
     body.style.width = '100%'
     body.style.height = '100%'
     body.style.background = 'black'
+    body.style.overflow = 'hidden'
 
     const canvas = document.createElement('canvas')
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    canvas.style.touchAction = 'none'
+    canvas.setAttribute('oncontextmenu', 'return false')
 
     this.canvas_ = canvas
 
@@ -30,20 +36,6 @@ class Canvas {
   }
 
   flex() {
-    const safeArea = this.safeArea
-
-    this.canvas_.setAttribute('oncontextmenu', 'return false')
-
-    this.canvas_.style.display = 'block'
-    this.canvas_.style.touchAction = 'none'
-    this.canvas_.style.position = 'absolute'
-
-    this.canvas_.width = safeArea.width
-    this.canvas_.height = safeArea.height
-
-    this.canvas_.style.top = safeArea.top + 'px'
-    this.canvas_.style.left = safeArea.left + 'px'
-
     const dpr = 2
 
     const oldWidth = this.canvas_.width
@@ -57,46 +49,34 @@ class Canvas {
   }
 
   get canvas() {
-    try { if (wx) return window.canvas } catch { }
-
     return this.canvas_
   }
 
   get ctx() {
-    try { if (wx) return window.canvas.getContext('2d') } catch { }
-
     return this.canvas_.getContext('2d')
   }
 
   get width() {
-    try { if (wx) return window.canvas.clientWidth } catch { }
-
-    return this.canvas_.clientWidth
+    return this.canvas_.offsetWidth
   }
 
   get height() {
-    try { if (wx) return window.canvas.clientHeight } catch { }
-
-    return this.canvas_.clientHeight
+    return this.canvas_.offsetHeight
   }
 
   get maxWidth() {
-    return window.ontouchstart === undefined ? this.safeArea.height * 0.5 : this.width
+    return window.ontouchstart === undefined ? this.height * 0.5 : this.width
   }
 
   get safeArea() {
-    try { if (wx) return wx.getSystemInfoSync().safeArea } catch { }
+    try {
+      if (wx) {
+        if (!this.wx_safeArea) this.wx_safeArea = wx.getSystemInfoSync().safeArea
+        return this.wx_safeArea
+      }
+    } catch { }
 
-    const width = window.document.documentElement.clientWidth
-    const height = window.document.documentElement.clientHeight
-
-    const top = 0
-    const bottom = height
-
-    const left = window.document.documentElement.clientWidth / 2 - width / 2
-    const right = window.document.documentElement.clientWidth / 2 + width / 2
-
-    return { top: top, left: left, right: right, bottom: bottom, width: width, height: height }
+    return { top: 0, left: 0, right: this.width, bottom: this.height, width: this.width, height: this.height }
   }
 }
 
