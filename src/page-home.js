@@ -27,13 +27,13 @@ class Page {
     this.randomColor = Math.random() * 3
 
     if (this.randomColor < 1) {
-      this.randomColor = 'rgba(40, 90, 90, 1)'
+      this.randomColor = 'rgba(90, 0, 40, 1)'
     }
     if (this.randomColor < 2) {
-      this.randomColor = 'rgba(90, 40, 90, 1)'
+      this.randomColor = 'rgba(40, 40, 90, 1)'
     }
     if (this.randomColor < 3) {
-      this.randomColor = 'rgba(90, 90, 40, 1)'
+      this.randomColor = 'rgba(40, 90, 90, 1)'
     }
   }
 

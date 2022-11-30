@@ -26,14 +26,14 @@ class Witch {
     this.previous
     this.next
 
-    this.use
+    this.useIf
 
     this.mouseDownPosition = null
 
     this.rotateTime = 0
-    this.fadeTime = 0
+    this.previousFadeTime = 0
 
-    this.touchEnd = new Function()
+    this.useEvent = new Function()
   }
 
   get option() {
@@ -44,7 +44,7 @@ class Witch {
     return 0.01
   }
 
-  get maxRotateNumber() {
+  get maxRotateTime() {
     return this.width / 4
   }
 
@@ -62,7 +62,7 @@ class Witch {
 
     const row = drawMultilineText({ width: this.width * 0.9, text: currentSkill.description, onlyread: true })
 
-    return (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1)
+    return (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1)
   }
 
   eventDown(e) {
@@ -73,11 +73,11 @@ class Witch {
   }
 
   eventUp(e) {
-    if (this.rotateTime === this.maxRotateNumber) {
-      this.touchEnd(this.witch.skill[0], this.next[0])
+    if (this.rotateTime === this.maxRotateTime) {
+      this.useEvent(this.witch.skill[0], this.next[0])
     }
-    if (this.rotateTime === -this.maxRotateNumber) {
-      this.touchEnd(this.witch.skill[1], this.next[1])
+    if (this.rotateTime === -this.maxRotateTime) {
+      this.useEvent(this.witch.skill[1], this.next[1])
     }
 
     this.mouseDownPosition = null
@@ -94,8 +94,8 @@ class Witch {
 
     this.rotateTime = result
 
-    if (result > this.maxRotateNumber) this.rotateTime = this.maxRotateNumber
-    if (result < -this.maxRotateNumber) this.rotateTime = -this.maxRotateNumber
+    if (result > this.maxRotateTime) this.rotateTime = this.maxRotateTime
+    if (result < -this.maxRotateTime) this.rotateTime = -this.maxRotateTime
   }
 
   render() {
@@ -110,16 +110,13 @@ class Witch {
       }
     }
 
-    if (this.fadeTime < 1) {
-      this.fadeTime = numberFix(this.fadeTime + 0.02)
+    if (this.previousFadeTime < 1) {
+      this.previousFadeTime = numberFix(this.previousFadeTime + 0.02)
     }
 
     Canvas.ctx.save()
 
-    drawRectRadius({ ...this.option, radius: 8 })
-
-    Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
-    Canvas.ctx.fill()
+    // skill
 
     var currentSkill
 
@@ -127,7 +124,12 @@ class Witch {
     if (this.rotateTime < 0) currentSkill = this.witch.skill[1]
 
     if (currentSkill) {
-      Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1)
+      drawRectRadius({ ...this.option, radius: 8 })
+
+      Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
+      Canvas.ctx.fill()
+
+      Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1)
 
       Canvas.ctx.textBaseline = 'top'
       Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
@@ -151,7 +153,7 @@ class Witch {
         Canvas.ctx.fillText('使用', this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
         Canvas.ctx.textAlign = 'center'
-        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[0].name}` })
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[0].name}` })
       }
       if (this.rotateTime < 0) {
         Canvas.ctx.textAlign = 'end'
@@ -166,13 +168,15 @@ class Witch {
         Canvas.ctx.fillText('使用', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.085)
 
         Canvas.ctx.textAlign = 'center'
-        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[1].name}` })
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[1].name}` })
       }
 
       Canvas.ctx.textAlign = 'center'
       const row = drawMultilineText({ width: this.width * 0.9, text: currentSkill.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
+      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
     }
+
+    // skill --end
 
     // paper
 
@@ -186,21 +190,25 @@ class Witch {
 
     Canvas.ctx.globalAlpha = 1
 
-    Canvas.ctx.fillStyle = `rgba(255, 255, 255, 1)`
+    Canvas.ctx.fillStyle = 'rgba(40, 40, 90, 1)'
     Canvas.ctx.fill()
 
     // paper --end
 
     // witch
 
-    Canvas.ctx.globalAlpha = Math.min((this.maxRotateNumber - Math.abs(this.rotateTime)) / this.maxRotateNumber, 1)
+    Canvas.ctx.globalAlpha = Math.min((this.maxRotateTime - Math.abs(this.rotateTime)) / this.maxRotateTime, 1)
 
-    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.3, height: this.height - this.height * 0.4 })
+    drawRect({ ...this.option, y: this.y + this.width * 0.28, height: this.height - this.width * 0.36 })
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
+
+    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.width * 0.28, height: this.height - this.width * 0.36 })
 
     Canvas.ctx.textAlign = 'start'
     Canvas.ctx.textBaseline = 'top'
     Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
@@ -220,13 +228,13 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
-    Canvas.ctx.textAlign = 'start'
-    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
-    Canvas.ctx.fill()
-    Canvas.ctx.fillText(`状态 ${this.witch.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
+    // Canvas.ctx.textAlign = 'start'
+    // drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
+    // Canvas.ctx.fill()
+    // Canvas.ctx.fillText(`状态 ${this.witch.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
-    if (this.fadeTime < 1 && this.previous) {
-      Canvas.ctx.globalAlpha = 1 - this.fadeTime
+    if (this.previousFadeTime < 1 && this.previous) {
+      Canvas.ctx.globalAlpha = 1 - this.previousFadeTime
 
       Canvas.ctx.textAlign = 'start'
       Canvas.ctx.textBaseline = 'top'
@@ -256,15 +264,19 @@ class Witch {
 
     // witch -- end
 
+    // skill
+
     if (currentSkill) {
-      Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1)
+      Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1)
 
       drawImageFullHeight(currentSkill.imageDOM, this.option)
     }
 
+    // skill --end
+
     Canvas.ctx.restore()
 
-    if (!this.use) {
+    if (!this.useIf) {
       Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
       Event.addEventListener('touchmove', this.eventMove.bind(this))
       Event.addEventListener('touchend', this.eventUp.bind(this))
@@ -313,7 +325,11 @@ class Monster {
     Canvas.ctx.fillStyle = 'rgba(90, 0, 40, 1)'
     Canvas.ctx.fill()
 
-    drawImageFullHeight(this.monster.imageDOM, { ...this.option, y: this.y + this.width * 0.15, height: this.height - this.width * 0.25 })
+    drawRect({ ...this.option, y: this.y + this.width * 0.12, height: this.height - this.width * 0.2 })
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
+
+    drawImageFullHeight(this.monster.imageDOM, { ...this.option, y: this.y + this.width * 0.12, height: this.height - this.width * 0.2 })
 
     Canvas.ctx.textBaseline = 'top'
     Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
@@ -333,10 +349,10 @@ class Monster {
     Canvas.ctx.textAlign = 'center'
     drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * this.skillTime, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.skill.description })
 
-    Canvas.ctx.textAlign = 'start'
-    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
-    Canvas.ctx.fill()
-    Canvas.ctx.fillText(`状态 ${this.monster.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
+    // Canvas.ctx.textAlign = 'start'
+    // drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
+    // Canvas.ctx.fill()
+    // Canvas.ctx.fillText(`状态 ${this.monster.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
     Canvas.ctx.restore()
   }
@@ -374,7 +390,7 @@ class Page {
       this.InstanceWitch.previous = this.InstanceWitch.witch
       this.InstanceWitch.witch = witch
       this.InstanceWitch.next = arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2)
-      this.InstanceWitch.fadeTime = 0
+      this.InstanceWitch.previousFadeTime = 0
     }
     if (!witch) {
       this.InstanceWitch.witch = arrayRandom(this.team, 1)[0]
@@ -384,8 +400,8 @@ class Page {
     this.InstanceMonster.skill = arrayRandom(this.InstanceMonster.monster.skill, 1)[0]
     this.InstanceMonster.skillTime = 0
 
-    this.InstanceWitch.touchEnd = async (skill, witch) => {
-      this.InstanceWitch.use = true
+    this.InstanceWitch.useEvent = async (skill, witch) => {
+      this.InstanceWitch.useIf = true
 
       await wait(60)
       await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
@@ -393,7 +409,7 @@ class Page {
       await this.round(witch)
       await wait(60)
 
-      this.InstanceWitch.use = false
+      this.InstanceWitch.useIf = false
     }
   }
 

@@ -6,7 +6,6 @@ import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle
 import PageHome from './page-home'
 import PagePve from './page-pve'
 import PageStore from './page-store'
-import PagePreview from './page-preview'
 
 import { Animation } from './instance-animation'
 import { Canvas } from './instance-canvas'
@@ -70,7 +69,6 @@ class Main {
           'home': PageHome,
           'pve': PagePve,
           'store': PageStore,
-          'preview': PagePreview
         },
       },
 
