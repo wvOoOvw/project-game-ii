@@ -151,7 +151,7 @@ class Witch {
         Canvas.ctx.fillText('使用', this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
         Canvas.ctx.textAlign = 'center'
-        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[1].name}` })
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[0].name}` })
       }
       if (this.rotateTime < 0) {
         Canvas.ctx.textAlign = 'end'
@@ -166,7 +166,7 @@ class Witch {
         Canvas.ctx.fillText('使用', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.085)
 
         Canvas.ctx.textAlign = 'center'
-        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[0].name}` })
+        drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * Math.min(Math.abs(this.rotateTime) / this.maxRotateNumber, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: `切换 / ${this.next[1].name}` })
       }
 
       Canvas.ctx.textAlign = 'center'
@@ -354,7 +354,7 @@ class Page {
     this.InstanceMonster.height = Math.min(Canvas.width * 0.5, Canvas.maxWidth * 0.5)
     this.InstanceMonster.x = (Canvas.width - this.InstanceWitch.width) * 0.5
     this.InstanceMonster.y = Canvas.height / 2 - this.InstanceMonster.height
-    this.InstanceMonster.monster = arrayRandom(originMonster, 1)[0]
+    this.InstanceMonster.monster = arrayRandom(this.monster, 1)[0]
 
     this.round()
   }
@@ -410,7 +410,7 @@ class Page {
         current.target.buff.forEach(i => i.value(current))
 
         if (current.effect === 'Cure') {
-          numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity_), 32, i => current.target.purity = current.target.purity + i)
+          numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity), 32, i => current.target.purity = current.target.purity + i)
         }
         if (current.effect === 'Damage') {
           numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
