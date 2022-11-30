@@ -149,7 +149,7 @@ var originWitch = [
       {
         name: '爆裂节拍',
         type: '防御',
-        description: '本回合内提升自身减伤70%',
+        description: '3回合内提升自身减伤70%',
         function: (self, opposite, selfAll) => {
           const buff = (result) => {
             if (result.effect === 'Damage' && result.target === self) {
@@ -158,7 +158,7 @@ var originWitch = [
           }
 
           return [
-            { effect: 'Buff', target: [self], value: buff, name: '减伤', time: 1 }
+            { effect: 'Buff', target: [self], value: buff, name: '减伤', time: 3 }
           ]
         }
       }

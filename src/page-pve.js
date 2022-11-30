@@ -195,6 +195,8 @@ class Witch {
 
     Canvas.ctx.globalAlpha = Math.min((this.maxRotateNumber - Math.abs(this.rotateTime)) / this.maxRotateNumber, 1)
 
+    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.3, height: this.height - this.height * 0.4 })
+
     Canvas.ctx.textAlign = 'start'
     Canvas.ctx.textBaseline = 'top'
     Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
@@ -218,7 +220,10 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
-    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
+    Canvas.ctx.textAlign = 'start'
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`状态 ${this.witch.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
     if (this.fadeTime < 1 && this.previous) {
       Canvas.ctx.globalAlpha = 1 - this.fadeTime
@@ -246,7 +251,7 @@ class Witch {
       Canvas.ctx.fill()
       Canvas.ctx.fillText(this.previous.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
-      drawImageFullHeight(this.previous.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
+      drawImageFullHeight(this.previous.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.35 })
     }
 
     // witch -- end
@@ -308,7 +313,7 @@ class Monster {
     Canvas.ctx.fillStyle = 'rgba(90, 0, 40, 1)'
     Canvas.ctx.fill()
 
-    drawImageFullHeight(this.monster.imageDOM, { ...this.option, y: this.y + this.width * 0.1, height: this.height - this.width * 0.1 })
+    drawImageFullHeight(this.monster.imageDOM, { ...this.option, y: this.y + this.width * 0.15, height: this.height - this.width * 0.25 })
 
     Canvas.ctx.textBaseline = 'top'
     Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
@@ -327,6 +332,11 @@ class Monster {
     Canvas.ctx.globalAlpha = this.skillTime
     Canvas.ctx.textAlign = 'center'
     drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * this.skillTime, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.skill.description })
+
+    Canvas.ctx.textAlign = 'start'
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`状态 ${this.monster.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
 
     Canvas.ctx.restore()
   }
@@ -351,7 +361,7 @@ class Page {
 
     this.InstanceMonster = new Monster()
     this.InstanceMonster.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
-    this.InstanceMonster.height = Math.min(Canvas.width * 0.5, Canvas.maxWidth * 0.5)
+    this.InstanceMonster.height = Math.min(Canvas.width * 0.6, Canvas.maxWidth * 0.6)
     this.InstanceMonster.x = (Canvas.width - this.InstanceWitch.width) * 0.5
     this.InstanceMonster.y = Canvas.height / 2 - this.InstanceMonster.height
     this.InstanceMonster.monster = arrayRandom(this.monster, 1)[0]
@@ -379,7 +389,7 @@ class Page {
 
       await wait(60)
       await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
-      await wait(60)
+      await wait(120)
       await this.round(witch)
       await wait(60)
 
@@ -449,6 +459,13 @@ class Page {
 
       result.target.forEach(target => handle(target))
     }
+
+    new Array(...this.team, monster).forEach(i => {
+      i.buff.forEach(i_ => {
+        i_.time = i_.time - 1
+        if (i_.time === 0) i.buff = i.buff.filter(i__ => i__ !== i_)
+      })
+    })
   }
 
   render() {
