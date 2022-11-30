@@ -377,10 +377,10 @@ class Page {
     this.InstanceWitch.touchEnd = async (skill, witch) => {
       this.InstanceWitch.use = true
 
+      await wait(60)
       await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
-
+      await wait(60)
       await this.round(witch)
-
       await wait(60)
 
       this.InstanceWitch.use = false
@@ -392,48 +392,63 @@ class Page {
 
     Message.play(`使用 ${witchSkill.name}`)
 
-    await wait(60)
-
     while (witchResult.length) {
-      const current = witchResult.shift()
+      const result = witchResult.shift()
 
-      if (current.animation) {
-        if (current.target === witch) {
-          Animation.play(current.animation, (img) => [this.InstanceWitch.x + this.InstanceWitch.width / 2 - img.width / 2, this.InstanceWitch.y + this.InstanceWitch.height / 2 - img.height / 2])
+      // if (current.animation) {
+      //   if (current.target === witch) {
+      //     Animation.play(current.animation, (img) => [this.InstanceWitch.x + this.InstanceWitch.width / 2 - img.width / 2, this.InstanceWitch.y + this.InstanceWitch.height / 2 - img.height / 2])
+      //   }
+      //   if (current.target === monster) {
+      //     Animation.play(current.animation, (img) => [this.InstanceMonster.x + this.InstanceMonster.width / 2 - img.width / 2, this.InstanceMonster.y + this.InstanceMonster.height / 2 - img.height / 2])
+      //   }
+      // }
+
+      const handle = target => {
+        const current = { ...result, target }
+
+        current.target.buff.forEach(i => i.value(current))
+
+        if (current.effect === 'Cure') {
+          numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity_), 32, i => current.target.purity = current.target.purity + i)
         }
-        if (current.target === monster) {
-          Animation.play(current.animation, (img) => [this.InstanceMonster.x + this.InstanceMonster.width / 2 - img.width / 2, this.InstanceMonster.y + this.InstanceMonster.height / 2 - img.height / 2])
+        if (current.effect === 'Damage') {
+          numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
+        }
+        if (current.effect === 'Defent') {
+          numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
+        }
+        if (current.effect === 'Buff') {
+          current.target.buff.push(current)
+        }
+        if (current.effect === 'Improve-Rational') {
+          numberAnimation(current.value, 32, i => current.target.rational = current.target.rational + i)
         }
       }
 
-      if (current.effect === 'Damage') {
-        numberAnimation(current.value, 32, i => current.target.dirty = current.target.dirty - i, current.target.dirty)
-      }
-      if (current.effect === 'Improve-Rational') {
-        numberAnimation(current.value, 32, i => current.target.rational = current.target.rational + i, current.target.rational)
-      }
+      result.target.forEach(target => handle(target))
     }
 
     const monsterResult = monsterSkill.function(monster, witch, this.team)
 
     while (monsterResult.length) {
-      const current = monsterResult.shift()
+      const result = monsterResult.shift()
 
-      if (current.animation) {
-        if (current.target === witch) {
-          Animation.play(current.animation, (img) => [this.InstanceWitch.x + this.InstanceWitch.width / 2 - img.width / 2, this.InstanceWitch.y + this.InstanceWitch.height / 2 - img.height / 2])
+      const handle = target => {
+        const current = { ...result, target }
+
+        current.target.buff.forEach(i => i.value(current))
+
+        if (current.effect === 'Cure') {
+          numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty_), 32, i => current.target.dirty = current.target.dirty + i)
         }
-        if (current.target === monster) {
-          Animation.play(current.animation, (img) => [this.InstanceMonster.x + this.InstanceMonster.width / 2 - img.width / 2, this.InstanceMonster.y + this.InstanceMonster.height / 2 - img.height / 2])
+        if (current.effect === 'Damage') {
+          numberAnimation(Math.min(current.value, current.target.purity), 32, i => current.target.purity = current.target.purity - i)
         }
       }
 
-      if (current.effect === 'Damage') {
-        numberAnimation(current.value, 32, i => current.target.purity = current.target.purity - i, current.target.purity)
-      }
+      result.target.forEach(target => handle(target))
     }
-
-    await wait(60)
   }
 
   render() {

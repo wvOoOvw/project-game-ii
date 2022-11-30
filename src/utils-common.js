@@ -8,7 +8,7 @@ const parseWitch = (array) => {
 
     const origin = originWitch.find(i_ => i.key === i_.key)
 
-    result_.push({ ...origin, ...i, purity_: origin.purity, rational_: origin.rational, perceptual_: origin.perceptual })
+    result_.push({ ...origin, ...i, purity_: origin.purity, rational_: origin.rational, perceptual_: origin.perceptual, buff: [] })
 
     return result_
   }, [])
@@ -22,7 +22,7 @@ const parseMonster = (array) => {
 
     const origin = originMonster.find(i_ => i.key === i_.key)
 
-    result_.push({ ...origin, ...i, dirty_: origin.dirty })
+    result_.push({ ...origin, ...i, dirty_: origin.dirty, buff: [] })
 
     return result_
   }, [])
