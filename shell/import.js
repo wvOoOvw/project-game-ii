@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const s = '../static/sound'
+const s = '../static/image'
 
 const list = []
 
