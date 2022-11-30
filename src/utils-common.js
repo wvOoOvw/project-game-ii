@@ -72,7 +72,6 @@ const wait = async (time, callback) => {
 
   if (!callback) {
     await new Promise((resolve) => event(resolve))
-
   }
 }
 

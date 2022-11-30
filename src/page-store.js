@@ -56,7 +56,7 @@ class ListItem {
 
     drawRectRadius({ x, y, width, height, radius: 4 })
 
-    Canvas.ctx.fillStyle = this.active ? 'rgba(40, 90, 90, 1)' : 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillStyle = this.active ? 'rgba(40, 40, 90, 1)' : 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
 
     Canvas.ctx.clip()
@@ -144,11 +144,11 @@ class Witch {
 
     this.witch
 
-    this.useEvent
-
     this.mouseDownPosition = null
 
     this.rotateTime = 0
+
+    this.useEvent = new Function()
   }
 
   get option() {
@@ -166,8 +166,8 @@ class Witch {
   get skillDescriptionHeight() {
     var currentSkill
 
-    if (this.witch && this.rotateTime > 0) currentSkill = this.witch.skill[0]
-    if (this.witch && this.rotateTime < 0) currentSkill = this.witch.skill[1]
+    if (this.rotateTime > 0) currentSkill = this.witch.skill[0]
+    if (this.rotateTime < 0) currentSkill = this.witch.skill[1]
 
     if (!currentSkill) return 0
 
@@ -209,7 +209,7 @@ class Witch {
   }
 
   render() {
-    if (this.rotateTime !== 0 && !this.mouseDownPosition) {
+    if (!this.mouseDownPosition && this.rotateTime !== 0) {
       const time = 16
 
       if (this.rotateTime < 0) {
@@ -220,28 +220,31 @@ class Witch {
       }
     }
 
-    var current
-
-    if (this.witch && this.rotateTime > 0) current = this.witch.skill[0]
-    if (this.witch && this.rotateTime < 0) current = this.witch.skill[1]
 
     Canvas.ctx.save()
 
-    drawRectRadius({ ...this.option, radius: 8 })
+    // skill
 
-    Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
-    Canvas.ctx.fill()
+    var currentSkill
 
-    if (current) {
+    if (this.rotateTime > 0) currentSkill = this.witch.skill[0]
+    if (this.rotateTime < 0) currentSkill = this.witch.skill[1]
+
+    if (currentSkill) {
+      drawRectRadius({ ...this.option, radius: 8 })
+
+      Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
+      Canvas.ctx.fill()
+
       Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1)
 
       Canvas.ctx.textBaseline = 'top'
-      Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
+      Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
       Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       const text = [
-        current.name,
-        current.type,
+        currentSkill.name,
+        currentSkill.type,
       ]
 
       if (this.rotateTime > 0) {
@@ -254,7 +257,7 @@ class Witch {
 
         drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
+        Canvas.ctx.fillText(this.witch.inTeam ? '卸载' : '装载', this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
       }
       if (this.rotateTime < 0) {
         Canvas.ctx.textAlign = 'end'
@@ -266,15 +269,17 @@ class Witch {
 
         drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
         Canvas.ctx.fill()
-        Canvas.ctx.fillText(this.ifInTeam ? '卸载' : '装载', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.085)
+        Canvas.ctx.fillText(this.witch.inTeam ? '卸载' : '装载', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.085)
       }
 
       Canvas.ctx.textAlign = 'center'
-      const row = drawMultilineText({ width: this.width * 0.9, text: current.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: current.description })
+      const row = drawMultilineText({ width: this.width * 0.9, text: currentSkill.description, onlyread: true })
+      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
     }
 
-    Canvas.ctx.globalAlpha = 1
+    // skill --end
+
+    // paper
 
     Canvas.ctx.translate(this.x + this.width * 0.5, this.y + this.height * 2)
     Canvas.ctx.rotate(this.rotateTime / 400)
@@ -284,47 +289,57 @@ class Witch {
 
     Canvas.ctx.clip()
 
+    Canvas.ctx.globalAlpha = 1
+
+    Canvas.ctx.fillStyle = 'rgba(40, 40, 90, 1)'
+    Canvas.ctx.fill()
+
+    // paper --end
+
+    // witch
+
+    Canvas.ctx.globalAlpha = Math.min((this.maxRotateTime - Math.abs(this.rotateTime)) / this.maxRotateTime, 1)
+
+    drawRect({ ...this.option, y: this.y + this.width * 0.28, height: this.height - this.width * 0.36 })
     Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
     Canvas.ctx.fill()
 
-    if (this.witch) {
-      Canvas.ctx.globalAlpha = Math.min((this.maxRotateTime - Math.abs(this.rotateTime)) / this.maxRotateTime, 1)
+    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.width * 0.28, height: this.height - this.width * 0.36 })
 
-      Canvas.ctx.textAlign = 'start'
-      Canvas.ctx.textBaseline = 'top'
-      Canvas.ctx.font = `900 ${this.width * 0.04}px Courier`
-      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    Canvas.ctx.textAlign = 'start'
+    Canvas.ctx.textBaseline = 'top'
+    Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText(`清醒 ${this.witch.purity}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`清醒 ${Math.ceil(this.witch.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`理性 ${Math.ceil(this.witch.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`感性 ${Math.ceil(this.witch.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
-      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText(`理性 ${this.witch.rational}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+    Canvas.ctx.textAlign = 'end'
+    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.045)
+    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
-      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText(`感性 ${this.witch.perceptual}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+    // witch -- end
 
-      Canvas.ctx.textAlign = 'end'
+    // skill
 
-      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText(this.witch.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.045)
-
-      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
-
-      drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.25 })
-    }
-
-    if (current) {
+    if (currentSkill) {
       Canvas.ctx.globalAlpha = Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1)
 
-      drawImageFullHeight(current.imageDOM, this.option)
+      drawImageFullHeight(currentSkill.imageDOM, this.option)
     }
+
+    // skill --end
 
     Canvas.ctx.restore()
 
@@ -394,7 +409,7 @@ class Page {
         Message.play('装载成功')
       }
       this.InstanceWitch.witch.inTeam = !this.InstanceWitch.witch.inTeam
-      
+
       load()
       this.InstanceList.init()
     }

@@ -21,12 +21,12 @@ class Message {
   }
 
   play(message, backgroundColor = 'rgba(255, 255, 255, 1)', textColor = 'rgba(0, 0, 0, 1)') {
-    clearTimeout(this.timeoutRef)
-
     this.message = message
     this.backgroundColor = backgroundColor
     this.textColor = textColor
     this.show = true
+
+    if (this.timeoutRef) return
 
     this.timeoutRef = wait(60, () => {
       this.show = false
