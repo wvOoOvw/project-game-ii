@@ -275,6 +275,21 @@ class Witch {
       drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
     }
 
+    Canvas.ctx.textAlign = 'start'
+    Canvas.ctx.textBaseline = 'top'
+    Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+
+    Canvas.ctx.globalAlpha = 1
+
+    drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`Lv ${Math.ceil(this.witch.level)}`, this.x + this.width * 0.07, this.y + this.height + this.width * 0.045)
+    Canvas.ctx.textAlign = 'end'
+    drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+    Canvas.ctx.fill()
+    Canvas.ctx.fillText(`Exp ${Math.ceil(this.witch.exp)} / ${Math.pow(2, this.witch.level) * 100}`, this.x + this.width - this.width * 0.07, this.y + this.height + this.width * 0.045)
+
     // skill --end
 
     // paper

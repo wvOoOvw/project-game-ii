@@ -239,7 +239,7 @@ class Witch {
       Canvas.ctx.textAlign = 'start'
       Canvas.ctx.textBaseline = 'top'
       Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
-      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()

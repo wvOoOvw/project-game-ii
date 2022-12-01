@@ -1,17 +1,14 @@
 import { Canvas } from './instance-canvas'
 
-import red_hit_0 from '../static/animation/red-hit/0.png'
-import red_hit_1 from '../static/animation/red-hit/1.png'
-import red_hit_2 from '../static/animation/red-hit/2.png'
-import red_hit_3 from '../static/animation/red-hit/3.png'
-import red_hit_4 from '../static/animation/red-hit/4.png'
-import red_hit_5 from '../static/animation/red-hit/5.png'
-
 class Animation {
   constructor() {
     this.map = {
-      'red-hit': [red_hit_0, red_hit_0, red_hit_1, red_hit_1, red_hit_2, red_hit_2, red_hit_3, red_hit_3, red_hit_4, red_hit_4, red_hit_5, red_hit_5]
+
     }
+
+    Object.keys(this.map).forEach((i) => {
+      this.map[i] = this.map[i].reduce((t, i) => [...t, ...new Array(4).fill(i)], [])
+    })
 
     this.queqe = []
   }
@@ -33,18 +30,6 @@ class Animation {
     if (!this.map[key]) console.error(key)
 
     this.queqe.push({ key: key, src: this.map[key], option, index: 0 })
-  }
-
-  stop(key) {
-    this.queqe = this.queqe.filter(i => i.key !== key)
-  }
-
-  clear() {
-    this.queqe = []
-  }
-
-  find(key) {
-    return this.queqe.filter(i => i.key === key)
   }
 
   render() {

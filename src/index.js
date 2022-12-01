@@ -85,7 +85,7 @@ class Main {
         }
         if (!info) {
           const info = {
-            library: originWitch.map(i => ({ key: i.key, level: 1, exp: 0 })),
+            library: originWitch.map(i => ({ key: i.key, level: 0, exp: 0 })),
             team: originWitch.map(i => ({ key: i.key })).filter((i, index) => index < 4),
           }
 

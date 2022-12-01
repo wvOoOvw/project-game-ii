@@ -17,7 +17,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: '[name].[ext]',
+              name: '[hash]-[name].[ext]',
               outputPath: 'static'
             }
           }
