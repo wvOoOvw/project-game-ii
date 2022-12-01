@@ -227,11 +227,6 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
-    // Canvas.ctx.textAlign = 'start'
-    // drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
-    // Canvas.ctx.fill()
-    // Canvas.ctx.fillText(`状态 ${this.witch.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
-
     if (this.previousFadeTime < 1 && this.previous) {
       Canvas.ctx.globalAlpha = 1 - this.previousFadeTime
 
@@ -382,16 +377,74 @@ class Mask {
   }
 }
 
+class Result {
+  constructor() {
+    this.result
+
+    this.closeEvent = new Function()
+
+    this.alphaTime = 0
+  }
+
+  render() {
+    if (this.result && this.alphaTime < 1) {
+      this.alphaTime = numberFix(this.alphaTime + 0.05)
+    }
+
+    if (!this.result && this.alphaTime > 0) {
+      this.alphaTime = numberFix(this.alphaTime - 0.05)
+    }
+
+    Canvas.ctx.save()
+
+    Canvas.ctx.globalAlpha = this.alphaTime * 0.5
+
+    drawFullColor('rgba(0, 0, 0, 1)')
+
+    Canvas.ctx.globalAlpha = this.alphaTime * 1
+
+    if (this.result) {
+      Canvas.ctx.textAlign = 'center'
+      Canvas.ctx.textBaseline = 'middle'
+      Canvas.ctx.font = `900 14px courier`
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+
+      if (this.result.type === 'win') {
+        Canvas.ctx.fillText(`战斗胜利`, Canvas.width / 2, Canvas.height / 2 - 24)
+      }
+
+      if (this.result.type === 'lose') {
+        Canvas.ctx.fillText(`战斗失败`, Canvas.width / 2, Canvas.height / 2 - 24)
+      }
+
+      Canvas.ctx.font = `900 12px courier`
+
+      Canvas.ctx.fillText(`点击任意处 继续战斗`, Canvas.width / 2, Canvas.height / 2 + 24)
+
+      drawRectRadius({ x: (Canvas.width - 240) / 2, y: Canvas.height / 2 - 1, width: 240, height: 2, radius: 2 })
+      Canvas.ctx.fill()
+
+      Event.addEventListener('touchstart', this.closeEvent, { stop: true, priority: 100 })
+    }
+
+    Canvas.ctx.restore()
+
+  }
+}
+
 class Page {
   constructor() {
-    this.team = parseWitch(Imitation.state.info.team)
-    this.monster = parseMonster(originMonster)
-
     this.InstanceNavigation = new Navigation()
     this.InstanceNavigation.content = [
       { name: '战斗', active: true },
       { name: '仓库', event: () => Imitation.state.page.current = 'store' }
     ]
+
+    this.InstanceResult = new Result()
+    this.InstanceResult.closeEvent = () => {
+      this.InstanceResult.result = null
+      this.init()
+    }
 
     this.InstanceMask = new Mask()
     this.InstanceMask.width = Canvas.width
@@ -410,6 +463,14 @@ class Page {
     this.InstanceMonster.height = Math.min(Canvas.width * 0.6, Canvas.maxWidth * 0.6)
     this.InstanceMonster.x = (Canvas.width - this.InstanceWitch.width) * 0.5
     this.InstanceMonster.y = Canvas.height / 2 - this.InstanceMonster.height
+
+    this.init()
+  }
+
+  async init() {
+    this.team = parseWitch(Imitation.state.info.team.map(i => Imitation.state.info.library.find(i_ => i_.key === i.key)))
+    this.monster = parseMonster(originMonster.map(i => ({ ...i, level: 0 })))
+
     this.InstanceMonster.monster = arrayRandom(this.monster, 1)[0]
 
     this.round()
@@ -419,13 +480,12 @@ class Page {
     if (witch) {
       this.InstanceWitch.previous = this.InstanceWitch.witch
       this.InstanceWitch.witch = witch
-      this.InstanceWitch.next = arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2)
       this.InstanceWitch.previousFadeTime = 0
     }
     if (!witch) {
       this.InstanceWitch.witch = arrayRandom(this.team, 1)[0]
-      this.InstanceWitch.next = arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2)
     }
+    this.InstanceWitch.next = this.team.length > 1 ? arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2) : [this.team[0], this.team[0]]
 
     this.InstanceMonster.skill = arrayRandom(this.InstanceMonster.monster.skill, 1)[0]
     this.InstanceMonster.skillIf = true
@@ -446,6 +506,21 @@ class Page {
 
       await wait(115)
 
+      if (this.InstanceMonster.monster.dirty === 0) {
+        this.InstanceResult.result = { type: 'win' }
+        this.InstanceMask.useIf = false
+        this.computeResult()
+        return
+      }
+
+      this.team = this.team.filter(i => i.purity > 0)
+
+      if (this.team.length === 0) {
+        this.InstanceResult.result = { type: 'lose' }
+        this.InstanceMask.useIf = false
+        return
+      }
+
       await this.round(witch)
 
       await wait(45)
@@ -461,18 +536,8 @@ class Page {
   async compute(witch, monster, witchSkill, monsterSkill) {
     const witchResult = witchSkill.function(witch, monster, this.team)
 
-
     while (witchResult.length) {
       const result = witchResult.shift()
-
-      // if (current.animation) {
-      //   if (current.target === witch) {
-      //     Animation.play(current.animation, (img) => [this.InstanceWitch.x + this.InstanceWitch.width / 2 - img.width / 2, this.InstanceWitch.y + this.InstanceWitch.height / 2 - img.height / 2])
-      //   }
-      //   if (current.target === monster) {
-      //     Animation.play(current.animation, (img) => [this.InstanceMonster.x + this.InstanceMonster.width / 2 - img.width / 2, this.InstanceMonster.y + this.InstanceMonster.height / 2 - img.height / 2])
-      //   }
-      // }
 
       const handle = target => {
         const current = { ...result, target }
@@ -528,12 +593,25 @@ class Page {
     })
   }
 
+  computeResult() {
+    Imitation.state.info.team.forEach(i => {
+      const find = Imitation.state.info.library.find(i_ => i_.key === i.key)
+
+      find.exp = find.exp + this.InstanceMonster.monster.exp
+
+      while (find.exp >= Math.pow(2, find.level) * 100) find.level = find.level + 1
+
+      Imitation.state.setInfo()
+    })
+  }
+
   render() {
     this.InstanceMonster.y = Canvas.height / 2 - this.InstanceMonster.height * 1.1 - this.InstanceMonster.skillDescriptionHeight - this.InstanceWitch.skillDescriptionHeight
 
     this.InstanceMonster.render()
     this.InstanceWitch.render()
     this.InstanceMask.render()
+    this.InstanceResult.render()
     this.InstanceNavigation.render()
   }
 }

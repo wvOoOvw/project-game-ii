@@ -13,7 +13,7 @@ var originMonster = [
     key: 1,
     name: '被污染的野猪',
     description: '在丛林中被污染的野猪，具备一定的攻击性。',
-    dirty: 1200,
+    dirty: 20,
     exp: 20,
     skill: [
       {

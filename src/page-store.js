@@ -23,7 +23,9 @@ class ListItem {
     this.offsetX = 0
     this.offsetY = 0
 
-    this.active
+    this.activeIf
+
+    this.activeTime = 1
 
     this.witch
 
@@ -50,13 +52,20 @@ class ListItem {
   }
 
   render() {
+    if (this.activeIf && this.activeTime < 1) {
+      this.activeTime = numberFix(this.activeTime + 0.05)
+    }
+    if (!this.activeIf && this.activeTime > 0) {
+      this.activeTime = numberFix(this.activeTime - 0.05)
+    }
+
     const { x, y, width, height } = this.option
 
     Canvas.ctx.save()
 
     drawRectRadius({ x, y, width, height, radius: 4 })
 
-    Canvas.ctx.fillStyle = this.active ? 'rgba(40, 40, 90, 1)' : 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fillStyle = `rgba(${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, 1)`
     Canvas.ctx.fill()
 
     Canvas.ctx.clip()
@@ -98,6 +107,19 @@ class List {
     return { x: this.x, y: this.y + this.offsetY, width: this.width, height: this.height }
   }
 
+  load() {
+    this.witch = parseWitch(Imitation.state.info.library)
+      .map(i => { i.inTeam = Imitation.state.info.team.find(i_ => i_.key === i.key); return i })
+      .sort((a, b) => {
+        return a.key - b.key
+      })
+      .sort((a, b) => {
+        const a_ = a.inTeam ? 1 : 0
+        const b_ = b.inTeam ? 1 : 0
+        return b_ - a_
+      })
+  }
+
   init() {
     this.InstanceScroll.x = this.x
     this.InstanceScroll.y = this.y
@@ -123,7 +145,6 @@ class List {
   render() {
     const event = (scroll) => {
       this.InstanceWitch.forEach((i) => {
-        i.active = i.witch.key === this.active
         i.offsetX = 0 - scroll[0]
         if (ifScreenCover(i.option, this.InstanceScroll.option)) i.render()
       })
@@ -142,9 +163,12 @@ class Witch {
 
     this.witch
 
+    this.previous
+
     this.mouseDownPosition = null
 
     this.rotateTime = 0
+    this.previousFadeTime = 0
 
     this.useEvent = new Function()
   }
@@ -216,6 +240,10 @@ class Witch {
       if (this.rotateTime > 0) {
         this.rotateTime = this.rotateTime / time > this.minDiff ? this.rotateTime - this.rotateTime / time : 0
       }
+    }
+
+    if (this.previousFadeTime < 1) {
+      this.previousFadeTime = numberFix(this.previousFadeTime + 0.02)
     }
 
     Canvas.ctx.save()
@@ -341,6 +369,36 @@ class Witch {
     Canvas.ctx.fill()
     Canvas.ctx.fillText(this.witch.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
 
+
+    if (this.previousFadeTime < 1 && this.previous) {
+      Canvas.ctx.globalAlpha = 1 - this.previousFadeTime
+
+      Canvas.ctx.textAlign = 'start'
+      Canvas.ctx.textBaseline = 'top'
+      Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+
+      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+      Canvas.ctx.fill()
+      Canvas.ctx.fillText(`清醒 ${Math.ceil(this.previous.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+      Canvas.ctx.fill()
+      Canvas.ctx.fillText(`理性 ${Math.ceil(this.previous.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+      drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
+      Canvas.ctx.fill()
+      Canvas.ctx.fillText(`感性 ${Math.ceil(this.previous.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+
+      Canvas.ctx.textAlign = 'end'
+      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
+      Canvas.ctx.fill()
+      Canvas.ctx.fillText(this.previous.name, this.x + this.width - this.width * 0.07, this.y + this.width * 0.045)
+      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
+      Canvas.ctx.fill()
+      Canvas.ctx.fillText(this.previous.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
+
+      drawImageFullHeight(this.previous.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.35 })
+    }
+
     // witch -- end
 
     // skill
@@ -369,42 +427,32 @@ class Page {
       { name: '仓库', active: true }
     ]
 
-    const load = () => {
-      this.InstanceList.witch = parseWitch(Imitation.state.info.library)
-        .map(i => { i.inTeam = Imitation.state.info.team.find(i_ => i_.key === i.key); return i })
-        .sort((a, b) => {
-          return a.key - b.key
-        })
-        .sort((a, b) => {
-          const a_ = a.inTeam ? 1 : 0
-          const b_ = b.inTeam ? 1 : 0
-          return b_ - a_
-        })
-    }
-
     this.InstanceList = new List()
-    load()
     this.InstanceList.width = Math.min(Canvas.width - 24, 1080)
     this.InstanceList.height = 220
     this.InstanceList.x = (Canvas.width - this.InstanceList.width) / 2
     this.InstanceList.y = 12 + Canvas.safeArea.top
+    this.InstanceList.load()
     this.InstanceList.init()
     this.InstanceList.touchEvent = witch => {
+      if (this.InstanceWitch.witch === witch) return
+
+      this.InstanceWitch.previous = this.InstanceWitch.witch
       this.InstanceWitch.witch = witch
-      this.InstanceList.active = witch.key
+      this.InstanceWitch.previousFadeTime = 0
+
+      this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch === witch)
     }
-    this.InstanceList.active = this.InstanceList.witch[0].key
+    this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch === this.InstanceList.witch[0])
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.height = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
     this.InstanceWitch.x = (Canvas.width - this.InstanceWitch.width) * 0.5
-    this.InstanceWitch.y = Canvas.height / 2
-    this.InstanceWitch.witch = this.InstanceList.witch[0]
+    this.InstanceWitch.y = Canvas.height / 2 - this.InstanceWitch.height * 0.05
     this.InstanceWitch.useEvent = () => {
       if (this.InstanceWitch.witch.inTeam) {
         Imitation.state.info.team = Imitation.state.info.team.filter(i => i.key !== this.InstanceWitch.witch.key)
-        Imitation.state.page.current = 'store'
         Message.play('卸载成功')
       }
       if (!this.InstanceWitch.witch.inTeam) {
@@ -417,14 +465,14 @@ class Page {
           return
         }
         Imitation.state.info.team.push({ key: this.InstanceWitch.witch.key })
-        Imitation.state.page.current = 'store'
         Message.play('装载成功')
       }
       this.InstanceWitch.witch.inTeam = !this.InstanceWitch.witch.inTeam
-
-      load()
+      this.InstanceList.load()
       this.InstanceList.init()
+      Imitation.state.setInfo()
     }
+    this.InstanceWitch.witch = this.InstanceList.witch[0]
   }
 
   render() {
