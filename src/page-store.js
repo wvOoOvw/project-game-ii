@@ -218,7 +218,6 @@ class Witch {
       }
     }
 
-
     Canvas.ctx.save()
 
     // skill

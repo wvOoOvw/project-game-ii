@@ -131,11 +131,9 @@ class Page {
       Event.addEventListener('touchend', this.eventUp.bind(this))
     }
 
-    drawFullColor('rgba(0, 0, 0, 1)')
-
-    const { x, y, width, height } = this.option
-
     Canvas.ctx.save()
+
+    drawFullColor('rgba(0, 0, 0, 1)')
 
     drawRectRadius({ ...this.option, radius: 8 })
 
@@ -144,9 +142,9 @@ class Page {
 
     Canvas.ctx.globalAlpha = 1
 
-    Canvas.ctx.translate(x + width * 0.5, y + height * 0.5)
+    Canvas.ctx.translate(this.x + this.width * 0.5, this.y + this.height * 0.5)
     Canvas.ctx.rotate(this.rotateNumber / 200)
-    Canvas.ctx.translate(-(x + width * 0.5), -(y + height * 0.5))
+    Canvas.ctx.translate(-(this.x + this.width * 0.5), -(this.y + this.height * 0.5))
 
     drawRectRadius({ ...this.option, radius: 8 })
 
@@ -159,7 +157,7 @@ class Page {
 
     Canvas.ctx.textAlign = 'center'
     Canvas.ctx.textBaseline = 'middle'
-    Canvas.ctx.font = `900 ${width * 0.05}px Courier`
+    Canvas.ctx.font = `900 ${this.width * 0.05}px Courier`
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
 
     Canvas.ctx.fillText('魔女的冒险 污秽篇', this.x + this.width * 0.5, this.y + this.height * 0.4)
@@ -170,7 +168,7 @@ class Page {
       Canvas.ctx.fillText('滑动 开始游戏', this.x + this.width * 0.5, this.y + this.height * 0.6)
     }
 
-    drawRectRadius({ x: x + width * 0.1, y: y + height * 0.5 - 1, width: width * 0.8, height: 2, radius: 2 })
+    drawRectRadius({ x: this.x + this.width * 0.1, y: this.y + this.height * 0.5 - 1, width: this.width * 0.8, height: 2, radius: 2 })
     Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     Canvas.ctx.fill()
 

@@ -358,6 +358,40 @@ class Monster {
   }
 }
 
+class Mask {
+  constructor() {
+    this.x
+    this.y
+    this.width
+    this.height
+
+    this.useIf
+
+    this.alphaTime = 0
+  }
+
+  get option() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
+  }
+
+  render() {
+    if (this.useIf && this.alphaTime < 1) {
+      this.alphaTime = numberFix(this.alphaTime + 0.05)
+    }
+    if (!this.useIf && this.alphaTime > 0) {
+      this.alphaTime = numberFix(this.alphaTime - 0.05)
+    }
+
+    Canvas.ctx.save()
+
+    Canvas.ctx.globalAlpha = this.alphaTime * 0.5
+
+    drawFullColor('rgba(0, 0, 0, 1)')
+
+    Canvas.ctx.restore()
+  }
+}
+
 class Page {
   constructor() {
     this.team = parseWitch(Imitation.state.info.team)
@@ -368,6 +402,12 @@ class Page {
       { name: '战斗', active: true },
       { name: '仓库', event: () => Imitation.state.page.current = 'store' }
     ]
+
+    this.InstanceMask = new Mask()
+    this.InstanceMask.width = Canvas.width
+    this.InstanceMask.height = Canvas.height
+    this.InstanceMask.x = 0
+    this.InstanceMask.y = 0
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
@@ -401,6 +441,7 @@ class Page {
     this.InstanceMonster.skillTime = 0
 
     this.InstanceWitch.useEvent = async (skill, witch) => {
+      this.InstanceMask.useIf = true
       this.InstanceWitch.useIf = true
 
       await wait(60)
@@ -410,6 +451,7 @@ class Page {
       await wait(60)
 
       this.InstanceWitch.useIf = false
+      this.InstanceMask.useIf = false
     }
   }
 
@@ -489,6 +531,7 @@ class Page {
 
     this.InstanceMonster.render()
     this.InstanceWitch.render()
+    this.InstanceMask.render()
     this.InstanceNavigation.render()
   }
 }
