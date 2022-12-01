@@ -11,7 +11,7 @@ class Message {
 
     this.timeoutRef = null
 
-    this.show = false
+    this.showIf = false
 
     this.opacity = 0
     this.width = Math.min(Canvas.width - 24, 200)
@@ -24,34 +24,34 @@ class Message {
     this.message = message
     this.backgroundColor = backgroundColor
     this.textColor = textColor
-    this.show = true
+    this.showIf = true
 
     if (this.timeoutRef) return
 
     this.timeoutRef = wait(60, () => {
-      this.show = false
+      this.showIf = false
       this.timeoutRef = null
     })
   }
 
   render() {
-    if (this.show && this.opacity < 1) {
+    if (this.showIf && this.opacity < 1) {
       this.opacity = numberFix(this.opacity + 0.05)
     }
 
-    if (!this.show && this.opacity > 0) {
+    if (!this.showIf && this.opacity > 0) {
       this.opacity = numberFix(this.opacity - 0.05)
     }
 
-    if (this.show && this.y > Canvas.height - this.height - 12) {
+    if (this.showIf && this.y > Canvas.height - this.height - 12) {
       this.y = numberFix(this.y - 2)
     }
 
-    if (!this.show && this.y < Canvas.height) {
+    if (!this.showIf && this.y < Canvas.height) {
       this.y = numberFix(this.y + 2)
     }
 
-    if (!this.show && this.opacity === 0) return
+    if (!this.showIf && this.opacity === 0) return
 
     Canvas.ctx.save()
 

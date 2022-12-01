@@ -271,7 +271,7 @@ class Witch {
 
       Canvas.ctx.textAlign = 'center'
       const row = drawMultilineText({ width: this.width * 0.9, text: currentSkill.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
+      drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.04 - (this.width * 0.02 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
     }
 
     Canvas.ctx.textAlign = 'start'

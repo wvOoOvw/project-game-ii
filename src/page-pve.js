@@ -125,7 +125,6 @@ class Witch {
 
     if (currentSkill) {
       drawRectRadius({ ...this.option, radius: 8 })
-
       Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
       Canvas.ctx.fill()
 
@@ -173,7 +172,7 @@ class Witch {
 
       Canvas.ctx.textAlign = 'center'
       const row = drawMultilineText({ width: this.width * 0.9, text: currentSkill.description, onlyread: true })
-      drawMultilineText({ x: this.x + this.width / 2, y: this.y - (this.width * 0.06 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
+      drawMultilineText({ x: this.x + this.width / 2, y: this.y - this.width * 0.04 - (this.width * 0.02 + this.width * 0.06 * row) * Math.min(Math.abs(this.rotateTime) / this.maxRotateTime, 1), width: this.width * 0.9, wrapSpace: this.width * 0.06, text: currentSkill.description })
     }
 
     // skill --end
@@ -294,6 +293,8 @@ class Monster {
     this.monster
     this.skill
 
+    this.skillIf
+
     this.skillTime = 0
   }
 
@@ -314,8 +315,11 @@ class Monster {
   }
 
   render() {
-    if (this.skillTime < 1) {
+    if (this.skillIf && this.skillTime < 1) {
       this.skillTime = numberFix(this.skillTime + 0.05)
+    }
+    if (!this.skillIf && this.skillTime > 0) {
+      this.skillTime = numberFix(this.skillTime - 0.05)
     }
 
     Canvas.ctx.save()
@@ -349,29 +353,15 @@ class Monster {
     Canvas.ctx.textAlign = 'center'
     drawMultilineText({ x: this.x + this.width / 2, y: this.y + this.height + this.width * 0.04 * this.skillTime, width: this.width * 0.9, wrapSpace: this.width * 0.06, text: this.skill.description })
 
-    // Canvas.ctx.textAlign = 'start'
-    // drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
-    // Canvas.ctx.fill()
-    // Canvas.ctx.fillText(`状态 ${this.monster.buff.map(i => i.name).join(' ')}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.085)
-
     Canvas.ctx.restore()
   }
 }
 
 class Mask {
   constructor() {
-    this.x
-    this.y
-    this.width
-    this.height
-
     this.useIf
 
     this.alphaTime = 0
-  }
-
-  get option() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height }
   }
 
   render() {
@@ -438,27 +428,39 @@ class Page {
     }
 
     this.InstanceMonster.skill = arrayRandom(this.InstanceMonster.monster.skill, 1)[0]
-    this.InstanceMonster.skillTime = 0
+    this.InstanceMonster.skillIf = true
 
     this.InstanceWitch.useEvent = async (skill, witch) => {
       this.InstanceMask.useIf = true
       this.InstanceWitch.useIf = true
 
-      await wait(60)
-      await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
-      await wait(120)
-      await this.round(witch)
+      Message.play(`使用 ${skill.name}`)
+
       await wait(60)
 
-      this.InstanceWitch.useIf = false
+      this.InstanceMonster.skillIf = false
+
+      await wait(60)
+
+      await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
+
+      await wait(115)
+
+      await this.round(witch)
+
+      await wait(45)
+
       this.InstanceMask.useIf = false
+
+      await wait(15)
+
+      this.InstanceWitch.useIf = false
     }
   }
 
   async compute(witch, monster, witchSkill, monsterSkill) {
     const witchResult = witchSkill.function(witch, monster, this.team)
 
-    Message.play(`使用 ${witchSkill.name}`)
 
     while (witchResult.length) {
       const result = witchResult.shift()

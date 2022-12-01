@@ -81,4 +81,4 @@ Imitation.prototype.dispatch = function () {
 
 const ImitationInstance = new Imitation()
 
-export { ImitationInstance as Imitation }
+export { ImitationInstance as Imitation, Imitation as ImitationClass }
