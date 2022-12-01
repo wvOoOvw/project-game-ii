@@ -375,7 +375,7 @@ class Page {
     this.InstanceList.width = Math.min(Canvas.width - 24, 1080)
     this.InstanceList.height = 220
     this.InstanceList.x = (Canvas.width - this.InstanceList.width) / 2
-    this.InstanceList.y = 12
+    this.InstanceList.y = 12 + Canvas.safeArea.top
     this.InstanceList.init()
     this.InstanceList.touchEvent = witch => {
       this.InstanceWitch.witch = witch
