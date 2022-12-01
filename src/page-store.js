@@ -61,8 +61,6 @@ class ListItem {
 
     Canvas.ctx.clip()
 
-    Canvas.ctx.globalAlpha = this.globalAlpha
-
     drawImage(this.witch.imageDOM, this.option)
 
     if (this.witch.inTeam) {
