@@ -230,6 +230,8 @@ class Witch {
     if (this.previousFadeTime < 1 && this.previous) {
       Canvas.ctx.globalAlpha = 1 - this.previousFadeTime
 
+      drawImageFullHeight(this.previous.imageDOM, { ...this.option, y: this.y + this.width * 0.28, height: this.height - this.width * 0.36 })
+
       Canvas.ctx.textAlign = 'start'
       Canvas.ctx.textBaseline = 'top'
       Canvas.ctx.font = `900 ${this.width * 0.04}px courier`
@@ -252,8 +254,6 @@ class Witch {
       drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
       Canvas.ctx.fillText(this.previous.type, this.x + this.width - this.width * 0.07, this.y + this.width * 0.125)
-
-      drawImageFullHeight(this.previous.imageDOM, { ...this.option, y: this.y + this.height * 0.25, height: this.height - this.height * 0.35 })
     }
 
     // witch -- end
@@ -472,6 +472,9 @@ class Page {
     this.monster = parseMonster(originMonster.map(i => ({ ...i, level: 0 })))
 
     this.InstanceMonster.monster = arrayRandom(this.monster, 1)[0]
+
+    this.InstanceMask.useIf = false
+    this.InstanceWitch.useIf = false
 
     this.round()
   }
