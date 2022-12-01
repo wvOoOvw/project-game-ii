@@ -40,52 +40,54 @@ class Navigation {
 
     Canvas.ctx.save()
 
-    Canvas.ctx.globalAlpha = this.visibleTime / this.maxVisibleTime
+    if (this.visibleTime !== 0) {
+      Canvas.ctx.globalAlpha = this.visibleTime / this.maxVisibleTime
 
-    drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
-    Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    Canvas.ctx.fill()
+      drawRect({ x: 0, y: 0, width: Canvas.width, height: Canvas.height })
+      Canvas.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+      Canvas.ctx.fill()
 
-    drawRectRadius({ x: (Canvas.width - Canvas.maxWidth) / 2, y: Canvas.height - this.visibleTime - 24, width: Canvas.maxWidth, height: this.visibleTime + 24, radius: [8, 8, 0, 0] })
-    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-    Canvas.ctx.fill()
+      drawRectRadius({ x: (Canvas.width - Canvas.maxWidth) / 2, y: Canvas.height - this.visibleTime - 24, width: Canvas.maxWidth, height: this.visibleTime + 24, radius: [8, 8, 0, 0] })
+      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+      Canvas.ctx.fill()
 
-    this.content.forEach((i, index) => {
-      var width = 72
-      var height = 30
-      var x = (Canvas.width - width) / 2
-      var y = Canvas.height - this.visibleTime
-      var radius = 4
+      this.content.forEach((i, index) => {
+        var width = 72
+        var height = 30
+        var x = (Canvas.width - width) / 2
+        var y = Canvas.height - this.visibleTime
+        var radius = 4
 
-      const maxIndex = this.content.length
-      const centerIndex = maxIndex / 2 - 0.5
-      const diff = (index - centerIndex) * (width + 4)
-      x = x + diff
+        const maxIndex = this.content.length
+        const centerIndex = maxIndex / 2 - 0.5
+        const diff = (index - centerIndex) * (width + 4)
+        x = x + diff
 
-      if (i.active) {
-        drawRectRadius({ x, y, width, height, radius })
-        Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
-        Canvas.ctx.fill()
-      }
+        if (i.active) {
+          drawRectRadius({ x, y, width, height, radius })
+          Canvas.ctx.fillStyle = 'rgba(40, 90, 90, 1)'
+          Canvas.ctx.fill()
+        }
 
-      if (!i.active) {
-        x = x + Canvas.ctx.lineWidth / 2
-        y = y + Canvas.ctx.lineWidth / 2
-        width = width - Canvas.ctx.lineWidth
-        height = height - Canvas.ctx.lineWidth
-        drawRectRadius({ x, y, width, height, radius })
-        Canvas.ctx.strokeStyle = 'rgba(40, 90, 90, 1)'
-        Canvas.ctx.stroke()
-      }
+        if (!i.active) {
+          x = x + Canvas.ctx.lineWidth / 2
+          y = y + Canvas.ctx.lineWidth / 2
+          width = width - Canvas.ctx.lineWidth
+          height = height - Canvas.ctx.lineWidth
+          drawRectRadius({ x, y, width, height, radius })
+          Canvas.ctx.strokeStyle = 'rgba(40, 90, 90, 1)'
+          Canvas.ctx.stroke()
+        }
 
-      Canvas.ctx.textAlign = 'center'
-      Canvas.ctx.textBaseline = 'middle'
-      Canvas.ctx.font = `900 10px Courier`
-      Canvas.ctx.fillStyle = i.active ? 'rgba(255, 255, 255, 1)' : 'rgba(40, 90, 90, 1)'
-      Canvas.ctx.fillText(i.name, x + width / 2, y + height / 2)
+        Canvas.ctx.textAlign = 'center'
+        Canvas.ctx.textBaseline = 'middle'
+        Canvas.ctx.font = `900 10px Courier`
+        Canvas.ctx.fillStyle = i.active ? 'rgba(255, 255, 255, 1)' : 'rgba(40, 90, 90, 1)'
+        Canvas.ctx.fillText(i.name, x + width / 2, y + height / 2)
 
-      Event.addEventListener('touchstart', i.event, { ifTouchCover: { x, y, width, height }, stop: true, priority: 900 })
-    })
+        Event.addEventListener('touchstart', i.event, { ifTouchCover: { x, y, width, height }, stop: true, priority: 900 })
+      })
+    }
 
     Canvas.ctx.globalAlpha = 1
 
