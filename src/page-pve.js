@@ -451,7 +451,16 @@ class Page {
     if (!witch) {
       this.InstanceWitch.witch = arrayRandom(this.team, 1)[0]
     }
-    this.InstanceWitch.next = this.team.length > 1 ? arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2) : [this.team[0], this.team[0]]
+
+    if (this.team.length === 1) {
+      this.InstanceWitch.next = [this.team[0], this.team[0]]
+    }
+    if (this.team.length === 2) {
+      this.InstanceWitch.next = [this.team.filter(i => i.key !== this.InstanceWitch.witch.key)[0], this.team.filter(i => i.key !== this.InstanceWitch.witch.key)[0]]
+    }
+    if (this.team.length > 2) {
+      this.InstanceWitch.next = arrayRandom(this.team.filter(i => i.key !== this.InstanceWitch.witch.key), 2)
+    }
 
     this.InstanceMonster.skill = arrayRandom(this.InstanceMonster.monster.skill, 1)[0]
     this.InstanceMonster.skillIf = true

@@ -65,7 +65,7 @@ class ListItem {
 
     drawRectRadius({ x, y, width, height, radius: 4 })
 
-    Canvas.ctx.fillStyle = `rgba(${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, 1)`
+    Canvas.ctx.fillStyle = `rgba(${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, 1)`
     Canvas.ctx.fill()
 
     Canvas.ctx.clip()
@@ -319,6 +319,14 @@ class Witch {
 
     // skill --end
 
+    // switch
+
+    // drawRectRadius({ x: this.x + this.width + this.width * 0.04, y: this.y + this.height / 2 - this.width * 0.06, width: this.width * 0.06, height: this.width * 0.12, radius: this.width * 0.03 })
+    // Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    // Canvas.ctx.fill()
+
+    // switch --end
+
     // paper
 
     Canvas.ctx.translate(this.x + this.width * 0.5, this.y + this.height * 2)
@@ -429,7 +437,7 @@ class Page {
 
     this.InstanceList = new List()
     this.InstanceList.width = Math.min(Canvas.width - 24, 1080)
-    this.InstanceList.height = 220
+    this.InstanceList.height = Math.min(Canvas.width * 0.5, Canvas.maxWidth * 0.5)
     this.InstanceList.x = (Canvas.width - this.InstanceList.width) / 2
     this.InstanceList.y = 12 + Canvas.safeArea.top
     this.InstanceList.load()
@@ -443,7 +451,7 @@ class Page {
 
       this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch === witch)
     }
-    this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch === this.InstanceList.witch[0])
+    this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch.key === this.InstanceList.witch[0].key)
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
@@ -470,6 +478,7 @@ class Page {
       this.InstanceWitch.witch.inTeam = !this.InstanceWitch.witch.inTeam
       this.InstanceList.load()
       this.InstanceList.init()
+      this.InstanceList.InstanceWitch.forEach(i => i.activeIf = i.witch.key === this.InstanceWitch.witch.key)
       Imitation.state.setInfo()
     }
     this.InstanceWitch.witch = this.InstanceList.witch[0]
