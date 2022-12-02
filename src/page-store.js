@@ -25,7 +25,7 @@ class ListItem {
 
     this.activeIf
 
-    this.activeTime = 1
+    this.activeTime = 0
 
     this.witch
 
@@ -104,7 +104,7 @@ class List {
   }
 
   get option() {
-    return { x: this.x, y: this.y + this.offsetY, width: this.width, height: this.height }
+    return { x: this.x, y: this.y, width: this.width, height: this.height }
   }
 
   load() {

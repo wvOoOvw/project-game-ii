@@ -8,8 +8,6 @@ const parseWitch = (array) => {
 
     const compose = { ...origin, ...i }
 
-    console.log(compose)
-
     compose.purity = compose.purity * Math.pow(1.2, i.level)
     compose.rational = compose.rational * Math.pow(1.2, i.level)
     compose.perceptual = compose.perceptual * Math.pow(1.2, i.level)
