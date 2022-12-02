@@ -11,6 +11,7 @@ import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
 import { Navigation } from './ui-navigation'
+import { Mask } from './ui-mask'
 
 import { originWitch, originMonster, sourceIoad } from './source'
 
@@ -25,8 +26,6 @@ class Witch {
 
     this.previous
     this.next
-
-    this.useIf
 
     this.mouseDownPosition = null
 
@@ -270,11 +269,9 @@ class Witch {
 
     Canvas.ctx.restore()
 
-    if (!this.useIf) {
-      Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
-      Event.addEventListener('touchmove', this.eventMove.bind(this))
-      Event.addEventListener('touchend', this.eventUp.bind(this))
-    }
+    Event.addEventListener('touchstart', this.eventDown.bind(this), { ifTouchCover: this.option })
+    Event.addEventListener('touchmove', this.eventMove.bind(this))
+    Event.addEventListener('touchend', this.eventUp.bind(this))
   }
 }
 
@@ -352,55 +349,6 @@ class Monster {
   }
 }
 
-class Mask {
-  constructor() {
-    this.useIf
-
-    this.text
-
-    this.touchEvent = new Function()
-
-    this.alphaTime = 0
-  }
-
-  render() {
-    if (this.useIf && this.alphaTime < 1) {
-      this.alphaTime = numberFix(this.alphaTime + 0.05)
-    }
-    if (!this.useIf && this.alphaTime > 0) {
-      this.alphaTime = numberFix(this.alphaTime - 0.05)
-    }
-
-    Canvas.ctx.save()
-
-    Canvas.ctx.globalAlpha = this.alphaTime * 0.5
-
-    drawFullColor('rgba(0, 0, 0, 1)')
-
-    Canvas.ctx.globalAlpha = this.alphaTime
-
-    if (this.text) {
-      Canvas.ctx.textAlign = 'center'
-      Canvas.ctx.textBaseline = 'middle'
-      Canvas.ctx.font = `900 14px courier`
-      Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
-
-      Canvas.ctx.fillText(this.text[0], Canvas.width / 2, Canvas.height / 2 - 24)
-
-      Canvas.ctx.font = `900 12px courier`
-
-      Canvas.ctx.fillText(this.text[1], Canvas.width / 2, Canvas.height / 2 + 24)
-
-      drawRectRadius({ x: (Canvas.width - 240) / 2, y: Canvas.height / 2 - 1, width: 240, height: 2, radius: 2 })
-      Canvas.ctx.fill()
-    }
-
-    Canvas.ctx.restore()
-
-    if (this.useIf || this.alphaTime > 0) Event.addEventListener('touchstart', this.touchEvent, { stop: true, priority: 100 })
-  }
-}
-
 class Page {
   constructor() {
     this.InstanceNavigation = new Navigation()
@@ -410,10 +358,6 @@ class Page {
     ]
 
     this.InstanceMask = new Mask()
-    this.InstanceMask.width = Canvas.width
-    this.InstanceMask.height = Canvas.height
-    this.InstanceMask.x = 0
-    this.InstanceMask.y = 0
 
     this.InstanceWitch = new Witch()
     this.InstanceWitch.width = Math.min(Canvas.width * 0.75, Canvas.maxWidth * 0.75)
@@ -436,8 +380,8 @@ class Page {
 
     this.InstanceMonster.monster = arrayRandom(this.monster, 1)[0]
 
-    this.InstanceMask.useIf = false
-    this.InstanceWitch.useIf = false
+    this.InstanceMask.showIf = false
+    this.InstanceWitch.showIf = false
 
     this.round()
   }
@@ -466,27 +410,32 @@ class Page {
     this.InstanceMonster.skillIf = true
 
     this.InstanceWitch.useEvent = async (skill, witch) => {
-      this.InstanceMask.useIf = true
-      this.InstanceWitch.useIf = true
+      this.InstanceMask.showIf = true
 
-      this.InstanceMask.text = ['战斗中', '等待战斗结束']
+      this.InstanceMask.text = ['战斗中', '等待战斗结束', '...']
 
       Message.play(`使用 ${skill.name}`)
 
-      await wait(60)
+      await wait(64)
 
       this.InstanceMonster.skillIf = false
 
-      await wait(60)
+      this.InstanceMask.showIf = false
+
+      await wait(64)
+
+      this.InstanceMask.text = ['战斗结算', '等待战斗结束', '...']
+
+      this.InstanceMask.showIf = true
 
       await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
 
-      await wait(115)
+      await wait(128)
 
       if (this.InstanceMonster.monster.dirty === 0) {
-        this.InstanceMask.useIf = false
-        await wait(15)
-        this.InstanceMask.useIf = true
+        this.InstanceMask.showIf = false
+        await wait(16)
+        this.InstanceMask.showIf = true
         this.InstanceMask.text = ['战斗胜利', '点击任意处 继续战斗']
         this.InstanceMask.touchEvent = () => {
           this.InstanceMask.text = null
@@ -500,9 +449,9 @@ class Page {
       this.team = this.team.filter(i => i.purity > 0)
 
       if (this.team.length === 0) {
-        this.InstanceMask.useIf = false
-        await wait(15)
-        this.InstanceMask.useIf = true
+        this.InstanceMask.showIf = false
+        await wait(16)
+        this.InstanceMask.showIf = true
         this.InstanceMask.text = ['战斗失败', '点击任意处 继续战斗']
         this.InstanceMask.touchEvent = () => {
           this.InstanceMask.text = null
@@ -514,15 +463,13 @@ class Page {
 
       await this.round(witch)
 
-      await wait(45)
+      await wait(32)
 
-      this.InstanceMask.useIf = false
+      this.InstanceMask.showIf = false
 
-      await wait(15)
+      await wait(32)
 
       this.InstanceMask.text = null
-
-      this.InstanceWitch.useIf = false
     }
   }
 
@@ -540,10 +487,8 @@ class Page {
         if (current.effect === 'Cure') {
           numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity), 32, i => current.target.purity = current.target.purity + i)
         }
-        if (current.effect === 'Damage') {
-          numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
-        }
-        if (current.effect === 'Defent') {
+        if (current.effect === 'Damage-Dirty') {
+          this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.dirty))}`)
           numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
         }
         if (current.effect === 'Buff') {
@@ -568,9 +513,10 @@ class Page {
         current.target.buff.forEach(i => i.value(current))
 
         if (current.effect === 'Cure') {
-          numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty_), 32, i => current.target.dirty = current.target.dirty + i)
+          numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty), 32, i => current.target.dirty = current.target.dirty + i)
         }
-        if (current.effect === 'Damage') {
+        if (current.effect === 'Damage-Purity') {
+          this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.purity))}`)
           numberAnimation(Math.min(current.value, current.target.purity), 32, i => current.target.purity = current.target.purity - i)
         }
       }

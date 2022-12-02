@@ -22,7 +22,7 @@ var originMonster = [
         description: '蓄势待发，准备向你冲来！做好防御的准备！！！',
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage', target: [opposite], value: Math.floor(100 + Math.random() * 50) },
+            { effect: 'Damage-Purity', target: [opposite], value: Math.floor(100 + Math.random() * 50) },
           ]
         }
       },
@@ -32,7 +32,7 @@ var originMonster = [
         description: '躺在了地上！',
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage', target: [opposite], value: Math.floor(20 + Math.random() * 50) },
+            { effect: 'Damage-Purity', target: [opposite], value: Math.floor(20 + Math.random() * 50) },
           ]
         }
       }
@@ -55,7 +55,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值20%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
         }
       },
       {
@@ -65,7 +65,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
           ]
         }
       }
@@ -85,7 +85,7 @@ var originWitch = [
         type: '伤害',
         description: '以感性值18%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.perceptual * 0.18 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.perceptual * 0.18 }]
         }
       },
       {
@@ -94,7 +94,7 @@ var originWitch = [
         description: '以理性值18%攻击目标',
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.18 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.18 }
           ]
         }
       }
@@ -114,7 +114,7 @@ var originWitch = [
         type: '伤害',
         description: '以感性值12%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.perceptual * 0.12 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.perceptual * 0.12 }]
         }
       },
       {
@@ -143,7 +143,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值15%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.15 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }]
         }
       },
       {
@@ -178,7 +178,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值20%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
         }
       },
       {
@@ -188,7 +188,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
           ]
         }
       }
@@ -208,7 +208,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值20%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
         }
       },
       {
@@ -218,7 +218,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
           ]
         }
       }
@@ -238,7 +238,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值20%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
         }
       },
       {
@@ -248,7 +248,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
           ]
         }
       }
@@ -268,7 +268,7 @@ var originWitch = [
         type: '伤害',
         description: '以理性值20%攻击目标',
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
         }
       },
       {
@@ -278,7 +278,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
           ]
         }
       }

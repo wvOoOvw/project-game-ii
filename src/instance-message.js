@@ -28,7 +28,7 @@ class Message {
 
     if (this.timeoutRef) return
 
-    this.timeoutRef = wait(60, () => {
+    this.timeoutRef = wait(64, () => {
       this.showIf = false
       this.timeoutRef = null
     })

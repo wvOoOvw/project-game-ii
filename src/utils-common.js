@@ -94,7 +94,7 @@ const hash = (n = 12, l = 1) => {
 }
 
 const numberFix = (n) => {
-  return Number(Number(n).toFixed(5))
+  return Number(Number(n).toFixed(8))
 }
 
 const numberAnimation = (number, time, callback) => {
