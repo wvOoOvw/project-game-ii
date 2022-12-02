@@ -356,6 +356,10 @@ class Mask {
   constructor() {
     this.useIf
 
+    this.text
+
+    this.touchEvent = new Function()
+
     this.alphaTime = 0
   }
 
@@ -373,62 +377,27 @@ class Mask {
 
     drawFullColor('rgba(0, 0, 0, 1)')
 
-    Canvas.ctx.restore()
-  }
-}
+    Canvas.ctx.globalAlpha = this.alphaTime
 
-class Result {
-  constructor() {
-    this.result
-
-    this.closeEvent = new Function()
-
-    this.alphaTime = 0
-  }
-
-  render() {
-    if (this.result && this.alphaTime < 1) {
-      this.alphaTime = numberFix(this.alphaTime + 0.05)
-    }
-
-    if (!this.result && this.alphaTime > 0) {
-      this.alphaTime = numberFix(this.alphaTime - 0.05)
-    }
-
-    Canvas.ctx.save()
-
-    Canvas.ctx.globalAlpha = this.alphaTime * 0.5
-
-    drawFullColor('rgba(0, 0, 0, 1)')
-
-    Canvas.ctx.globalAlpha = this.alphaTime * 1
-
-    if (this.result) {
+    if (this.text) {
       Canvas.ctx.textAlign = 'center'
       Canvas.ctx.textBaseline = 'middle'
       Canvas.ctx.font = `900 14px courier`
       Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-      if (this.result.type === 'win') {
-        Canvas.ctx.fillText(`战斗胜利`, Canvas.width / 2, Canvas.height / 2 - 24)
-      }
-
-      if (this.result.type === 'lose') {
-        Canvas.ctx.fillText(`战斗失败`, Canvas.width / 2, Canvas.height / 2 - 24)
-      }
+      Canvas.ctx.fillText(this.text[0], Canvas.width / 2, Canvas.height / 2 - 24)
 
       Canvas.ctx.font = `900 12px courier`
 
-      Canvas.ctx.fillText(`点击任意处 继续战斗`, Canvas.width / 2, Canvas.height / 2 + 24)
+      Canvas.ctx.fillText(this.text[1], Canvas.width / 2, Canvas.height / 2 + 24)
 
       drawRectRadius({ x: (Canvas.width - 240) / 2, y: Canvas.height / 2 - 1, width: 240, height: 2, radius: 2 })
       Canvas.ctx.fill()
-
-      Event.addEventListener('touchstart', this.closeEvent, { stop: true, priority: 100 })
     }
 
     Canvas.ctx.restore()
 
+    if (this.useIf || this.alphaTime > 0) Event.addEventListener('touchstart', this.touchEvent, { stop: true, priority: 100 })
   }
 }
 
@@ -439,12 +408,6 @@ class Page {
       { name: '战斗', active: true },
       { name: '仓库', event: () => Imitation.state.page.current = 'store' }
     ]
-
-    this.InstanceResult = new Result()
-    this.InstanceResult.closeEvent = () => {
-      this.InstanceResult.result = null
-      this.init()
-    }
 
     this.InstanceMask = new Mask()
     this.InstanceMask.width = Canvas.width
@@ -497,6 +460,8 @@ class Page {
       this.InstanceMask.useIf = true
       this.InstanceWitch.useIf = true
 
+      this.InstanceMask.text = ['战斗中', '等待战斗结束']
+
       Message.play(`使用 ${skill.name}`)
 
       await wait(60)
@@ -510,8 +475,15 @@ class Page {
       await wait(115)
 
       if (this.InstanceMonster.monster.dirty === 0) {
-        this.InstanceResult.result = { type: 'win' }
         this.InstanceMask.useIf = false
+        await wait(15)
+        this.InstanceMask.useIf = true
+        this.InstanceMask.text = ['战斗胜利', '点击任意处 继续战斗']
+        this.InstanceMask.touchEvent = () => {
+          this.InstanceMask.text = null
+          this.InstanceMask.touchEvent = null
+          this.init()
+        }
         this.computeResult()
         return
       }
@@ -519,8 +491,15 @@ class Page {
       this.team = this.team.filter(i => i.purity > 0)
 
       if (this.team.length === 0) {
-        this.InstanceResult.result = { type: 'lose' }
         this.InstanceMask.useIf = false
+        await wait(15)
+        this.InstanceMask.useIf = true
+        this.InstanceMask.text = ['战斗失败', '点击任意处 继续战斗']
+        this.InstanceMask.touchEvent = () => {
+          this.InstanceMask.text = null
+          this.InstanceMask.touchEvent = null
+          this.init()
+        }
         return
       }
 
@@ -531,6 +510,8 @@ class Page {
       this.InstanceMask.useIf = false
 
       await wait(15)
+
+      this.InstanceMask.text = null
 
       this.InstanceWitch.useIf = false
     }
@@ -614,7 +595,6 @@ class Page {
     this.InstanceMonster.render()
     this.InstanceWitch.render()
     this.InstanceMask.render()
-    this.InstanceResult.render()
     this.InstanceNavigation.render()
   }
 }
