@@ -1,6 +1,8 @@
-import { parseWitch, symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
+import { symbolNumber, wait, hash, numberFix, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText } from './utils-canvas'
 import { UI, Click, FadeCreator } from './utils-ui'
+import { parseWitch } from './source'
+
 
 import { Animation } from './instance-animation'
 import { Canvas } from './instance-canvas'
@@ -65,12 +67,16 @@ class ListItem {
 
     drawRectRadius({ x, y, width, height, radius: 4 })
 
-    Canvas.ctx.fillStyle = `rgba(${Math.ceil(255 - this.activeTime * (255 - 40))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, ${Math.ceil(255 - this.activeTime * (255 - 90))}, 1)`
+    Canvas.ctx.fillStyle = 'rgba(40, 40, 90, 1)'
     Canvas.ctx.fill()
 
     Canvas.ctx.clip()
 
-    drawImage(this.witch.imageDOM, this.option)
+    drawRect({ x, y: this.y + this.height * 0.15 * (1 - this.activeTime), width, height: this.height - (this.height * 0.3 * (1 - this.activeTime)) })
+    Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+    Canvas.ctx.fill()
+
+    drawImageFullHeight(this.witch.imageDOM, { ...this.option, y: this.y + this.height * 0.2 * (1 - this.activeTime), height: this.height - (this.height * 0.4 * (1 - this.activeTime)) })
 
     if (this.witch.inTeam) {
       drawRectRadius({ x: x + height * 0.05, y: y + height * 0.05, width: height * 0.05, height: height * 0.05, radius: height * 0.05 / 2 })

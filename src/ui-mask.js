@@ -22,6 +22,8 @@ class Mask {
     this.alphaTimeSpeed = 1 / 32
 
     this.text
+
+    this.textOffsetY = 0
   }
 
   render() {
@@ -47,24 +49,23 @@ class Mask {
 
       Canvas.ctx.fillStyle = 'rgba(255, 255, 255, 1)'
 
-      drawRectRadius({ x: (Canvas.width - 240) / 2, y: Canvas.height / 2 - 1, width: 240, height: 2, radius: 2 })
+      drawRectRadius({ x: (Canvas.width - 240) / 2, y: Canvas.height / 2 - 1 + this.textOffsetY, width: 240, height: 2, radius: 2 })
       Canvas.ctx.fill()
 
       Canvas.ctx.textAlign = 'center'
       Canvas.ctx.textBaseline = 'middle'
       Canvas.ctx.font = `900 14px courier`
 
-      Canvas.ctx.fillText(one, Canvas.width / 2, Canvas.height / 2 - 24)
+      Canvas.ctx.fillText(one, Canvas.width / 2, Canvas.height / 2 - 24 + this.textOffsetY)
 
       Canvas.ctx.font = `900 12px courier`
 
       other.forEach((i, index) => {
-        Canvas.ctx.fillText(i, Canvas.width / 2, Canvas.height / 2 + 24 * (index + 1))
+        Canvas.ctx.fillText(i, Canvas.width / 2, Canvas.height / 2 + 24 * (index + 1) + this.textOffsetY)
       })
     }
 
     Canvas.ctx.restore()
-
 
     if (this.alphaTime > 0) Event.addEventListener('touchstart', this.touchEvent, { stop: true, priority: this.touchEventPriority })
   }

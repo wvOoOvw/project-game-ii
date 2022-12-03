@@ -1,6 +1,7 @@
-import { parseWitch, symbolNumber, wait, hash, numberFix, numberAnimation, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover, parseMonster } from './utils-common'
+import { symbolNumber, wait, hash, numberFix, numberAnimation, arrayRandom, setArrayRandom, searchParams, ifTouchCover, ifScreenCover } from './utils-common'
 import { drawImage, drawImageFullHeight, drawRect, drawRectRadius, drawRectAngle, drawMultilineText, drawFullColor } from './utils-canvas'
 import { FadeCreator } from './utils-ui'
+import { parseWitch, parseMonster } from './source'
 
 import { Animation } from './instance-animation'
 import { Canvas } from './instance-canvas'
@@ -411,38 +412,33 @@ class Page {
 
     this.InstanceWitch.useEvent = async (skill, witch) => {
       this.InstanceMask.showIf = true
-
-      this.InstanceMask.text = ['战斗中', '等待战斗结束', '...']
-
-      Message.play(`使用 ${skill.name}`)
-
+      this.InstanceMask.text = ['战斗中', `${this.InstanceWitch.witch.name} 使用 ${skill.name}`]
+      
       await wait(64)
 
       this.InstanceMonster.skillIf = false
-
       this.InstanceMask.showIf = false
 
-      await wait(64)
-
-      this.InstanceMask.text = ['战斗结算', '等待战斗结束', '...']
+      await wait(32)
 
       this.InstanceMask.showIf = true
+      this.InstanceMask.text = ['战斗中']
 
       await this.compute(this.InstanceWitch.witch, this.InstanceMonster.monster, skill, this.InstanceMonster.skill)
-
-      await wait(128)
+      
+      await wait(64)
 
       if (this.InstanceMonster.monster.dirty === 0) {
         this.InstanceMask.showIf = false
-        await wait(16)
+        await wait(32)
         this.InstanceMask.showIf = true
-        this.InstanceMask.text = ['战斗胜利', '点击任意处 继续战斗']
+        this.InstanceMask.text = ['战斗胜利', '点击任意处 重新战斗']
         this.InstanceMask.touchEvent = () => {
-          this.InstanceMask.text = null
+          this.InstanceMask.showIf = false
           this.InstanceMask.touchEvent = null
           this.init()
         }
-        this.computeResult()
+        this.computeReward()
         return
       }
 
@@ -450,26 +446,32 @@ class Page {
 
       if (this.team.length === 0) {
         this.InstanceMask.showIf = false
-        await wait(16)
+        await wait(32)
         this.InstanceMask.showIf = true
         this.InstanceMask.text = ['战斗失败', '点击任意处 继续战斗']
         this.InstanceMask.touchEvent = () => {
-          this.InstanceMask.text = null
+          this.InstanceMask.showIf = false
           this.InstanceMask.touchEvent = null
           this.init()
         }
         return
       }
 
+      this.InstanceMask.touchEvent = async () => {
+        this.InstanceMask.touchEvent = () => {
+          this.InstanceMask.showIf = false
+          this.InstanceMask.touchEvent = null
+        }
+        this.InstanceMask.showIf = false
+        await wait(32)
+        if (this.InstanceMask.touchEvent === null) return
+        this.InstanceMask.showIf = true
+        this.InstanceMask.text = ['战斗中', `切换 / ${this.InstanceWitch.witch.name} -> ${witch.name}`]
+      }
+      
+      await wait(64)
+
       await this.round(witch)
-
-      await wait(32)
-
-      this.InstanceMask.showIf = false
-
-      await wait(32)
-
-      this.InstanceMask.text = null
     }
   }
 
@@ -532,7 +534,7 @@ class Page {
     })
   }
 
-  computeResult() {
+  computeReward() {
     Imitation.state.info.team.forEach(i => {
       const find = Imitation.state.info.library.find(i_ => i_.key === i.key)
 

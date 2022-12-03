@@ -298,4 +298,48 @@ const sourceIoad = () => {
   })
 }
 
-export { originMonster, originWitch, sourceIoad }
+const parseWitch = (array) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originWitch.find(i_ => i.key === i_.key)
+
+    const compose = { ...origin, ...i }
+
+    compose.purity = compose.purity * Math.pow(1.2, i.level)
+    compose.rational = compose.rational * Math.pow(1.2, i.level)
+    compose.perceptual = compose.perceptual * Math.pow(1.2, i.level)
+    compose.purity_ = compose.purity
+    compose.rational_ = compose.rational
+    compose.perceptual_ = compose.perceptual
+    compose.buff = []
+
+    result_.push(compose)
+
+    return result_
+  }, [])
+
+  return result
+}
+
+const parseMonster = (array) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originMonster.find(i_ => i.key === i_.key)
+
+    const compose = { ...origin, ...i }
+
+    compose.dirty = compose.dirty * Math.pow(1.2, i.level)
+    compose.dirty_ = compose.dirty
+    compose.buff = []
+
+    result_.push(compose)
+
+    return result_
+  }, [])
+
+  return result
+}
+
+export { originMonster, originWitch, sourceIoad, parseWitch, parseMonster }
