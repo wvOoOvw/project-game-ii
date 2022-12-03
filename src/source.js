@@ -349,9 +349,9 @@ const parseWitch = (array) => {
 
     const compose = { ...origin, ...i }
 
-    compose.purity = compose.purity * Math.pow(1.2, i.level)
-    compose.rational = compose.rational * Math.pow(1.2, i.level)
-    compose.perceptual = compose.perceptual * Math.pow(1.2, i.level)
+    compose.purity = Math.ceil(compose.purity * Math.pow(1.2, i.level))
+    compose.rational = Math.ceil(compose.rational * Math.pow(1.2, i.level))
+    compose.perceptual = Math.ceil(compose.perceptual * Math.pow(1.2, i.level))
     compose.purity_ = compose.purity
     compose.rational_ = compose.rational
     compose.perceptual_ = compose.perceptual
@@ -376,7 +376,7 @@ const parseMonster = (array) => {
 
     const compose = { ...origin, ...i }
 
-    compose.dirty = compose.dirty * Math.pow(1.2, i.level)
+    compose.dirty = Math.ceil(compose.dirty * Math.pow(1.2, i.level))
     compose.dirty_ = compose.dirty
     compose.buff = []
     compose.buff_ = []
