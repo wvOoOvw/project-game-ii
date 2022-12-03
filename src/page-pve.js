@@ -515,6 +515,8 @@ class Page {
     this.InstanceMonster.skillIf = true
 
     this.InstanceWitch.useEvent = async (position) => {
+      if (position !== 'left' || position !== 'right') return
+
       var skill
       var witch
 
