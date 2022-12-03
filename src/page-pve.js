@@ -95,12 +95,6 @@ class Witch {
     if (this.rotateTime === -this.maxRotateTime) this.useEvent('left')
     if (this.offsetYTime === this.maxOffsetYTime) this.useEvent('bottom')
     if (this.offsetYTime === -this.maxOffsetYTime) this.useEvent('top')
-    // if (this.rotateTime === this.maxRotateTime) {
-    //   this.useEvent(this.witch.skill[0], this.next[0])
-    // }
-    // if (this.rotateTime === -this.maxRotateTime) {
-    //   this.useEvent(this.witch.skill[1], this.next[1])
-    // }
 
     this.mouseDownPosition = null
     this.restoreStatus = null
@@ -255,10 +249,6 @@ class Witch {
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
       Canvas.ctx.fillText(`Lv ${Math.ceil(this.witch.level)}`, this.x + this.width * 0.07, this.y + this.height - this.width * 0.045)
-      Canvas.ctx.textAlign = 'end'
-      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.height - this.width * 0.09, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText('升级', this.x + this.width - this.width * 0.07, this.y + this.height - this.width * 0.045)
     }
 
     // lv --end
@@ -279,10 +269,6 @@ class Witch {
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
       Canvas.ctx.fillText(`${this.witch.characteristic[1].name} ${symbolNumber(this.witch.characteristic[1].level)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
-      Canvas.ctx.textAlign = 'end'
-      drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
-      Canvas.ctx.fill()
-      Canvas.ctx.fillText('重生', this.x + this.width - this.width * 0.07, this.y + this.width * 0.045)
 
       Canvas.ctx.textBaseline = 'bottom'
       Canvas.ctx.textAlign = 'start'

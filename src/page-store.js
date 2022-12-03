@@ -573,6 +573,10 @@ class Page {
           Message.play('已装载')
           return
         }
+        if (Imitation.state.info.library.find(i => i.key === this.InstanceWitch.witch.key).level < 1) {
+          Message.play('装载失败 等级不足 1')
+          return
+        }
         Imitation.state.info.team.push({ key: this.InstanceWitch.witch.key })
         Message.play('装载成功')
       }
