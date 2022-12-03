@@ -24,6 +24,8 @@ class Mask {
     this.text
 
     this.textOffsetY = 0
+
+    this.textTextAlign = 'center'
   }
 
   render() {
@@ -61,7 +63,13 @@ class Mask {
       Canvas.ctx.font = `900 12px courier`
 
       other.forEach((i, index) => {
-        Canvas.ctx.fillText(i, Canvas.width / 2, Canvas.height / 2 + 24 * (index + 1) + this.textOffsetY)
+        Canvas.ctx.textAlign = this.textTextAlign
+        if (this.textTextAlign === 'left') {
+          Canvas.ctx.fillText(i, (Canvas.width - 240) / 2 + 24, Canvas.height / 2 + 24 * (index + 1) + this.textOffsetY)
+        }
+        if (this.textTextAlign === 'center') {
+          Canvas.ctx.fillText(i, Canvas.width / 2, Canvas.height / 2 + 24 * (index + 1) + this.textOffsetY)
+        }
       })
     }
 

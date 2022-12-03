@@ -8,13 +8,39 @@ import { Message } from './instance-message'
 import { Picture } from './instance-picture'
 import { Sound } from './instance-sound'
 
+var originCharacteristic = [
+  {
+    key: 1,
+    name: '勇敢',
+    description: '提升理性值',
+    function: (characteristic, self) => {
+      self.rational = (1 + ((characteristic.level) * 0.04)) * self.rational
+      self.rational_ = (1 + ((characteristic.level) * 0.04)) * self.rational_
+    }
+  },
+  {
+    key: 2,
+    name: '冷静',
+    description: '提升感性值',
+    function: (characteristic, self) => {
+      self.perceptual = (1 + ((characteristic.level) * 0.04)) * self.perceptual
+      self.perceptual_ = (1 + ((characteristic.level) * 0.04)) * self.perceptual_
+    }
+  }
+]
+
 var originMonster = [
   {
     key: 1,
     name: '被污染的野猪',
     description: '在丛林中被污染的野猪，具备一定的攻击性。',
     dirty: 1200,
-    exp: 20,
+    reward: [
+      {
+        name: 'exp',
+        value: 20
+      }
+    ],
     skill: [
       {
         name: '冲撞',
@@ -36,7 +62,8 @@ var originMonster = [
           ]
         }
       }
-    ]
+    ],
+    characteristic: []
   }
 ]
 
@@ -298,6 +325,22 @@ const sourceIoad = () => {
   })
 }
 
+const parseCharacteristic = (array) => {
+  const result = array.reduce((t, i) => {
+    const result_ = [...t]
+
+    const origin = originCharacteristic.find(i_ => i.key === i_.key)
+
+    const compose = { ...origin, ...i }
+
+    result_.push(compose)
+
+    return result_
+  }, [])
+
+  return result
+}
+
 const parseWitch = (array) => {
   const result = array.reduce((t, i) => {
     const result_ = [...t]
@@ -313,6 +356,9 @@ const parseWitch = (array) => {
     compose.rational_ = compose.rational
     compose.perceptual_ = compose.perceptual
     compose.buff = []
+    compose.buff_ = []
+    compose.characteristic = parseCharacteristic(compose.characteristic)
+    compose.characteristic.forEach(i => i.function(i, compose))
 
     result_.push(compose)
 
@@ -333,6 +379,9 @@ const parseMonster = (array) => {
     compose.dirty = compose.dirty * Math.pow(1.2, i.level)
     compose.dirty_ = compose.dirty
     compose.buff = []
+    compose.buff_ = []
+    compose.characteristic = parseCharacteristic(compose.characteristic)
+    compose.characteristic.forEach(i => i.function(i, compose))
 
     result_.push(compose)
 
@@ -342,4 +391,4 @@ const parseMonster = (array) => {
   return result
 }
 
-export { originMonster, originWitch, sourceIoad, parseWitch, parseMonster }
+export { originCharacteristic, originMonster, originWitch, sourceIoad, parseCharacteristic, parseWitch, parseMonster }
