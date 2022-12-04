@@ -78,7 +78,7 @@ class Main {
         localStorage.setItem('info', JSON.stringify(Imitation.state.info))
       },
       getInfo: async () => {
-        localStorage.removeItem('info')
+        // localStorage.removeItem('info')
         const info = localStorage.getItem('info')
         if (info) {
           Imitation.state.info = JSON.parse(info)

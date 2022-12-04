@@ -615,7 +615,7 @@ class Page {
 
       if (position === 'bottom') {
         if (this.InstanceWitch.witch.exp < 100) {
-          Message.play(`升级失败 经验值不足 100`)
+          Message.play(`重生失败 经验值不足 100`)
           return
         }
 

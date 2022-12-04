@@ -515,7 +515,7 @@ class Page {
     this.InstanceMonster.skillIf = true
 
     this.InstanceWitch.useEvent = async (position) => {
-      if (position !== 'left' || position !== 'right') return
+      if (position !== 'left' && position !== 'right') return
 
       var skill
       var witch
@@ -575,6 +575,8 @@ class Page {
         return
       }
 
+      const currentName = this.InstanceWitch.witch.name
+
       this.InstanceMask.touchEvent = async () => {
         this.InstanceMask.touchEvent = () => {
           this.InstanceMask.showIf = false
@@ -584,7 +586,7 @@ class Page {
         await wait(32)
         if (this.InstanceMask.touchEvent === null) return
         this.InstanceMask.showIf = true
-        this.InstanceMask.text = ['战斗中', `切换 / ${this.InstanceWitch.witch.name} -> ${witch.name}`]
+        this.InstanceMask.text = ['战斗中', `切换 / ${currentName} -> ${witch.name}`]
       }
 
       await wait(64)
@@ -594,57 +596,71 @@ class Page {
   }
 
   async compute(witch, monster, witchSkill, monsterSkill) {
-    const witchResult = witchSkill.function(witch, monster, this.team)
-
-    while (witchResult.length) {
-      const result = witchResult.shift()
-
-      const handle = target => {
-        const current = { ...result, target }
-
-        current.target.buff.forEach(i => i.value(current))
-
-        if (current.effect === 'Cure') {
-          numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity), 32, i => current.target.purity = current.target.purity + i)
-        }
-        if (current.effect === 'Damage-Dirty') {
-          this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.dirty))}`)
-          numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
-        }
-        if (current.effect === 'Buff') {
-          current.target.buff.push(current)
-        }
-        if (current.effect === 'Improve-Rational') {
-          numberAnimation(current.value, 32, i => current.target.rational = current.target.rational + i)
-        }
-      }
-
-      result.target.forEach(target => handle(target))
+    var result
+    if (witchSkill.speed < monsterSkill.speed) {
+      result = [...witchSkill.function(witch, monster, this.team), ...monsterSkill.function(monster, witch, this.team)]
     }
+    if (witchSkill.speed > monsterSkill.speed) {
+      result = [...monsterSkill.function(monster, witch, this.team), ...witchSkill.function(witch, monster, this.team)]
+    }
+    if (witchSkill.speed === monsterSkill.speed) {
+      const random = Math.random()
 
-    const monsterResult = monsterSkill.function(monster, witch, this.team)
-
-    while (monsterResult.length) {
-      const result = monsterResult.shift()
-
-      const handle = target => {
-        const current = { ...result, target }
-
-        current.target.buff.forEach(i => i.value(current))
-
-        if (current.effect === 'Cure') {
-          numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty), 32, i => current.target.dirty = current.target.dirty + i)
-        }
-        if (current.effect === 'Damage-Purity') {
-          this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.purity))}`)
-          numberAnimation(Math.min(current.value, current.target.purity), 32, i => current.target.purity = current.target.purity - i)
-        }
+      if (random < 0.5) {
+        result = [...witchSkill.function(witch, monster, this.team), ...monsterSkill.function(monster, witch, this.team)]
       }
-
-      result.target.forEach(target => handle(target))
+      if (random >= 0.5) {
+        result = [...monsterSkill.function(monster, witch, this.team), ...witchSkill.function(witch, monster, this.team)]
+      }
     }
 
     new Array(...this.team, monster).forEach(i => {
+      i.buff_.forEach(i => i.value(i, 'start', result))
+      i.buff.forEach(i => i.value(i, 'start', result))
+    })
+
+    while (result.length) {
+      const current = result.shift()
+
+      new Array(...this.team, monster).forEach(i => {
+        i.buff_.forEach(i => i.value(i, 'result', result, current))
+        i.buff.forEach(i => i.value(i, 'result', result, current))
+      })
+
+      if (current.effect === 'Damage-Dirty') {
+        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.dirty))}`)
+        numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
+      }
+      if (current.effect === 'Damage-Purity') {
+        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.purity))}`)
+        numberAnimation(Math.min(current.value, current.target.purity), 32, i => current.target.purity = current.target.purity - i)
+      }
+      if (current.effect === 'Cure-Purity') {
+        this.InstanceMask.text.push(`${current.target.name} 回复清醒 ${Math.ceil(Math.min(current.value, current.target.purity_ - current.target.purity))}`)
+        numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity), 32, i => current.target.purity = current.target.purity + i)
+      }
+      if (current.effect === 'Cure-Dirty') {
+        this.InstanceMask.text.push(`${current.target.name} 回复污秽 ${Math.ceil(Math.min(current.value, current.target.dirty_ - current.target.dirty))}`)
+        numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty), 32, i => current.target.dirty = current.target.dirty + i)
+      }
+      if (current.effect === 'Buff') {
+        this.InstanceMask.text.push(`${current.target.name} 附加状态 ${current.name}`)
+        current.target.buff.push(current)
+      }
+      if (current.effect === 'Improve-Rational') {
+        this.InstanceMask.text.push(`${current.target.name} 提升理性 ${Math.ceil(current.value)}`)
+        numberAnimation(current.value, 32, i => current.target.rational = current.target.rational + i)
+      }
+      if (current.effect === 'Improve-Perceptual') {
+        this.InstanceMask.text.push(`${current.target.name} 提升感性 ${Math.ceil(current.value)}`)
+        numberAnimation(current.value, 32, i => current.target.perceptual = current.target.perceptual + i)
+      }
+    }
+
+    new Array(...this.team, monster).forEach(i => {
+      i.buff_.forEach(i => i.value(i, 'end', result))
+      i.buff.forEach(i => i.value(i, 'end', result))
+
       i.buff.forEach(i_ => {
         i_.time = i_.time - 1
         if (i_.time === 0) i.buff = i.buff.filter(i__ => i__ !== i_)

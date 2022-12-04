@@ -26,6 +26,15 @@ var originCharacteristic = [
       self.perceptual = (1 + ((characteristic.level) * 0.04)) * self.perceptual
       self.perceptual_ = (1 + ((characteristic.level) * 0.04)) * self.perceptual_
     }
+  },
+  {
+    key: 3,
+    name: '活力',
+    description: '提升清醒值',
+    function: (characteristic, self) => {
+      self.purity = (1 + ((characteristic.level) * 0.04)) * self.purity
+      self.purity_ = (1 + ((characteristic.level) * 0.04)) * self.purity_
+    }
   }
 ]
 
@@ -46,19 +55,21 @@ var originMonster = [
         name: '冲撞',
         type: '伤害',
         description: '蓄势待发，准备向你冲来！做好防御的准备！！！',
+        speed: 5,
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage-Purity', target: [opposite], value: Math.floor(100 + Math.random() * 50) },
+            { effect: 'Damage-Purity', origin: self, target: opposite, value: Math.floor(100 + Math.random() * 50) },
           ]
         }
       },
       {
         name: '休息',
-        type: '回复',
+        type: '伤害',
         description: '躺在了地上！',
+        speed: 9,
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage-Purity', target: [opposite], value: Math.floor(20 + Math.random() * 50) },
+            { effect: 'Damage-Purity', origin: self, target: opposite, value: Math.floor(20 + Math.random() * 50) },
           ]
         }
       }
@@ -70,7 +81,7 @@ var originMonster = [
 var originWitch = [
   {
     key: 1,
-    name: '自由滑轮',
+    name: '加百列',
     type: '进攻',
     description: '',
     purity: 1200,
@@ -78,21 +89,23 @@ var originWitch = [
     perceptual: 880,
     skill: [
       {
-        name: '圆舞',
+        name: '技能 A',
         type: '伤害',
         description: '以理性值20%攻击目标',
+        speed: 4,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.2 }]
         }
       },
       {
-        name: '零落',
+        name: '技能 B',
         type: '伤害 提升',
         description: '提升自身理性值10%，并以理性值15%攻击目标',
+        speed: 4,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Improve-Rational', origin: self, target: self, value: self.rational * 0.1 },
+            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 }
           ]
         }
       }
@@ -100,7 +113,7 @@ var originWitch = [
   },
   {
     key: 2,
-    name: '甜食守卫',
+    name: '乌利尔',
     type: '进攻',
     description: '',
     purity: 1150,
@@ -108,20 +121,22 @@ var originWitch = [
     perceptual: 1040,
     skill: [
       {
-        name: '舜生',
+        name: '技能 A',
         type: '伤害',
         description: '以感性值18%攻击目标',
+        speed: 4,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.perceptual * 0.18 }]
+          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.perceptual * 0.18 }]
         }
       },
       {
-        name: '刹那',
+        name: '技能 B',
         type: '伤害',
         description: '以理性值18%攻击目标',
+        speed: 4,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.18 }
+            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.18 }
           ]
         }
       }
@@ -129,7 +144,7 @@ var originWitch = [
   },
   {
     key: 3,
-    name: '疯人院',
+    name: '米加勒',
     type: '辅助',
     description: '',
     purity: 1000,
@@ -137,28 +152,30 @@ var originWitch = [
     perceptual: 1200,
     skill: [
       {
-        name: '绯红之刃',
+        name: '技能 A',
         type: '伤害',
         description: '以感性值12%攻击目标',
+        speed: 6,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.perceptual * 0.12 }]
+          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.perceptual * 0.12 }]
         }
       },
       {
-        name: '绯红治疗',
+        name: '技能 B',
         type: '回复',
         description: '以感性值8%治疗友方全体',
+        speed: 8,
         function: (self, opposite, selfAll) => {
-          return [
-            { effect: 'Cure', target: selfAll, value: self.perceptual * 0.08 }
-          ]
+          return selfAll.map(i => {
+            return { effect: 'Cure-Purity', origin: self, target: i, value: self.perceptual * 0.08 }
+          })
         }
       }
     ]
   },
   {
     key: 4,
-    name: '致命音符',
+    name: '乌列',
     type: '防御',
     description: '',
     purity: 1500,
@@ -166,26 +183,29 @@ var originWitch = [
     perceptual: 700,
     skill: [
       {
-        name: '闪光独奏',
+        name: '技能 A',
         type: '伤害',
         description: '以理性值15%攻击目标',
+        speed: 6,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }]
+          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 }]
         }
       },
       {
-        name: '爆裂节拍',
+        name: '技能 B',
         type: '防御',
         description: '3回合内提升自身减伤70%',
+        speed: 2,
         function: (self, opposite, selfAll) => {
-          const buff = (result) => {
-            if (result.effect === 'Damage' && result.target === self) {
-              result.value = numberFix(result.value * 0.3)
+          const buff = (buff, when, result, current) => {
+            if (when === 'result') {
+              if (current.effect === 'Damage-Purity' && current.target === self) {
+                current.value = numberFix(current.value * 0.3)
+              }
             }
           }
-
           return [
-            { effect: 'Buff', target: [self], value: buff, name: '减伤', time: 3 }
+            { effect: 'Buff', origin: self, target: self, value: buff, name: '减伤', time: 3 }
           ]
         }
       }
@@ -193,29 +213,33 @@ var originWitch = [
   },
   {
     key: 5,
-    name: '晚安故事',
+    name: '切茜娅',
     type: '进攻',
     description: '',
-    purity: 1200,
-    rational: 1180,
-    perceptual: 880,
+    purity: 870,
+    rational: 1200,
+    perceptual: 1000,
     skill: [
       {
-        name: '放音',
+        name: '技能 A',
         type: '伤害',
-        description: '以理性值20%攻击目标',
+        description: '以理性值10%感性值10%攻击目标',
+        speed: 4,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
+          return [
+            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.1 + self.perceptual * 0.1 }
+          ]
         }
       },
       {
-        name: '夜半',
-        type: '伤害 提升',
-        description: '提升自身理性值10%，并以理性值15%攻击目标',
+        name: '技能 B',
+        type: '伤害 回复',
+        description: '以理性值15%感性值攻击目标，并以感性值5%治疗自己',
+        speed: 7,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
+            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 },
+            { effect: 'Cure-Purity', origin: self, target: i, value: self.perceptual * 0.05 }
           ]
         }
       }
@@ -223,94 +247,42 @@ var originWitch = [
   },
   {
     key: 6,
-    name: '场外焦点',
-    type: '进攻',
+    name: '迦勒',
+    type: '辅助',
     description: '',
-    purity: 1200,
-    rational: 1180,
-    perceptual: 880,
+    purity: 1050,
+    rational: 880,
+    perceptual: 1100,
     skill: [
       {
-        name: '偶像身姿',
-        type: '伤害',
-        description: '以理性值20%攻击目标',
+        name: '技能 A',
+        type: '伤害 辅助',
+        description: '以感性值10%攻击目标，以感性值8%提升其他友方的理性值',
+        speed: 6,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
+          return [
+            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.2 },
+            ...selfAll.filter(i => i !== self).map(i => {
+              return { effect: 'Improve-Rational', origin: self, target: i, value: self.perceptual * 0.08 }
+            })
+          ]
         }
       },
       {
-        name: '闪烁打击',
-        type: '伤害 提升',
-        description: '提升自身理性值10%，并以理性值15%攻击目标',
+        name: '技能 B',
+        type: '辅助',
+        description: '以感性值10%提升所有友方的理性值',
+        speed: 6,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
+            ...selfAll.map(i => {
+              return { effect: 'Improve-Rational', origin: self, target: i, value: self.perceptual * 0.1 }
+            })
           ]
         }
       }
     ]
-  },
-  {
-    key: 7,
-    name: '纯真',
-    type: '进攻',
-    description: '',
-    purity: 1200,
-    rational: 1180,
-    perceptual: 880,
-    skill: [
-      {
-        name: '飞叶',
-        type: '伤害',
-        description: '以理性值20%攻击目标',
-        function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
-        }
-      },
-      {
-        name: '香气',
-        type: '伤害 提升',
-        description: '提升自身理性值10%，并以理性值15%攻击目标',
-        function: (self, opposite, selfAll) => {
-          return [
-            { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
-          ]
-        }
-      }
-    ]
-  },
-  {
-    key: 8,
-    name: '不良',
-    type: '进攻',
-    description: '',
-    purity: 1200,
-    rational: 1180,
-    perceptual: 880,
-    skill: [
-      {
-        name: '惩戒',
-        type: '伤害',
-        description: '以理性值20%攻击目标',
-        function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.2 }]
-        }
-      },
-      {
-        name: '利刃回旋',
-        type: '伤害 提升',
-        description: '提升自身理性值10%，并以理性值15%攻击目标',
-        function: (self, opposite, selfAll) => {
-          return [
-            { effect: 'Improve-Rational', target: [self], value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', target: [opposite], value: self.rational * 0.15 }
-          ]
-        }
-      }
-    ]
-  },
+  }
 ]
 
 const sourceIoad = () => {
@@ -349,9 +321,9 @@ const parseWitch = (array) => {
 
     const compose = { ...origin, ...i }
 
-    compose.purity = Math.ceil(compose.purity * Math.pow(1.2, i.level))
-    compose.rational = Math.ceil(compose.rational * Math.pow(1.2, i.level))
-    compose.perceptual = Math.ceil(compose.perceptual * Math.pow(1.2, i.level))
+    compose.purity = compose.purity * Math.pow(1.2, i.level)
+    compose.rational = compose.rational * Math.pow(1.2, i.level)
+    compose.perceptual = compose.perceptual * Math.pow(1.2, i.level)
     compose.purity_ = compose.purity
     compose.rational_ = compose.rational
     compose.perceptual_ = compose.perceptual
@@ -359,6 +331,13 @@ const parseWitch = (array) => {
     compose.buff_ = []
     compose.characteristic = parseCharacteristic(compose.characteristic)
     compose.characteristic.forEach(i => i.function(i, compose))
+
+    compose.purity = Math.ceil(compose.purity)
+    compose.rational = Math.ceil(compose.rational)
+    compose.perceptual = Math.ceil(compose.perceptual)
+    compose.purity_ = Math.ceil(compose.purity_)
+    compose.rational_ = Math.ceil(compose.rational_)
+    compose.perceptual_ = Math.ceil(compose.perceptual_)
 
     result_.push(compose)
 
@@ -382,6 +361,9 @@ const parseMonster = (array) => {
     compose.buff_ = []
     compose.characteristic = parseCharacteristic(compose.characteristic)
     compose.characteristic.forEach(i => i.function(i, compose))
+
+    compose.dirty = Math.ceil(compose.dirty)
+    compose.dirty_ = Math.ceil(compose.dirty_)
 
     result_.push(compose)
 
