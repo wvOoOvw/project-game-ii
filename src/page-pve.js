@@ -628,24 +628,36 @@ class Page {
       })
 
       if (current.effect === 'Damage-HitPoint') {
-        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.HitPoint))}`)
-        numberAnimation(Math.min(current.value, current.target.HitPoint), 32, i => current.target.HitPoint = current.target.HitPoint - i)
+        const value = Math.min(current.value, current.target.HitPoint)
+        if (value) {
+          this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(value)}`)
+          numberAnimation(value, 32, i => current.target.HitPoint = numberFix(current.target.HitPoint - i))
+        }
       }
       if (current.effect === 'Cure-HitPoint') {
-        this.InstanceMask.text.push(`${current.target.name} 回复 ${Math.ceil(Math.min(current.value, current.target.HitPoint_ - current.target.HitPoint))}`)
-        numberAnimation(Math.min(current.value, current.target.HitPoint_ - current.target.HitPoint), 32, i => current.target.HitPoint = current.target.HitPoint + i)
+        const value = Math.min(current.value, current.target.HitPoint_ - current.target.HitPoint)
+        if (value) {
+          this.InstanceMask.text.push(`${current.target.name} 回复 ${Math.ceil(value)}`)
+          numberAnimation(value, 32, i => current.target.HitPoint = numberFix(current.target.HitPoint + i))
+        }
+      }
+      if (current.effect === 'Improve-Attact_A') {
+        const value = current.value
+        if (value) {
+          this.InstanceMask.text.push(`${current.target.name} 提升理性 ${Math.ceil(value)}`)
+          numberAnimation(value, 32, i => current.target.Attact_A = numberFix(current.target.Attact_A + i))
+        }
+      }
+      if (current.effect === 'Improve-Attact_B') {
+        const value = current.value
+        if (value) {
+          this.InstanceMask.text.push(`${current.target.name} 提升感性 ${Math.ceil(value)}`)
+          numberAnimation(value, 32, i => current.target.Attact_B = numberFix(current.target.Attact_B + i))
+        }
       }
       if (current.effect === 'Buff') {
         this.InstanceMask.text.push(`${current.target.name} 附加状态 ${current.name}`)
         current.target.buff.push(current)
-      }
-      if (current.effect === 'Improve-Attact_A') {
-        this.InstanceMask.text.push(`${current.target.name} 提升理性 ${Math.ceil(current.value)}`)
-        numberAnimation(current.value, 32, i => current.target.Attact_A = current.target.Attact_A + i)
-      }
-      if (current.effect === 'Improve-Attact_B') {
-        this.InstanceMask.text.push(`${current.target.name} 提升感性 ${Math.ceil(current.value)}`)
-        numberAnimation(current.value, 32, i => current.target.Attact_B = current.target.Attact_B + i)
       }
     }
 
