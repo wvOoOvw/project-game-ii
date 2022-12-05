@@ -35,6 +35,21 @@ var originCharacteristic = [
       self.purity = (1 + ((characteristic.level) * 0.04)) * self.purity
       self.purity_ = (1 + ((characteristic.level) * 0.04)) * self.purity_
     }
+  },
+  {
+    key: 4,
+    name: '嗜血',
+    description: '造成伤害后回复清醒',
+    function: (characteristic, self) => {
+      const buff = (buff, when, result, current) => {
+        if (when === 'result') {
+          if (current.effect === 'Damage-Dirty' && current.origin === self) {
+            result.push({ effect: 'Cure-Purity', origin: self, target: self, value: ((characteristic.level) * 0.02) * current.value })
+          }
+        }
+      }
+      self.buff_.push({ effect: 'Buff', origin: self, target: self, value: buff, name: '嗜血' })
+    }
   }
 ]
 

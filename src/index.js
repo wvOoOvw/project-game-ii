@@ -78,14 +78,14 @@ class Main {
         localStorage.setItem('info', JSON.stringify(Imitation.state.info))
       },
       getInfo: async () => {
-        localStorage.removeItem('info')
+        // localStorage.removeItem('info')
         const info = localStorage.getItem('info')
         if (info) {
           Imitation.state.info = JSON.parse(info)
         }
         if (!info) {
           const info = {
-            library: originWitch.map(i => ({ key: i.key, level: 1, exp: 0, characteristic: [{ key: 1, level: 1 }, { key: 2, level: 1 }] })),
+            library: originWitch.map(i => ({ key: i.key, level: 1, exp: 2000, characteristic: [{ key: 1, level: 1 }, { key: 2, level: 1 }] })),
             team: originWitch.map(i => ({ key: i.key })).filter((i, index) => index < 4),
           }
 
