@@ -14,8 +14,8 @@ var originCharacteristic = [
     name: '勇敢',
     description: '提升理性值',
     function: (characteristic, self) => {
-      self.rational = (1 + ((characteristic.level) * 0.04)) * self.rational
-      self.rational_ = (1 + ((characteristic.level) * 0.04)) * self.rational_
+      self.Attact_A = (1 + ((characteristic.level) * 0.04)) * self.Attact_A
+      self.Attact_A_ = (1 + ((characteristic.level) * 0.04)) * self.Attact_A_
     }
   },
   {
@@ -23,8 +23,8 @@ var originCharacteristic = [
     name: '冷静',
     description: '提升感性值',
     function: (characteristic, self) => {
-      self.perceptual = (1 + ((characteristic.level) * 0.04)) * self.perceptual
-      self.perceptual_ = (1 + ((characteristic.level) * 0.04)) * self.perceptual_
+      self.Attact_B = (1 + ((characteristic.level) * 0.04)) * self.Attact_B
+      self.Attact_B_ = (1 + ((characteristic.level) * 0.04)) * self.Attact_B_
     }
   },
   {
@@ -32,8 +32,8 @@ var originCharacteristic = [
     name: '活力',
     description: '提升清醒值',
     function: (characteristic, self) => {
-      self.purity = (1 + ((characteristic.level) * 0.04)) * self.purity
-      self.purity_ = (1 + ((characteristic.level) * 0.04)) * self.purity_
+      self.HitPoint = (1 + ((characteristic.level) * 0.04)) * self.HitPoint
+      self.HitPoint_ = (1 + ((characteristic.level) * 0.04)) * self.HitPoint_
     }
   },
   {
@@ -43,8 +43,8 @@ var originCharacteristic = [
     function: (characteristic, self) => {
       const buff = (buff, when, result, current) => {
         if (when === 'result') {
-          if (current.effect === 'Damage-Dirty' && current.origin === self) {
-            result.push({ effect: 'Cure-Purity', origin: self, target: self, value: ((characteristic.level) * 0.02) * current.value })
+          if (current.effect === 'Damage-HitPoint' && current.origin === self) {
+            result.push({ effect: 'Cure-HitPoint', origin: self, target: self, value: ((characteristic.level) * 0.02) * current.value })
           }
         }
       }
@@ -58,7 +58,7 @@ var originMonster = [
     key: 1,
     name: '被污染的野猪',
     description: '在丛林中被污染的野猪，具备一定的攻击性。',
-    dirty: 1200,
+    HitPoint: 1200,
     reward: [
       {
         name: 'exp',
@@ -73,7 +73,7 @@ var originMonster = [
         speed: 5,
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage-Purity', origin: self, target: opposite, value: Math.floor(100 + Math.random() * 50) },
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: Math.floor(100 + Math.random() * 50) },
           ]
         }
       },
@@ -84,7 +84,7 @@ var originMonster = [
         speed: 9,
         function: (self, opposite, oppositeAll) => {
           return [
-            { effect: 'Damage-Purity', origin: self, target: opposite, value: Math.floor(20 + Math.random() * 50) },
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: Math.floor(20 + Math.random() * 50) },
           ]
         }
       }
@@ -99,9 +99,9 @@ var originWitch = [
     name: '加百列',
     type: '进攻',
     description: '',
-    purity: 1200,
-    rational: 1180,
-    perceptual: 880,
+    HitPoint: 1200,
+    Attact_A: 1180,
+    Attact_B: 880,
     skill: [
       {
         name: '技能 A',
@@ -109,7 +109,7 @@ var originWitch = [
         description: '以理性值20%攻击目标',
         speed: 4,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.2 }]
+          return [{ effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.2 }]
         }
       },
       {
@@ -119,8 +119,8 @@ var originWitch = [
         speed: 4,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Improve-Rational', origin: self, target: self, value: self.rational * 0.1 },
-            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 }
+            { effect: 'Improve-Attact_A', origin: self, target: self, value: self.Attact_A * 0.1 },
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.15 }
           ]
         }
       }
@@ -131,9 +131,9 @@ var originWitch = [
     name: '乌利尔',
     type: '进攻',
     description: '',
-    purity: 1150,
-    rational: 960,
-    perceptual: 1040,
+    HitPoint: 1150,
+    Attact_A: 960,
+    Attact_B: 1040,
     skill: [
       {
         name: '技能 A',
@@ -141,7 +141,7 @@ var originWitch = [
         description: '以感性值18%攻击目标',
         speed: 4,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.perceptual * 0.18 }]
+          return [{ effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_B * 0.18 }]
         }
       },
       {
@@ -151,7 +151,7 @@ var originWitch = [
         speed: 4,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.18 }
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.18 }
           ]
         }
       }
@@ -162,9 +162,9 @@ var originWitch = [
     name: '米加勒',
     type: '辅助',
     description: '',
-    purity: 1000,
-    rational: 820,
-    perceptual: 1200,
+    HitPoint: 1000,
+    Attact_A: 820,
+    Attact_B: 1200,
     skill: [
       {
         name: '技能 A',
@@ -172,7 +172,7 @@ var originWitch = [
         description: '以感性值12%攻击目标',
         speed: 6,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.perceptual * 0.12 }]
+          return [{ effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_B * 0.12 }]
         }
       },
       {
@@ -182,7 +182,7 @@ var originWitch = [
         speed: 8,
         function: (self, opposite, selfAll) => {
           return selfAll.map(i => {
-            return { effect: 'Cure-Purity', origin: self, target: i, value: self.perceptual * 0.08 }
+            return { effect: 'Cure-HitPoint', origin: self, target: i, value: self.Attact_B * 0.08 }
           })
         }
       }
@@ -193,9 +193,9 @@ var originWitch = [
     name: '乌列',
     type: '防御',
     description: '',
-    purity: 1500,
-    rational: 920,
-    perceptual: 700,
+    HitPoint: 1500,
+    Attact_A: 920,
+    Attact_B: 700,
     skill: [
       {
         name: '技能 A',
@@ -203,7 +203,7 @@ var originWitch = [
         description: '以理性值15%攻击目标',
         speed: 6,
         function: (self, opposite, selfAll) => {
-          return [{ effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 }]
+          return [{ effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.15 }]
         }
       },
       {
@@ -214,7 +214,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           const buff = (buff, when, result, current) => {
             if (when === 'result') {
-              if (current.effect === 'Damage-Purity' && current.target === self) {
+              if (current.effect === 'Damage-HitPoint' && current.target === self) {
                 current.value = numberFix(current.value * 0.3)
               }
             }
@@ -231,9 +231,9 @@ var originWitch = [
     name: '切茜娅',
     type: '进攻',
     description: '',
-    purity: 870,
-    rational: 1200,
-    perceptual: 1000,
+    HitPoint: 870,
+    Attact_A: 1200,
+    Attact_B: 1000,
     skill: [
       {
         name: '技能 A',
@@ -242,7 +242,7 @@ var originWitch = [
         speed: 4,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.1 + self.perceptual * 0.1 }
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.1 + self.Attact_B * 0.1 }
           ]
         }
       },
@@ -253,8 +253,8 @@ var originWitch = [
         speed: 7,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.15 },
-            { effect: 'Cure-Purity', origin: self, target: i, value: self.perceptual * 0.05 }
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.15 },
+            { effect: 'Cure-HitPoint', origin: self, target: i, value: self.Attact_B * 0.05 }
           ]
         }
       }
@@ -265,9 +265,9 @@ var originWitch = [
     name: '迦勒',
     type: '辅助',
     description: '',
-    purity: 1050,
-    rational: 880,
-    perceptual: 1100,
+    HitPoint: 1050,
+    Attact_A: 880,
+    Attact_B: 1100,
     skill: [
       {
         name: '技能 A',
@@ -276,9 +276,9 @@ var originWitch = [
         speed: 6,
         function: (self, opposite, selfAll) => {
           return [
-            { effect: 'Damage-Dirty', origin: self, target: opposite, value: self.rational * 0.2 },
+            { effect: 'Damage-HitPoint', origin: self, target: opposite, value: self.Attact_A * 0.2 },
             ...selfAll.filter(i => i !== self).map(i => {
-              return { effect: 'Improve-Rational', origin: self, target: i, value: self.perceptual * 0.08 }
+              return { effect: 'Improve-Attact_A', origin: self, target: i, value: self.Attact_B * 0.08 }
             })
           ]
         }
@@ -291,7 +291,7 @@ var originWitch = [
         function: (self, opposite, selfAll) => {
           return [
             ...selfAll.map(i => {
-              return { effect: 'Improve-Rational', origin: self, target: i, value: self.perceptual * 0.1 }
+              return { effect: 'Improve-Attact_A', origin: self, target: i, value: self.Attact_B * 0.1 }
             })
           ]
         }
@@ -336,23 +336,23 @@ const parseWitch = (array) => {
 
     const compose = { ...origin, ...i }
 
-    compose.purity = compose.purity * Math.pow(1.2, i.level)
-    compose.rational = compose.rational * Math.pow(1.2, i.level)
-    compose.perceptual = compose.perceptual * Math.pow(1.2, i.level)
-    compose.purity_ = compose.purity
-    compose.rational_ = compose.rational
-    compose.perceptual_ = compose.perceptual
+    compose.HitPoint = compose.HitPoint * Math.pow(1.2, i.level)
+    compose.Attact_A = compose.Attact_A * Math.pow(1.2, i.level)
+    compose.Attact_B = compose.Attact_B * Math.pow(1.2, i.level)
+    compose.HitPoint_ = compose.HitPoint
+    compose.Attact_A_ = compose.Attact_A
+    compose.Attact_B_ = compose.Attact_B
     compose.buff = []
     compose.buff_ = []
     compose.characteristic = parseCharacteristic(compose.characteristic)
     compose.characteristic.forEach(i => i.function(i, compose))
 
-    compose.purity = Math.ceil(compose.purity)
-    compose.rational = Math.ceil(compose.rational)
-    compose.perceptual = Math.ceil(compose.perceptual)
-    compose.purity_ = Math.ceil(compose.purity_)
-    compose.rational_ = Math.ceil(compose.rational_)
-    compose.perceptual_ = Math.ceil(compose.perceptual_)
+    compose.HitPoint = Math.ceil(compose.HitPoint)
+    compose.Attact_A = Math.ceil(compose.Attact_A)
+    compose.Attact_B = Math.ceil(compose.Attact_B)
+    compose.HitPoint_ = Math.ceil(compose.HitPoint_)
+    compose.Attact_A_ = Math.ceil(compose.Attact_A_)
+    compose.Attact_B_ = Math.ceil(compose.Attact_B_)
 
     result_.push(compose)
 
@@ -370,15 +370,15 @@ const parseMonster = (array) => {
 
     const compose = { ...origin, ...i }
 
-    compose.dirty = Math.ceil(compose.dirty * Math.pow(1.2, i.level))
-    compose.dirty_ = compose.dirty
+    compose.HitPoint = Math.ceil(compose.HitPoint * Math.pow(1.2, i.level))
+    compose.HitPoint_ = compose.HitPoint
     compose.buff = []
     compose.buff_ = []
     compose.characteristic = parseCharacteristic(compose.characteristic)
     compose.characteristic.forEach(i => i.function(i, compose))
 
-    compose.dirty = Math.ceil(compose.dirty)
-    compose.dirty_ = Math.ceil(compose.dirty_)
+    compose.HitPoint = Math.ceil(compose.HitPoint)
+    compose.HitPoint_ = Math.ceil(compose.HitPoint_)
 
     result_.push(compose)
 

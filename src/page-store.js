@@ -460,13 +460,13 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`清醒 ${Math.ceil(this.witch.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+    Canvas.ctx.fillText(`清醒 ${Math.ceil(this.witch.HitPoint)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`理性 ${Math.ceil(this.witch.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+    Canvas.ctx.fillText(`理性 ${Math.ceil(this.witch.Attact_A)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`感性 ${Math.ceil(this.witch.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+    Canvas.ctx.fillText(`感性 ${Math.ceil(this.witch.Attact_B)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
     Canvas.ctx.textAlign = 'end'
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -488,13 +488,13 @@ class Witch {
 
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`清醒 ${Math.ceil(this.previous.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+      Canvas.ctx.fillText(`清醒 ${Math.ceil(this.previous.HitPoint)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`理性 ${Math.ceil(this.previous.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+      Canvas.ctx.fillText(`理性 ${Math.ceil(this.previous.Attact_A)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`感性 ${Math.ceil(this.previous.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+      Canvas.ctx.fillText(`感性 ${Math.ceil(this.previous.Attact_B)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
       Canvas.ctx.textAlign = 'end'
       drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -602,9 +602,9 @@ class Page {
           '等级提升',
           `等级 ${Math.ceil(snapshot.level)} -> ${Math.ceil(this.InstanceWitch.witch.level)}`,
           `经验 ${Math.ceil(snapshot.exp)} -> ${Math.ceil(this.InstanceWitch.witch.exp)}`,
-          `清醒 ${Math.ceil(snapshot.purity)} -> ${Math.ceil(this.InstanceWitch.witch.purity)}`,
-          `理性 ${Math.ceil(snapshot.rational)} -> ${Math.ceil(this.InstanceWitch.witch.rational)}`,
-          `感性 ${Math.ceil(snapshot.perceptual)} -> ${Math.ceil(this.InstanceWitch.witch.perceptual)}`,
+          `清醒 ${Math.ceil(snapshot.HitPoint)} -> ${Math.ceil(this.InstanceWitch.witch.HitPoint)}`,
+          `理性 ${Math.ceil(snapshot.Attact_A)} -> ${Math.ceil(this.InstanceWitch.witch.Attact_A)}`,
+          `感性 ${Math.ceil(snapshot.Attact_B)} -> ${Math.ceil(this.InstanceWitch.witch.Attact_B)}`,
         ]
         this.InstanceMask.touchEvent = () => {
           this.InstanceMask.showIf = false
@@ -655,9 +655,9 @@ class Page {
           `${this.InstanceWitch.witch.characteristic[1].name} ${symbolNumber(this.InstanceWitch.witch.characteristic[1].level)} : ${this.InstanceWitch.witch.characteristic[1].description}`,
           `${this.InstanceWitch.witch.characteristic[0].name} ${symbolNumber(this.InstanceWitch.witch.characteristic[0].level)} : ${this.InstanceWitch.witch.characteristic[0].description}`,
           `经验 ${Math.ceil(snapshot.exp)} -> ${Math.ceil(this.InstanceWitch.witch.exp)}`,
-          `清醒 ${Math.ceil(snapshot.purity)} -> ${Math.ceil(this.InstanceWitch.witch.purity)}`,
-          `理性 ${Math.ceil(snapshot.rational)} -> ${Math.ceil(this.InstanceWitch.witch.rational)}`,
-          `感性 ${Math.ceil(snapshot.perceptual)} -> ${Math.ceil(this.InstanceWitch.witch.perceptual)}`,
+          `清醒 ${Math.ceil(snapshot.HitPoint)} -> ${Math.ceil(this.InstanceWitch.witch.HitPoint)}`,
+          `理性 ${Math.ceil(snapshot.Attact_A)} -> ${Math.ceil(this.InstanceWitch.witch.Attact_A)}`,
+          `感性 ${Math.ceil(snapshot.Attact_B)} -> ${Math.ceil(this.InstanceWitch.witch.Attact_B)}`,
         ]
         this.InstanceMask.touchEvent = () => {
           this.InstanceMask.showIf = false

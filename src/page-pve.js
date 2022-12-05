@@ -315,13 +315,13 @@ class Witch {
 
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`清醒 ${Math.ceil(this.witch.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+    Canvas.ctx.fillText(`清醒 ${Math.ceil(this.witch.HitPoint)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`理性 ${Math.ceil(this.witch.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+    Canvas.ctx.fillText(`理性 ${Math.ceil(this.witch.Attact_A)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`感性 ${Math.ceil(this.witch.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+    Canvas.ctx.fillText(`感性 ${Math.ceil(this.witch.Attact_B)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
     Canvas.ctx.textAlign = 'end'
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -343,13 +343,13 @@ class Witch {
 
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`清醒 ${Math.ceil(this.previous.purity)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+      Canvas.ctx.fillText(`清醒 ${Math.ceil(this.previous.HitPoint)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.12, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`理性 ${Math.ceil(this.previous.rational)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
+      Canvas.ctx.fillText(`理性 ${Math.ceil(this.previous.Attact_A)}`, this.x + this.width * 0.07, this.y + this.width * 0.125)
       drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.2, width: 2, height: this.width * 0.05, radius: 1 })
       Canvas.ctx.fill()
-      Canvas.ctx.fillText(`感性 ${Math.ceil(this.previous.perceptual)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
+      Canvas.ctx.fillText(`感性 ${Math.ceil(this.previous.Attact_B)}`, this.x + this.width * 0.07, this.y + this.width * 0.205)
 
       Canvas.ctx.textAlign = 'end'
       drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -439,7 +439,7 @@ class Monster {
     Canvas.ctx.textAlign = 'start'
     drawRectRadius({ x: this.x + this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
     Canvas.ctx.fill()
-    Canvas.ctx.fillText(`污秽 ${Math.ceil(this.monster.dirty)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
+    Canvas.ctx.fillText(`污秽 ${Math.ceil(this.monster.HitPoint)}`, this.x + this.width * 0.07, this.y + this.width * 0.045)
 
     Canvas.ctx.textAlign = 'end'
     drawRectRadius({ x: this.x + this.width - this.width * 0.04, y: this.y + this.width * 0.04, width: 2, height: this.width * 0.05, radius: 1 })
@@ -546,7 +546,7 @@ class Page {
 
       await wait(64)
 
-      if (this.InstanceMonster.monster.dirty === 0) {
+      if (this.InstanceMonster.monster.HitPoint === 0) {
         this.InstanceMask.showIf = false
         await wait(32)
         this.InstanceMask.showIf = true
@@ -560,7 +560,7 @@ class Page {
         return
       }
 
-      this.team = this.team.filter(i => i.purity > 0)
+      this.team = this.team.filter(i => i.HitPoint > 0)
 
       if (this.team.length === 0) {
         this.InstanceMask.showIf = false
@@ -627,33 +627,25 @@ class Page {
         i.buff.forEach(i => i.value(i, 'result', result, current))
       })
 
-      if (current.effect === 'Damage-Dirty') {
-        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.dirty))}`)
-        numberAnimation(Math.min(current.value, current.target.dirty), 32, i => current.target.dirty = current.target.dirty - i)
+      if (current.effect === 'Damage-HitPoint') {
+        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.HitPoint))}`)
+        numberAnimation(Math.min(current.value, current.target.HitPoint), 32, i => current.target.HitPoint = current.target.HitPoint - i)
       }
-      if (current.effect === 'Damage-Purity') {
-        this.InstanceMask.text.push(`${current.target.name} 受到伤害 ${Math.ceil(Math.min(current.value, current.target.purity))}`)
-        numberAnimation(Math.min(current.value, current.target.purity), 32, i => current.target.purity = current.target.purity - i)
-      }
-      if (current.effect === 'Cure-Purity') {
-        this.InstanceMask.text.push(`${current.target.name} 回复清醒 ${Math.ceil(Math.min(current.value, current.target.purity_ - current.target.purity))}`)
-        numberAnimation(Math.min(current.value, current.target.purity_ - current.target.purity), 32, i => current.target.purity = current.target.purity + i)
-      }
-      if (current.effect === 'Cure-Dirty') {
-        this.InstanceMask.text.push(`${current.target.name} 回复污秽 ${Math.ceil(Math.min(current.value, current.target.dirty_ - current.target.dirty))}`)
-        numberAnimation(Math.min(current.value, current.target.dirty_ - current.target.dirty), 32, i => current.target.dirty = current.target.dirty + i)
+      if (current.effect === 'Cure-HitPoint') {
+        this.InstanceMask.text.push(`${current.target.name} 回复 ${Math.ceil(Math.min(current.value, current.target.HitPoint_ - current.target.HitPoint))}`)
+        numberAnimation(Math.min(current.value, current.target.HitPoint_ - current.target.HitPoint), 32, i => current.target.HitPoint = current.target.HitPoint + i)
       }
       if (current.effect === 'Buff') {
         this.InstanceMask.text.push(`${current.target.name} 附加状态 ${current.name}`)
         current.target.buff.push(current)
       }
-      if (current.effect === 'Improve-Rational') {
+      if (current.effect === 'Improve-Attact_A') {
         this.InstanceMask.text.push(`${current.target.name} 提升理性 ${Math.ceil(current.value)}`)
-        numberAnimation(current.value, 32, i => current.target.rational = current.target.rational + i)
+        numberAnimation(current.value, 32, i => current.target.Attact_A = current.target.Attact_A + i)
       }
-      if (current.effect === 'Improve-Perceptual') {
+      if (current.effect === 'Improve-Attact_B') {
         this.InstanceMask.text.push(`${current.target.name} 提升感性 ${Math.ceil(current.value)}`)
-        numberAnimation(current.value, 32, i => current.target.perceptual = current.target.perceptual + i)
+        numberAnimation(current.value, 32, i => current.target.Attact_B = current.target.Attact_B + i)
       }
     }
 
